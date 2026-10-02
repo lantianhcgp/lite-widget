@@ -934,7 +934,7 @@ class Renderer(private val assets: WidgetAssets) {
                 val wm = app.getSystemService(android.content.Context.WALLPAPER_SERVICE)
                         as android.app.WallpaperManager
                 val d = wm.drawable
-                (d as? android.graphics.BitmapDrawable)?.bitmap
+                (d as? android.graphics.drawable.BitmapDrawable)?.bitmap
             } catch (t: Throwable) {
                 if (!frostLogged) {
                     AppLog.w("frost: wallpaper unavailable: ${t.javaClass.simpleName}: ${t.message}")
