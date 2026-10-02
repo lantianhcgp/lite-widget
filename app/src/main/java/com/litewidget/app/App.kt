@@ -22,13 +22,24 @@ class App : Application() {
         super.onCreate()
         instance = this
         installCrashCapture()
-        AppLog.init(filesDir)
-        prefs = Prefs(this)
-        store = WidgetStore(filesDir)
-        assetLoader = AssetLoader(filesDir)
-        data = DataRepo(this)
-        copySchema()
-        AppLog.i("App started, widgetsDir=${store.dir.absolutePath}")
+        try {
+            AppLog.init(filesDir)
+            prefs = Prefs(this)
+            store = WidgetStore(filesDir)
+            assetLoader = AssetLoader(filesDir)
+            data = DataRepo(this)
+            copySchema()
+            AppLog.i("App started, widgetsDir=${store.dir.absolutePath}")
+        } catch (t: Throwable) {
+            // Application 初始化失败：落盘后继续，让首页有机会把堆栈弹出来
+            try {
+                crashFile.appendText(
+                    "==== App.onCreate failed ====\n" +
+                        android.util.Log.getStackTraceString(t) + "\n----\n"
+                )
+            } catch (_: Throwable) {
+            }
+        }
     }
 
     val crashFile: java.io.File

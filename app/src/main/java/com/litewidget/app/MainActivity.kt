@@ -42,6 +42,14 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        try {
+            boot()
+        } catch (t: Throwable) {
+            onBootFailure(t)
+        }
+    }
+
+    private fun boot() {
         showCrashIfAny() // 最先弹，保证即使后面还有崩溃点也能拿到堆栈
         setContentView(R.layout.activity_main)
 
@@ -113,6 +121,32 @@ class MainActivity : Activity() {
 
         renderList()
         askNotificationPermission()
+    }
+
+    /** 启动失败不上报系统，直接在首页把堆栈亮出来（没有 logcat 就靠这个） */
+    private fun onBootFailure(t: Throwable) {
+        AppLog.e("onCreate failed", t)
+        try {
+            App.instance.crashFile.appendText(
+                "==== boot failure ====\n" + android.util.Log.getStackTraceString(t) + "\n----\n"
+            )
+        } catch (_: Throwable) {
+        }
+        try {
+            val tv = TextView(this).apply {
+                setPadding(48, 48, 48, 48)
+                textSize = 12f
+                typeface = android.graphics.Typeface.MONOSPACE
+                setTextIsSelectable(true)
+                text = android.util.Log.getStackTraceString(t)
+            }
+            AlertDialog.Builder(this)
+                .setTitle("启动异常（截给我看）")
+                .setView(tv)
+                .setPositiveButton("关闭", null)
+                .show()
+        } catch (_: Throwable) {
+        }
     }
 
     /** 上次崩溃自报家门：没有 logcat 时靠这个拿堆栈 */
@@ -355,8 +389,14 @@ class MainActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
-        updateServerUi()
-        renderList()
+        try {
+            if (::serverSwitch.isInitialized && ::listBox.isInitialized) {
+                updateServerUi()
+                renderList()
+            }
+        } catch (t: Throwable) {
+            AppLog.e("onResume failed", t)
+        }
     }
 
     override fun onDestroy() {
