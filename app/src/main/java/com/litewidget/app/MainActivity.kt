@@ -42,6 +42,7 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        com.litewidget.app.core.Trace.mark(this, "7 MainActivity.onCreate start")
         try {
             boot()
         } catch (t: Throwable) {
@@ -51,7 +52,9 @@ class MainActivity : Activity() {
 
     private fun boot() {
         showCrashIfAny() // 最先弹，保证即使后面还有崩溃点也能拿到堆栈
+        com.litewidget.app.core.Trace.mark(this, "8 showCrashIfAny done")
         setContentView(R.layout.activity_main)
+        com.litewidget.app.core.Trace.mark(this, "9 setContentView OK")
 
         findViewById<TextView>(R.id.subtitle).text =
             "v${BuildConfigCompat.VERSION} · 文件驱动 + MCP 开发"
@@ -119,12 +122,19 @@ class MainActivity : Activity() {
 
         findViewById<Button>(R.id.btn_logs).setOnClickListener { showLogs() }
 
+        com.litewidget.app.core.Trace.mark(this, "10 findViewById/listeners OK")
         renderList()
+        com.litewidget.app.core.Trace.mark(this, "11 renderList OK")
         askNotificationPermission()
+        com.litewidget.app.core.Trace.mark(this, "12 boot COMPLETE (界面出来了)")
     }
 
     /** 启动失败不上报系统，直接在首页把堆栈亮出来（没有 logcat 就靠这个） */
     private fun onBootFailure(t: Throwable) {
+        com.litewidget.app.core.Trace.error(
+            this,
+            "boot FAILED\n" + android.util.Log.getStackTraceString(t)
+        )
         AppLog.e("onCreate failed", t)
         try {
             App.instance.crashFile.appendText(
@@ -412,5 +422,5 @@ class MainActivity : Activity() {
 
 /** 版本号占位（避免依赖 BuildConfig 生成时机） */
 object BuildConfigCompat {
-    const val VERSION = "0.1.1"
+    const val VERSION = "0.1.2"
 }

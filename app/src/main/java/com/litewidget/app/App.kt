@@ -18,19 +18,30 @@ class App : Application() {
     lateinit var assetLoader: AssetLoader
         private set
 
+    override fun attachBaseContext(newBase: android.content.Context?) {
+        super.attachBaseContext(newBase)
+        com.litewidget.app.core.Trace.mark(newBase, "1 App.attachBaseContext OK")
+    }
+
     override fun onCreate() {
         super.onCreate()
         instance = this
+        com.litewidget.app.core.Trace.mark(this, "2 App.onCreate start")
         installCrashCapture()
         try {
             AppLog.init(filesDir)
+            com.litewidget.app.core.Trace.mark(this, "3 AppLog.init OK")
             prefs = Prefs(this)
             store = WidgetStore(filesDir)
+            com.litewidget.app.core.Trace.mark(this, "4 WidgetStore OK")
             assetLoader = AssetLoader(filesDir)
             data = DataRepo(this)
+            com.litewidget.app.core.Trace.mark(this, "5 DataRepo/AssetLoader OK")
             copySchema()
+            com.litewidget.app.core.Trace.mark(this, "6 copySchema OK")
             AppLog.i("App started, widgetsDir=${store.dir.absolutePath}")
         } catch (t: Throwable) {
+            com.litewidget.app.core.Trace.error(this, "App.onCreate FAILED\n" + android.util.Log.getStackTraceString(t))
             // Application 初始化失败：落盘后继续，让首页有机会把堆栈弹出来
             try {
                 crashFile.appendText(
@@ -61,6 +72,13 @@ class App : Application() {
                 val f = crashFile
                 f.parentFile?.mkdirs()
                 f.appendText(sb.toString())
+            } catch (_: Throwable) {
+            }
+            try {
+                com.litewidget.app.core.Trace.error(
+                    this@App,
+                    "UNCAUGHT on ${thread.name}\n" + android.util.Log.getStackTraceString(throwable)
+                )
             } catch (_: Throwable) {
             }
             if (prev != null) prev.uncaughtException(thread, throwable)
