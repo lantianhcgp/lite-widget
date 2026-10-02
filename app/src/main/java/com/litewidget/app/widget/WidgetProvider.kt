@@ -7,7 +7,7 @@ import android.content.Intent
 import com.litewidget.app.core.AppLog
 
 /** 桌面小组件：系统定时/添加时回调，统一交给 WidgetUpdater 渲染推送。 */
-class WidgetProvider : AppWidgetProvider() {
+open class WidgetProvider : AppWidgetProvider() {
 
     override fun onUpdate(
         context: Context,

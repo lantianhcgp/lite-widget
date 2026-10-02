@@ -71,6 +71,11 @@ class Renderer(private val assets: WidgetAssets) {
         private fun fmtNum(d: Double, dec: Int): String =
             String.format(Locale.US, "%.${dec}f", d)
 
+        /** 预览用密度：让 auto 模式按 spec 画布渲染（720px 宽 → density=2 → 设计宽 360） */
+        fun previewDensity(spec: JSONObject, outW: Int): Float {
+            val cw = spec.optJSONObject("canvas")?.optDouble("width", 360.0)?.toFloat() ?: 360f
+            return if (cw > 0f) outW / cw else 1f
+        }
     }
 
     // ------------------------------------------------------------------ 入口
