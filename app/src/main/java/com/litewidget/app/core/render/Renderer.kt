@@ -901,7 +901,6 @@ class Renderer(private val assets: WidgetAssets) {
                 paint.shader = g
                 c.drawRect(rect.left, rect.top, rect.right, rect.top + gw, paint)
                 paint.shader = null
-                g.recycle()
             }
             if (ig.optBoolean("bottom", false)) {
                 val g = LinearGradient(
@@ -911,7 +910,6 @@ class Renderer(private val assets: WidgetAssets) {
                 paint.shader = g
                 c.drawRect(rect.left, rect.bottom - gw, rect.right, rect.bottom, paint)
                 paint.shader = null
-                g.recycle()
             }
             c.restoreToCount(save)
         }
@@ -935,7 +933,8 @@ class Renderer(private val assets: WidgetAssets) {
             val wall = try {
                 val wm = app.getSystemService(android.content.Context.WALLPAPER_SERVICE)
                         as android.app.WallpaperManager
-                wm.bitmap
+                val d = wm.drawable
+                (d as? android.graphics.BitmapDrawable)?.bitmap
             } catch (t: Throwable) {
                 if (!frostLogged) {
                     AppLog.w("frost: wallpaper unavailable: ${t.javaClass.simpleName}: ${t.message}")
