@@ -42,6 +42,7 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        showCrashIfAny() // 最先弹，保证即使后面还有崩溃点也能拿到堆栈
         setContentView(R.layout.activity_main)
 
         findViewById<TextView>(R.id.subtitle).text =
@@ -112,6 +113,33 @@ class MainActivity : Activity() {
 
         renderList()
         askNotificationPermission()
+    }
+
+    /** 上次崩溃自报家门：没有 logcat 时靠这个拿堆栈 */
+    private fun showCrashIfAny() {
+        val f = App.instance.crashFile
+        if (!f.isFile || f.length() == 0L) return
+        val crashText = try {
+            f.readText()
+        } catch (t: Throwable) {
+            return
+        }
+        val tv = TextView(this).apply {
+            setPadding(32, 24, 32, 24)
+            textSize = 11f
+            typeface = android.graphics.Typeface.MONOSPACE
+            setTextIsSelectable(true)
+            text = crashText
+        }
+        AlertDialog.Builder(this)
+            .setTitle("上次启动崩溃（截给我看）")
+            .setView(tv)
+            .setPositiveButton("关闭", null)
+            .setNeutralButton("清空") { _, _ ->
+                f.writeText("")
+            }
+            .show()
+        AppLog.e("previous crash shown:\n$crashText")
     }
 
     private val serverHandler = android.os.Handler(mainLooper)
