@@ -47,7 +47,32 @@ class Prefs(ctx: Context) {
         return t
     }
 
-    fun hasSource(): Boolean = baseUrl.isNotEmpty() && devNo.isNotEmpty()
+    /** 变量值：组件 data 声明的输入（存 var_<name>，凭据永不进组件包/MCP） */
+    fun varValue(name: String): String = sp.getString("var_$name", "") ?: ""
+    fun setVarValue(name: String, v: String) = sp.edit().putString("var_$name", v.trim()).apply()
+
+    /** 数据源优先读变量（新机制），回退老字段（兼容已填过的用户） */
+    val effectiveBaseUrl: String get() = varValue("baseUrl").ifEmpty { baseUrl }
+    val effectiveDevNo: String get() = varValue("devNo").ifEmpty { devNo }
+
+    fun hasSource(): Boolean = effectiveBaseUrl.isNotEmpty() && effectiveDevNo.isNotEmpty()
+
+    /** 老字段一次性迁移进变量存储 */
+    fun migrateLegacyVars() {
+        if (varValue("baseUrl").isEmpty() && baseUrl.isNotEmpty()) setVarValue("baseUrl", baseUrl)
+        if (varValue("devNo").isEmpty() && devNo.isNotEmpty()) setVarValue("devNo", devNo)
+    }
+
+    /** 每个组件的自动刷新频率（分钟，0 = 不自动刷新） */
+    fun refreshInterval(id: String): Int = sp.getInt("refresh_$id", 0)
+    fun setRefreshInterval(id: String, minutes: Int) = sp.edit().putInt("refresh_$id", minutes).apply()
+    fun lastRender(id: String): Long = sp.getLong("last_render_$id", 0L)
+    fun setLastRender(id: String, ts: Long) = sp.edit().putLong("last_render_$id", ts).apply()
+
+    /** 桌面实例绑定：appWidgetId -> 组件 id（管理器里逐实例指定模板） */
+    fun binding(appWidgetId: Int): String = sp.getString("bind_$appWidgetId", "") ?: ""
+    fun setBinding(appWidgetId: Int, id: String) = sp.edit().putString("bind_$appWidgetId", id).apply()
+    fun clearBinding(appWidgetId: Int) = sp.edit().remove("bind_$appWidgetId").apply()
 
     companion object {
         /** sign = MD5(dev_no + time + nonce + SALT).toUpperCase() —— 已逆向，服务端暂不校验 */

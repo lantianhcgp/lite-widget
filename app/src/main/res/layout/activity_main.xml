@@ -74,7 +74,7 @@
                 android:textSize="13sp" />
         </LinearLayout>
 
-        <!-- 数据源 -->
+        <!-- 管理：桌面实例 / 变量 / 数据刷新 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -83,56 +83,30 @@
             android:orientation="vertical"
             android:padding="14dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/label_source"
-                android:textColor="@color/fg"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-
-            <EditText
-                android:id="@+id/input_base_url"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/bg_input"
-                android:hint="@string/hint_base_url"
-                android:inputType="textUri"
-                android:maxLines="1"
-                android:padding="10dp"
-                android:textColor="@color/fg"
-                android:textColorHint="@color/dim"
-                android:textSize="14sp" />
-
-            <EditText
-                android:id="@+id/input_dev_no"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/bg_input"
-                android:hint="@string/hint_dev_no"
-                android:inputType="number"
-                android:maxLines="1"
-                android:padding="10dp"
-                android:textColor="@color/fg"
-                android:textColorHint="@color/dim"
-                android:textSize="14sp" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/btn_save_source"
+                    android:id="@+id/btn_manager"
                     android:layout_width="0dp"
                     android:layout_height="42dp"
                     android:layout_marginEnd="6dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_button"
-                    android:text="@string/btn_save"
+                    android:text="桌面管理"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp" />
+
+                <Button
+                    android:id="@+id/btn_vars"
+                    android:layout_width="0dp"
+                    android:layout_height="42dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_button"
+                    android:text="变量管理"
                     android:textColor="#FFFFFF"
                     android:textSize="13sp" />
 
@@ -142,7 +116,7 @@
                     android:layout_height="42dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_button"
-                    android:text="@string/btn_refresh"
+                    android:text="刷新数据"
                     android:textColor="#FFFFFF"
                     android:textSize="13sp" />
             </LinearLayout>

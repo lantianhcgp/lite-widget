@@ -76,9 +76,6 @@ class MainActivity : Activity() {
             AppLog.i("bootstrap sample widget created")
         }
 
-        findViewById<EditText>(R.id.input_base_url).setText(prefs.baseUrl)
-        findViewById<EditText>(R.id.input_dev_no).setText(prefs.devNo)
-
         serverSwitch.isChecked = McpService.isRunning()
         updateServerUi()
 
@@ -99,14 +96,13 @@ class MainActivity : Activity() {
             toast("令牌已复制")
         }
 
-        findViewById<Button>(R.id.btn_save_source).setOnClickListener {
-            prefs.baseUrl = findViewById<EditText>(R.id.input_base_url).text.toString()
-            prefs.devNo = findViewById<EditText>(R.id.input_dev_no).text.toString()
-            toast(if (prefs.hasSource()) "数据源已保存" else "地址或充值号为空")
-            refreshData()
-        }
-
         findViewById<Button>(R.id.btn_refresh).setOnClickListener { refreshData() }
+        findViewById<Button>(R.id.btn_manager).setOnClickListener {
+            startActivity(Intent(this, ManagerActivity::class.java))
+        }
+        findViewById<Button>(R.id.btn_vars).setOnClickListener {
+            startActivity(Intent(this, VariablesActivity::class.java))
+        }
 
         findViewById<Button>(R.id.btn_add).setOnClickListener { promptNewWidget() }
 
@@ -200,8 +196,9 @@ class MainActivity : Activity() {
             val row = inflater.inflate(R.layout.item_widget, listBox, false)
             row.findViewById<TextView>(R.id.item_title).text = "${item.name}"
             val active = if (item.id == App.instance.prefs.activeWidget) " · 已应用" else ""
+            val iv = App.instance.prefs.refreshInterval(item.id)
             row.findViewById<TextView>(R.id.item_meta).text =
-                "${item.id} · ${item.size} · v${item.version}$active"
+                "${item.id} · ${item.size} · v${item.version}$active · 刷新:${intervalText(iv)}"
 
             val preview = row.findViewById<ImageView>(R.id.item_preview)
             loadPreview(item.id, preview)
@@ -232,6 +229,9 @@ class MainActivity : Activity() {
                     }
                     .setNegativeButton("取消", null)
                     .show()
+            }
+            row.findViewById<Button>(R.id.item_freq).setOnClickListener {
+                promptRefreshInterval(item.id)
             }
             listBox.addView(row)
         }
@@ -292,6 +292,27 @@ class MainActivity : Activity() {
             .setNegativeButton("取消", null)
             .show()
     }
+
+    /** 自动刷新频率选择（每个组件独立设置） */
+    private fun promptRefreshInterval(id: String) {
+        val items = arrayOf("关闭（不自动刷新）", "每 1 分钟", "每 5 分钟", "每 15 分钟", "每 30 分钟", "每 60 分钟")
+        val values = intArrayOf(0, 1, 5, 15, 30, 60)
+        val cur = App.instance.prefs.refreshInterval(id)
+        val checked = values.indexOf(cur).coerceAtLeast(0)
+        AlertDialog.Builder(this)
+            .setTitle("「${id}」自动刷新频率")
+            .setSingleChoiceItems(items, checked) { d, which ->
+                App.instance.prefs.setRefreshInterval(id, values[which])
+                App.instance.prefs.setLastRender(id, 0L)
+                toast(if (values[which] == 0) "已关闭自动刷新" else "每 ${values[which]} 分钟自动刷新")
+                d.dismiss()
+                renderList()
+            }
+            .setNegativeButton("取消", null)
+            .show()
+    }
+
+    private fun intervalText(m: Int) = if (m <= 0) "关" else "${m}分"
 
     private fun showLogs() {
         val tv = TextView(this).apply {
@@ -423,5 +444,5 @@ class MainActivity : Activity() {
 
 /** 版本号占位（避免依赖 BuildConfig 生成时机） */
 object BuildConfigCompat {
-    const val VERSION = "0.1.5"
+    const val VERSION = "0.1.6"
 }

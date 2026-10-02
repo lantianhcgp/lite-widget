@@ -39,6 +39,8 @@ class App : Application() {
             com.litewidget.app.core.Trace.mark(this, "5 DataRepo/AssetLoader OK")
             copySchema()
             com.litewidget.app.core.Trace.mark(this, "6 copySchema OK")
+            prefs.migrateLegacyVars()
+            startRefreshTicker()
             AppLog.i("App started, widgetsDir=${store.dir.absolutePath}")
         } catch (t: Throwable) {
             com.litewidget.app.core.Trace.error(this, "App.onCreate FAILED\n" + android.util.Log.getStackTraceString(t))
@@ -55,6 +57,41 @@ class App : Application() {
 
     val crashFile: java.io.File
         get() = java.io.File(filesDir, "crash.txt")
+
+    /**
+     * 自动刷新：进程内 Handler 45 秒轮询（主力）+ AlarmManager 每分钟兜底（进程被杀时唤醒）。
+     * 到不到点由 WidgetUpdater.tickNow 按每个组件各自设置的频率判断。
+     */
+    private fun startRefreshTicker() {
+        try {
+            val h = android.os.Handler(mainLooper)
+            val task = object : Runnable {
+                override fun run() {
+                    try {
+                        com.litewidget.app.widget.WidgetUpdater.tickNow(this@App)
+                    } catch (t: Throwable) {
+                        AppLog.w("ticker tick fail: ${t.message}")
+                    }
+                    h.postDelayed(this, 45_000L)
+                }
+            }
+            h.postDelayed(task, 45_000L)
+            val am = getSystemService(android.content.Context.ALARM_SERVICE) as android.app.AlarmManager
+            val pi = android.app.PendingIntent.getBroadcast(
+                this, 701,
+                android.content.Intent(this, com.litewidget.app.widget.RefreshReceiver::class.java),
+                android.app.PendingIntent.FLAG_IMMUTABLE
+            )
+            am.setInexactRepeating(
+                android.app.AlarmManager.RTC_WAKEUP,
+                System.currentTimeMillis() + 60_000L,
+                60_000L, pi
+            )
+            AppLog.i("refresh ticker started (45s handler + 60s alarm)")
+        } catch (t: Throwable) {
+            AppLog.w("ticker start fail: ${t.message}")
+        }
+    }
 
     /**
      * 启动崩溃自捕获：把未捕获异常完整落盘，下次启动在首页弹出来。

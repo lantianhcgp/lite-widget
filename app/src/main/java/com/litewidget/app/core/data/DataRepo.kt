@@ -43,8 +43,8 @@ class DataRepo(private val ctx: Context) {
     /** 必须在后台线程调用 */
     fun refresh(): Map<String, Any?> {
         val prefs = Prefs(ctx)
-        if (!prefs.hasSource()) throw IllegalStateException("请先填写后台地址和充值号")
-        val data = WifiClient.loginCard(prefs.baseUrl, prefs.devNo)
+        if (!prefs.hasSource()) throw IllegalStateException("变量未填写：App → 变量管理，填后台地址和充值号")
+        val data = WifiClient.loginCard(prefs.effectiveBaseUrl, prefs.effectiveDevNo)
         file.parentFile?.mkdirs()
         file.writeText(data.toString())
         val m = fromJson(data)

@@ -286,8 +286,9 @@ class McpServer(private val app: App) {
         }))
         a.put(tool("widget_render", "渲染组件预览图（PNG base64），用于自检样式", obj {
             prop("id", "string", "组件 id", true)
-            prop("width", "integer", "输出宽 px，默认 720")
-            prop("height", "integer", "输出高 px，默认 360")
+            prop("size", "string", "规范尺寸 2x2/4x1/4x2/2x4/4x4：渲染该尺寸的变体（推荐）")
+            prop("width", "integer", "输出宽 px（给了 size 时默认按规范比例）")
+            prop("height", "integer", "输出高 px")
         }))
         a.put(tool("widget_reload", "把组件应用到桌面小组件", obj {
             prop("id", "string", "组件 id，缺省用当前激活组件")
@@ -378,9 +379,20 @@ class McpServer(private val app: App) {
                 if (!store.exists(id)) return "组件不存在: $id" to true
                 val spec = store.readSpec(id) ?: return "widget.json 缺失或解析失败" to true
                 val errs = SpecValidator.widget(spec)
-                val w = args.optInt("width", 720)
-                val h = args.optInt("height", 360)
-                val density = Renderer.previewDensity(spec, w)
+                val size = args.optString("size", "").takeIf { it in Renderer.CANONICAL }
+                var w = args.optInt("width", 0)
+                var h = args.optInt("height", 0)
+                val density: Float
+                if (size != null) {
+                    val c = Renderer.CANONICAL[size]!!
+                    if (w <= 0) w = (c.first * 2f).toInt()
+                    density = w / c.first
+                    if (h <= 0) h = (c.second * density).toInt()
+                } else {
+                    if (w <= 0) w = 720
+                    if (h <= 0) h = 360
+                    density = Renderer.previewDensity(spec, w)
+                }
                 val bmp = Renderer(app.assetLoader.forWidget(id)).render(spec, app.data.forRender(), w, h, density)
                 val b64 = Base64.encodeToString(bitmapToPng(bmp), Base64.NO_WRAP)
                 bmp.recycle()
@@ -486,7 +498,7 @@ class McpServer(private val app: App) {
     }
 
     companion object {
-        const val VERSION = "0.1.0"
+        const val VERSION = "0.1.6"
         private const val MAX_BODY = 2 * 1024 * 1024
         private val ALLOWED = setOf("widgets", "logs", "data", "exports")
         private val WRITABLE = setOf("widgets", "logs")

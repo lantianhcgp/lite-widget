@@ -27,6 +27,16 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ManagerActivity"
+            android:exported="false"
+            android:label="桌面管理" />
+
+        <activity
+            android:name=".VariablesActivity"
+            android:exported="false"
+            android:label="变量管理" />
+
         <service
             android:name=".mcp.McpService"
             android:exported="false"
@@ -60,6 +70,10 @@
 
         <receiver
             android:name=".widget.WidgetActionReceiver"
+            android:exported="false" />
+
+        <receiver
+            android:name=".widget.RefreshReceiver"
             android:exported="false" />
     </application>
 </manifest>

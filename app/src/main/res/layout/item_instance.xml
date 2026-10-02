@@ -7,25 +7,16 @@
     android:orientation="vertical"
     android:padding="12dp">
 
-    <ImageView
-        android:id="@+id/item_preview"
-        android:layout_width="match_parent"
-        android:layout_height="140dp"
-        android:background="#0A0A0E"
-        android:contentDescription="@string/app_name"
-        android:scaleType="fitCenter" />
-
     <TextView
-        android:id="@+id/item_title"
+        android:id="@+id/inst_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:textColor="@color/fg"
         android:textSize="15sp"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/item_meta"
+        android:id="@+id/inst_meta"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
@@ -39,45 +30,24 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/item_apply"
+            android:id="@+id/inst_pick"
             android:layout_width="0dp"
             android:layout_height="36dp"
             android:layout_marginEnd="6dp"
             android:layout_weight="1"
             android:background="@drawable/bg_button"
-            android:text="应用"
+            android:text="更换模板"
             android:textColor="#FFFFFF"
             android:textSize="12sp" />
 
         <Button
-            android:id="@+id/item_export"
-            android:layout_width="0dp"
-            android:layout_height="36dp"
-            android:layout_marginEnd="6dp"
-            android:layout_weight="1"
-            android:background="@drawable/bg_button"
-            android:text="@string/btn_export"
-            android:textColor="#FFFFFF"
-            android:textSize="12sp" />
-
-        <Button
-            android:id="@+id/item_delete"
+            android:id="@+id/inst_reset"
             android:layout_width="0dp"
             android:layout_height="36dp"
             android:layout_weight="1"
             android:background="@drawable/bg_card"
-            android:text="删除"
+            android:text="恢复默认"
             android:textColor="#FF5252"
-            android:textSize="12sp" />
-
-        <Button
-            android:id="@+id/item_freq"
-            android:layout_width="0dp"
-            android:layout_height="36dp"
-            android:layout_weight="1"
-            android:background="@drawable/bg_card"
-            android:text="频率"
-            android:textColor="#9E9EA6"
             android:textSize="12sp" />
     </LinearLayout>
 </LinearLayout>

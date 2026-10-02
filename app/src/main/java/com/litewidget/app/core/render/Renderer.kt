@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlin.math.abs
+import kotlin.math.ln
 import kotlin.math.max
 import kotlin.math.min
 
@@ -72,9 +73,42 @@ class Renderer(private val assets: WidgetAssets) {
             String.format(Locale.US, "%.${dec}f", d)
 
         /** 预览用密度：让 auto 模式按 spec 画布渲染（720px 宽 → density=2 → 设计宽 360） */
-        fun previewDensity(spec: JSONObject, outW: Int): Float {
+        fun previewDensity(spec: JSONObject, outW: Int, size: String? = null): Float {
+            if (size != null) {
+                val c = CANONICAL[size]
+                if (c != null && c.first > 0f) return outW / c.first
+            }
             val cw = spec.optJSONObject("canvas")?.optDouble("width", 360.0)?.toFloat() ?: 360f
             return if (cw > 0f) outW / cw else 1f
+        }
+
+        /** 各尺寸的规范设计空间（dp）：变体按此对号入座 */
+        val CANONICAL: Map<String, Pair<Float, Float>> = linkedMapOf(
+            "4x1" to Pair(360f, 90f),
+            "4x2" to Pair(360f, 180f),
+            "2x2" to Pair(180f, 180f),
+            "4x4" to Pair(360f, 360f),
+            "2x4" to Pair(180f, 360f)
+        )
+
+        /** 按设计空间 dp 归类到最接近的规范尺寸（对数距离，容忍启动器的尺寸偏差） */
+        fun classify(dw: Float, dh: Float): String {
+            var best = "4x2"
+            var bestD = Double.MAX_VALUE
+            for ((k, s) in CANONICAL) {
+                val d = abs(ln((dw / s.first).toDouble())) + abs(ln((dh / s.second).toDouble()))
+                if (d < bestD) { bestD = d; best = k }
+            }
+            return best
+        }
+
+        /** 选取尺寸变体：variants.<size>.root 优先，找不到回退顶层 root（老组件兼容） */
+        fun selectVariant(spec: JSONObject, dw: Float, dh: Float): JSONObject {
+            val vs = spec.optJSONObject("variants") ?: return spec
+            val root = vs.optJSONObject(classify(dw, dh))?.optJSONObject("root") ?: return spec
+            val out = JSONObject(spec.toString())
+            out.put("root", root)
+            return out
         }
     }
 
@@ -98,9 +132,11 @@ class Renderer(private val assets: WidgetAssets) {
             dw = outW / density
             dh = outH / density
         }
-        val rootObj = spec.optJSONObject("root")
+        // 变体优先：按设计空间尺寸挑 variants.<size>；没有对应变体则用顶层 root
+        val active = selectVariant(spec, dw, dh)
+        val rootObj = active.optJSONObject("root")
             ?: throw IllegalArgumentException("widget.json 缺少 root")
-        ctx = Ctx(values, spec.optJSONObject("vars"))
+        ctx = Ctx(values, active.optJSONObject("vars"))
 
         val root = L(rootObj)
         measure(root, dw, dh)

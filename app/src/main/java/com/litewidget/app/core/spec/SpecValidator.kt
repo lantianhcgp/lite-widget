@@ -58,7 +58,7 @@ object SpecValidator {
 
     fun widget(json: JSONObject): List<String> {
         errs.clear()
-        unknown(json, setOf("version", "canvas", "root", "vars"), "$")
+        unknown(json, setOf("version", "canvas", "root", "vars", "variants", "data"), "$")
         need(json, listOf("version", "canvas", "root"), "$")
         if (json.opt("version") != null && json.opt("version") != 1) bad("$", "version", "当前只支持 1")
         val canvas = json.optJSONObject("canvas")
@@ -72,7 +72,44 @@ object SpecValidator {
         val root = json.optJSONObject("root")
         if (root == null) errs.add("$.root: 缺少")
         else node(root, "$.root")
+        json.optJSONObject("variants")?.let { variants(it, "$.variants") }
+        json.optJSONObject("data")?.let { dataBlock(it, "$.data") }
         return errs
+    }
+
+    /** 按尺寸的独立设计：variants.<size>.root 与顶层 root 同规则 */
+    private fun variants(vs: JSONObject, path: String) {
+        unknown(vs, SIZES + "2x4", path)
+        for (k in vs.keys()) {
+            val sub = vs.optJSONObject(k)
+            if (sub == null) { errs.add("$path.$k: 必须是对象"); continue }
+            unknown(sub, setOf("root"), "$path.$k")
+            val r = sub.optJSONObject("root")
+            if (r == null) errs.add("$path.$k.root: 缺少（变体必须含 root）")
+            else node(r, "$path.$k.root")
+        }
+    }
+
+    private val VARNAME = Regex("^[a-z][a-zA-Z0-9_]*$")
+
+    /** 组件声明的外部变量：App「变量管理」页收集用户填写（值存本地，不进包不走 MCP） */
+    private fun dataBlock(d: JSONObject, path: String) {
+        unknown(d, setOf("source", "vars"), path)
+        if (d.has("source") && d.opt("source") !is String) bad(path, "source", "必须是字符串")
+        val vars = d.optJSONObject("vars") ?: return
+        for (k in vars.keys()) {
+            if (!VARNAME.matches(k)) {
+                errs.add("$path.vars: 变量名 '$k' 需小写字母开头 + 字母/数字/下划线")
+                continue
+            }
+            val v = vars.optJSONObject(k)
+            if (v == null) { errs.add("$path.vars.$k: 必须是对象"); continue }
+            unknown(v, setOf("label", "type", "required", "secret", "hint"), "$path.vars.$k")
+            if (v.has("label") && v.opt("label") !is String) bad("$path.vars", k, "label 必须是字符串")
+            enum(v, "type", setOf("string", "url", "number", "password"), "$path.vars.$k")
+            if (v.has("required") && v.opt("required") !is Boolean) bad("$path.vars", k, "required 必须是布尔")
+            if (v.has("secret") && v.opt("secret") !is Boolean) bad("$path.vars", k, "secret 必须是布尔")
+        }
     }
 
     private fun node(o: JSONObject, path: String) {
