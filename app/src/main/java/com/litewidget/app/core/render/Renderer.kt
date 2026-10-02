@@ -955,13 +955,13 @@ class Renderer(private val assets: WidgetAssets) {
             if (r.width() <= 0 || r.height() <= 0) return
             val start = o.optDouble("startAngle", -90.0).toFloat()
             val sweep = o.optDouble("sweep", 360.0).toFloat()
-            paint.shader = shaderFor(track, rect) ?: run {
-                paint.color = withAlpha(0xFF26262C.toInt(), nodeAlpha); null
-            }
-            if (paint.shader == null) paint.color = withAlpha(0xFF26262C.toInt(), nodeAlpha)
+            paint.shader = shaderFor(track, rect)
+            if (paint.shader == null)
+                paint.color = withAlpha(parseColor(track?.optString("color", "#26262C") ?: "#26262C"), nodeAlpha)
             c.drawArc(r, start, sweep, false, paint)
             paint.shader = shaderFor(bar, rect)
-            if (paint.shader == null) paint.color = withAlpha(0xFF4CAF50.toInt(), nodeAlpha)
+            if (paint.shader == null)
+                paint.color = withAlpha(parseColor(bar?.optString("color", "#4CAF50") ?: "#4CAF50"), nodeAlpha)
             c.drawArc(r, start, sweep * frac, false, paint)
             paint.shader = null
         } else {
@@ -970,10 +970,12 @@ class Renderer(private val assets: WidgetAssets) {
             val labelH = if (showLabel) label.optDouble("size", 12.0).toFloat() * 1.5f else 0f
             val cy = y + th / 2f
             paint.shader = shaderFor(track, rect)
-            if (paint.shader == null) paint.color = withAlpha(0xFF26262C.toInt(), nodeAlpha)
+            if (paint.shader == null)
+                paint.color = withAlpha(parseColor(track?.optString("color", "#26262C") ?: "#26262C"), nodeAlpha)
             c.drawLine(x, cy, x + l.w, cy, paint)
             paint.shader = shaderFor(bar, rect)
-            if (paint.shader == null) paint.color = withAlpha(0xFF4CAF50.toInt(), nodeAlpha)
+            if (paint.shader == null)
+                paint.color = withAlpha(parseColor(bar?.optString("color", "#4CAF50") ?: "#4CAF50"), nodeAlpha)
             val end = x + max(l.w * frac, if (roundCap) th else 0f)
             if (l.w * frac > 0f) c.drawLine(x, cy, min(end, x + l.w), cy, paint)
             paint.shader = null
