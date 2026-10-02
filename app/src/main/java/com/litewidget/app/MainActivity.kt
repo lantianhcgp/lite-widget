@@ -186,7 +186,8 @@ class MainActivity : Activity() {
         AppLog.e("previous crash shown:\n$crashText")
     }
 
-    private val serverHandler = android.os.Handler(mainLooper)
+    // 不能在构造期取 mainLooper（此时 Context 尚未 attach → NPE，正是闪退根因），首次使用时才初始化
+    private val serverHandler by lazy { android.os.Handler(mainLooper) }
 
     // ------------------------------------------------------------ 列表
 
@@ -422,5 +423,5 @@ class MainActivity : Activity() {
 
 /** 版本号占位（避免依赖 BuildConfig 生成时机） */
 object BuildConfigCompat {
-    const val VERSION = "0.1.2"
+    const val VERSION = "0.1.3"
 }
