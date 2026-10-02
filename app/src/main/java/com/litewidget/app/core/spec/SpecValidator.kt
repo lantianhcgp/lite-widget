@@ -31,7 +31,10 @@ object SpecValidator {
         ),
         "spacer" to setOf("size")
     )
-    private val STYLE_KEYS = setOf("width", "height", "radius", "background", "border", "shadow", "opacity", "transform")
+    private val STYLE_KEYS = setOf(
+        "width", "height", "radius", "background", "border", "shadow", "opacity", "transform",
+        "shape", "rim", "innerGlow"
+    )
 
     private val errs = ArrayList<String>()
 
@@ -188,6 +191,18 @@ object SpecValidator {
     private fun style(s: JSONObject?, path: String) {
         if (s == null) return
         unknown(s, STYLE_KEYS, path)
+        enum(s, "shape", setOf("squircle"), path)
+        s.optJSONObject("rim")?.let { r ->
+            unknown(r, setOf("top", "bottom", "sides", "width"), "$path.rim")
+            color(r, "top", "$path.rim"); color(r, "bottom", "$path.rim"); color(r, "sides", "$path.rim")
+            num(r, "width", "$path.rim")
+        }
+        s.optJSONObject("innerGlow")?.let { g ->
+            unknown(g, setOf("color", "width", "top", "bottom"), "$path.innerGlow")
+            color(g, "color", "$path.innerGlow"); num(g, "width", "$path.innerGlow")
+            if (g.has("top") && g.opt("top") !is Boolean) bad(path, "innerGlow", "top 需布尔")
+            if (g.has("bottom") && g.opt("bottom") !is Boolean) bad(path, "innerGlow", "bottom 需布尔")
+        }
         enum(s, "width", setOf("fill", "hug"), path, numericAlso = true)
         enum(s, "height", setOf("fill", "hug"), path, numericAlso = true)
         fill(s.optJSONObject("background"), "$path.background")
@@ -226,7 +241,13 @@ object SpecValidator {
                 need(f, listOf("src"), path)
                 if (!f.optString("src").startsWith("assets/")) errs.add("$path.src: 必须以 assets/ 开头")
             }
-            else -> errs.add("$path.type: 必须是 solid/linear/radial/image")
+            "frost" -> {
+                unknown(f, setOf("type", "blur", "opacity", "tint"), path)
+                num(f, "blur", path)
+                if (f.has("opacity")) range(f.opt("opacity"), 0.0, 1.0, "$path.opacity")
+                color(f, "tint", path)
+            }
+            else -> errs.add("$path.type: 必须是 solid/linear/radial/image/frost")
         }
     }
 
@@ -237,6 +258,15 @@ object SpecValidator {
         for (i in 0 until a.length()) {
             val c = a.optString(i, "")
             if (!COLOR.matches(c)) bad("$path.colors", "[$i]", "需 #RRGGBB 或 #AARRGGBB（8位时 alpha 在前，Android 惯例），实际'$c'")
+        }
+        val ps = f.optJSONArray("positions")
+        if (ps != null) {
+            if (ps.length() != a.length()) errs.add("$path.positions: 长度需与 colors 一致(${a.length()})")
+            for (i in 0 until ps.length()) {
+                val v = ps.opt(i)
+                if (v !is Number || v.toDouble() < 0.0 || v.toDouble() > 1.0)
+                    errs.add("$path.positions[$i]: 需 0~1")
+            }
         }
     }
 

@@ -389,6 +389,15 @@
                 "minimum": 0,
                 "maximum": 360,
                 "default": 135
+              },
+              "positions": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "$comment": "与 colors 等长的 0~1 停靠点，缺省均匀分布"
               }
             }
           },
@@ -430,6 +439,15 @@
                 "exclusiveMinimum": 0,
                 "maximum": 2,
                 "default": 1
+              },
+              "positions": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "$comment": "与 colors 等长的 0~1 停靠点，缺省均匀分布"
               }
             }
           },
@@ -462,6 +480,31 @@
                 "minimum": 0,
                 "maximum": 1,
                 "default": 1
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "type": {
+                "const": "frost"
+              },
+              "blur": {
+                "type": "number",
+                "minimum": 0,
+                "$comment": "降采样模糊强度（设计dp）"
+              },
+              "opacity": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "tint": {
+                "$ref": "#/$defs/color"
               }
             }
           }
@@ -565,6 +608,52 @@
               },
               "scaleY": {
                 "type": "number"
+              }
+            }
+          },
+          "shape": {
+            "enum": [
+              "squircle"
+            ],
+            "$comment": "squircle = Apple 连续曲率超椭圆角（n≈5），忽略 radius"
+          },
+          "rim": {
+            "type": "object",
+            "additionalProperties": false,
+            "$comment": "方向性镜面亮边：上/下发丝线（亮）+ 两侧发丝线（暗），沿真机 Control Center 实测分布",
+            "properties": {
+              "top": {
+                "$ref": "#/$defs/color"
+              },
+              "bottom": {
+                "$ref": "#/$defs/color"
+              },
+              "sides": {
+                "$ref": "#/$defs/color"
+              },
+              "width": {
+                "type": "number",
+                "minimum": 0.5
+              }
+            }
+          },
+          "innerGlow": {
+            "type": "object",
+            "additionalProperties": false,
+            "$comment": "内透镜高光：卡内缘的光带（玻璃厚度感）",
+            "properties": {
+              "color": {
+                "$ref": "#/$defs/color"
+              },
+              "width": {
+                "type": "number",
+                "minimum": 1
+              },
+              "top": {
+                "type": "boolean"
+              },
+              "bottom": {
+                "type": "boolean"
               }
             }
           }

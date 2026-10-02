@@ -59,6 +59,8 @@ class Renderer(private val assets: WidgetAssets) {
 
     companion object {
         const val UNBOUNDED = Float.POSITIVE_INFINITY
+        private var frostLogged = false
+        private var frostFailed = false
 
         fun parseColor(s: String?): Int {
             if (s.isNullOrEmpty()) return Color.TRANSPARENT
@@ -663,18 +665,37 @@ class Renderer(private val assets: WidgetAssets) {
         }
     }
 
-    private fun shapePath(rect: RectF, rr: FloatArray): Path {
+    private fun shapePath(rect: RectF, rr: FloatArray, squircle: Boolean = false): Path {
         val p = Path()
-        if (rr.all { it <= 0f }) {
-            p.addRect(rect, Path.Direction.CW)
-        } else {
-            p.addRoundRect(
+        when {
+            squircle && rect.width() > 0f && rect.height() > 0f -> superellipse(p, rect)
+            rr.all { it <= 0f } -> p.addRect(rect, Path.Direction.CW)
+            else -> p.addRoundRect(
                 rect,
                 floatArrayOf(rr[0], rr[0], rr[1], rr[1], rr[2], rr[2], rr[3], rr[3]),
                 Path.Direction.CW
             )
         }
         return p
+    }
+
+    /** 超椭圆 |x/a|^n + |y/b|^n = 1，n=5 ≈ Apple 连续曲率 squircle */
+    private fun superellipse(p: Path, rect: RectF, n: Float = 5f) {
+        val cx = rect.centerX()
+        val cy = rect.centerY()
+        val a = rect.width() / 2f
+        val b = rect.height() / 2f
+        val e = 2.0 / n
+        val steps = 128
+        for (i in 0 until steps) {
+            val t = (i.toDouble() / steps) * Math.PI * 2.0
+            val ct = Math.cos(t)
+            val st = Math.sin(t)
+            val x = cx + (a * Math.signum(ct) * Math.pow(Math.abs(ct), e)).toFloat()
+            val y = cy + (b * Math.signum(st) * Math.pow(Math.abs(st), e)).toFloat()
+            if (i == 0) p.moveTo(x, y) else p.lineTo(x, y)
+        }
+        p.close()
     }
 
     private fun finiteRect(r: RectF): Boolean =
@@ -700,7 +721,7 @@ class Renderer(private val assets: WidgetAssets) {
                     val dy = (Math.sin(ang) * r).toFloat()
                     LinearGradient(
                         cx - dx, cy - dy, cx + dx, cy + dy, cols,
-                        positionsOf(cols.size), Shader.TileMode.CLAMP
+                        positionsOf(cols.size, f), Shader.TileMode.CLAMP
                     )
                 }
                 "radial" -> {
@@ -710,7 +731,7 @@ class Renderer(private val assets: WidgetAssets) {
                     val fy = (rect.top + rect.height() * ((ctr?.optDouble(1, 0.5) ?: 0.5))).toFloat()
                     val rad = max(rect.width(), rect.height()) * f.optDouble("radius", 1.0).toFloat()
                     RadialGradient(
-                        fx, fy, rad, cols, positionsOf(cols.size), Shader.TileMode.CLAMP
+                        fx, fy, rad, cols, positionsOf(cols.size, f), Shader.TileMode.CLAMP
                     )
                 }
                 else -> null
@@ -728,8 +749,19 @@ class Renderer(private val assets: WidgetAssets) {
         return out
     }
 
-    private fun positionsOf(n: Int): FloatArray {
+    private fun positionsOf(n: Int, f: JSONObject? = null): FloatArray {
         if (n <= 1) return floatArrayOf(0f)
+        val a = f?.optJSONArray("positions")
+        if (a != null && a.length() == n) {
+            val out = FloatArray(n)
+            var ok = true
+            for (i in 0 until n) {
+                val v = a.optDouble(i, -1.0)
+                if (v < 0.0 || v > 1.0) { ok = false; break }
+                out[i] = v.toFloat()
+            }
+            if (ok) return out
+        }
         val p = FloatArray(n)
         for (i in 0 until n) p[i] = i / (n - 1f)
         return p
@@ -758,8 +790,10 @@ class Renderer(private val assets: WidgetAssets) {
         val rect = RectF(x, y, x + l.w, y + l.h)
         val rr = radii(style)
         val bg = style?.optJSONObject("background")
-        val hasVisual = bg != null || style?.has("border") == true || style?.has("shadow") == true
-        val path = shapePath(rect, rr)
+        val sq = style?.optString("shape") == "squircle"
+        val hasVisual = bg != null || style?.has("border") == true || style?.has("shadow") == true ||
+            style?.has("rim") == true || style?.has("innerGlow") == true
+        val path = shapePath(rect, rr, sq)
 
         val sh = style?.optJSONObject("shadow")
         if (sh != null && l.w > 0 && l.h > 0) {
@@ -778,7 +812,16 @@ class Renderer(private val assets: WidgetAssets) {
 
         var clip = false
         if (bg != null && l.w > 0 && l.h > 0) {
-            if (bg.optString("type") == "image") {
+            if (bg.optString("type") == "frost") {
+                drawFrost(c, path, rect, bg)
+                if (bg.has("tint")) {
+                    paint.shader = null
+                    paint.style = Paint.Style.FILL
+                    paint.color = withAlpha(parseColor(bg.optString("tint")), nodeAlpha)
+                    c.drawPath(path, paint)
+                }
+                clip = true
+            } else if (bg.optString("type") == "image") {
                 val bmp = assets.bitmap(bg.optString("src", ""))
                 if (bmp != null) {
                     val save = c.save()
@@ -810,8 +853,67 @@ class Renderer(private val assets: WidgetAssets) {
             paint.color = withAlpha(parseColor(border.optString("color")), nodeAlpha)
             val inset = RectF(rect)
             inset.inset(bw / 2f, bw / 2f)
-            c.drawPath(shapePath(inset, rr), paint)
+            c.drawPath(shapePath(inset, rr, sq), paint)
             paint.pathEffect = null
+        }
+
+        // 方向性镜面亮边：上/下发丝线（亮）+ 左右侧发丝线（暗）——实测 Control Center 分布
+        val rim = style?.optJSONObject("rim")
+        if (rim != null && l.w > 0 && l.h > 0) {
+            val rw = rim.optDouble("width", 1.0).toFloat().coerceAtLeast(0.5f)
+            val save = c.save()
+            c.clipPath(path)
+            paint.shader = null
+            paint.style = Paint.Style.STROKE
+            paint.strokeWidth = rw
+            paint.pathEffect = null
+            if (rim.has("top")) {
+                paint.color = withAlpha(parseColor(rim.optString("top")), nodeAlpha)
+                c.drawLine(rect.left + rw, rect.top + rw / 2f, rect.right - rw, rect.top + rw / 2f, paint)
+            }
+            if (rim.has("bottom")) {
+                paint.color = withAlpha(parseColor(rim.optString("bottom")), nodeAlpha)
+                c.drawLine(rect.left + rw, rect.bottom - rw / 2f, rect.right - rw, rect.bottom - rw / 2f, paint)
+            }
+            if (rim.has("sides")) {
+                paint.color = withAlpha(parseColor(rim.optString("sides")), nodeAlpha)
+                c.drawLine(rect.left + rw / 2f, rect.top + rw, rect.left + rw / 2f, rect.bottom - rw, paint)
+                c.drawLine(rect.right - rw / 2f, rect.top + rw, rect.right - rw / 2f, rect.bottom - rw, paint)
+            }
+            c.restoreToCount(save)
+            paint.style = Paint.Style.FILL
+        }
+
+        // 内透镜高光：玻璃厚度感（顶光带 + 可选底光带）
+        val ig = style?.optJSONObject("innerGlow")
+        if (ig != null && l.w > 0 && l.h > 0) {
+            val gw = ig.optDouble("width", 24.0).toFloat().coerceAtLeast(1f)
+            val col = parseColor(ig.optString("color", "#FFFFFF"))
+            val save = c.save()
+            c.clipPath(path)
+            paint.shader = null
+            paint.style = Paint.Style.FILL
+            if (ig.optBoolean("top", true)) {
+                val g = LinearGradient(
+                    rect.left, rect.top, rect.left, rect.top + gw,
+                    col, col and 0x00FFFFFF, Shader.TileMode.CLAMP
+                )
+                paint.shader = g
+                c.drawRect(rect.left, rect.top, rect.right, rect.top + gw, paint)
+                paint.shader = null
+                g.recycle()
+            }
+            if (ig.optBoolean("bottom", false)) {
+                val g = LinearGradient(
+                    rect.left, rect.bottom, rect.left, rect.bottom - gw,
+                    col, col and 0x00FFFFFF, Shader.TileMode.CLAMP
+                )
+                paint.shader = g
+                c.drawRect(rect.left, rect.bottom - gw, rect.right, rect.bottom, paint)
+                paint.shader = null
+                g.recycle()
+            }
+            c.restoreToCount(save)
         }
 
         if (hasVisual && clip) {
@@ -821,6 +923,68 @@ class Renderer(private val assets: WidgetAssets) {
             c.restoreToCount(save)
         } else {
             l.kids.forEach { draw(c, it, x, y, nodeAlpha) }
+        }
+    }
+
+    /** 壁纸磨砂层：取系统壁纸 cover 缩放到卡区域，降采样-回升实现模糊（真·磨砂玻璃）。
+     *  拿不到壁纸（权限/机型）时静默跳过，仅记一次日志。 */
+    private fun drawFrost(c: Canvas, path: Path, rect: RectF, bg: JSONObject) {
+        try {
+            val app = com.litewidget.app.App.instance
+            if (frostFailed) return
+            val wall = try {
+                val wm = app.getSystemService(android.content.Context.WALLPAPER_SERVICE)
+                        as android.app.WallpaperManager
+                wm.bitmap
+            } catch (t: Throwable) {
+                if (!frostLogged) {
+                    AppLog.w("frost: wallpaper unavailable: ${t.javaClass.simpleName}: ${t.message}")
+                    frostLogged = true; frostFailed = true
+                }
+                return
+            }
+            if (wall == null || wall.isRecycled) return
+            val bw = rect.width().toInt().coerceAtLeast(1)
+            val bh = rect.height().toInt().coerceAtLeast(1)
+            val scale = max(bw.toFloat() / wall.width, bh.toFloat() / wall.height)
+            var scaled = Bitmap.createScaledBitmap(
+                wall,
+                max(1, (wall.width * scale).toInt()),
+                max(1, (wall.height * scale).toInt()),
+                true
+            )
+            val ox = ((scaled.width - bw) / 2).coerceAtLeast(0)
+            val oy = ((scaled.height - bh) / 2).coerceAtLeast(0)
+            var crop = Bitmap.createBitmap(
+                scaled, ox, oy, min(bw, scaled.width), min(bh, scaled.height)
+            )
+            if (crop != scaled) scaled.recycle()
+            // 模糊：降采样 blur 倍 → 双线性回升
+            val f = bg.optDouble("blur", 14.0).toFloat().coerceAtLeast(2f)
+            val sw = max(2, (crop.width / f).toInt())
+            val sh = max(2, (crop.height / f).toInt())
+            val small = Bitmap.createScaledBitmap(crop, sw, sh, true)
+            val out = Bitmap.createScaledBitmap(small, crop.width, crop.height, true)
+            if (small != out) small.recycle()
+            crop.recycle()
+            val save = c.save()
+            c.clipPath(path)
+            paint.shader = null
+            paint.style = Paint.Style.FILL
+            paint.alpha = (bg.optDouble("opacity", 1.0).toFloat().coerceIn(0f, 1f) * 255).toInt()
+            c.drawBitmap(out, rect.left, rect.top, paint)
+            paint.alpha = 255
+            out.recycle()
+            c.restoreToCount(save)
+            if (!frostLogged) {
+                AppLog.i("frost: wallpaper layer active (${bw}x${bh} blur=$f)")
+                frostLogged = true
+            }
+        } catch (t: Throwable) {
+            if (!frostLogged) {
+                AppLog.w("frost draw fail: ${t.javaClass.simpleName}: ${t.message}")
+                frostLogged = true; frostFailed = true
+            }
         }
     }
 
