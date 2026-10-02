@@ -236,7 +236,7 @@ object SpecValidator {
         if (a.length() < 2 || a.length() > 8) errs.add("$path.colors: 需要 2-8 个颜色")
         for (i in 0 until a.length()) {
             val c = a.optString(i, "")
-            if (!COLOR.matches(c)) bad("$path.colors", "[$i]", "需 #RRGGBB/#RRGGBBAA，实际 '$c'")
+            if (!COLOR.matches(c)) bad("$path.colors", "[$i]", "需 #RRGGBB 或 #AARRGGBB（8位时 alpha 在前，Android 惯例），实际'$c'")
         }
     }
 
@@ -289,7 +289,7 @@ object SpecValidator {
     private fun color(o: JSONObject, key: String, path: String) {
         if (!o.has(key)) return
         val v = o.optString(key, "")
-        if (!COLOR.matches(v)) bad(path, key, "需 #RRGGBB/#RRGGBBAA，实际 '$v'")
+        if (!COLOR.matches(v)) bad(path, key, "需 #RRGGBB 或 #AARRGGBB（8位时 alpha 在前，Android 惯例），实际'$v'")
     }
 
     private fun num(o: JSONObject, key: String, path: String) {
