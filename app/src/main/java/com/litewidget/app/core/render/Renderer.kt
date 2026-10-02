@@ -634,8 +634,8 @@ class Renderer(private val assets: WidgetAssets) {
                 "radial" -> {
                     val cols = colorList(f)
                     val ctr = f.optJSONArray("center")
-                    val fx = rect.left + rect.width() * ((ctr?.optDouble(0, 0.5) ?: 0.5))
-                    val fy = rect.top + rect.height() * ((ctr?.optDouble(1, 0.5) ?: 0.5))
+                    val fx = (rect.left + rect.width() * ((ctr?.optDouble(0, 0.5) ?: 0.5))).toFloat()
+                    val fy = (rect.top + rect.height() * ((ctr?.optDouble(1, 0.5) ?: 0.5))).toFloat()
                     val rad = max(rect.width(), rect.height()) * f.optDouble("radius", 1.0).toFloat()
                     RadialGradient(
                         fx, fy, rad, cols, positionsOf(cols.size), Shader.TileMode.CLAMP

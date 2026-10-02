@@ -427,7 +427,7 @@ class McpServer(private val app: App) {
             }
             "schema_get" -> {
                 val f = File(app.filesDir, "schema.json")
-                if (f.isFile) f.readText(Charsets.UTF_8)
+                if (f.isFile) f.readText(Charsets.UTF_8) to false
                 else DEFAULT_SCHEMA to false
             }
             else -> "未知工具: $name" to true

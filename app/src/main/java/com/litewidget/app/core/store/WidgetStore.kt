@@ -68,15 +68,17 @@ class WidgetStore(filesDir: File) {
         null
     }
 
-    fun writeText(id: String, rel: String, content: String): Boolean = try {
+    fun writeText(id: String, rel: String, content: String): Boolean {
         val f = resolve(id, rel) ?: return false
-        f.parentFile?.mkdirs()
-        f.writeText(content, Charsets.UTF_8)
-        AppLog.i("write $id/$rel (${content.length} bytes)")
-        true
-    } catch (t: Throwable) {
-        AppLog.e("write $id/$rel fail", t)
-        false
+        return try {
+            f.parentFile?.mkdirs()
+            f.writeText(content, Charsets.UTF_8)
+            AppLog.i("write $id/$rel (${content.length} bytes)")
+            true
+        } catch (t: Throwable) {
+            AppLog.e("write $id/$rel fail", t)
+            false
+        }
     }
 
     fun deleteFile(id: String, rel: String): Boolean {
@@ -95,12 +97,14 @@ class WidgetStore(filesDir: File) {
     fun readManifest(id: String): JSONObject? = readJson(id, "manifest.json")
     fun readSpec(id: String): JSONObject? = readJson(id, "widget.json")
 
-    private fun readJson(id: String, rel: String): JSONObject? = try {
+    private fun readJson(id: String, rel: String): JSONObject? {
         val s = readText(id, rel) ?: return null
-        JSONObject(s)
-    } catch (t: Throwable) {
-        AppLog.w("json parse fail $id/$rel: ${t.message}")
-        null
+        return try {
+            JSONObject(s)
+        } catch (t: Throwable) {
+            AppLog.w("json parse fail $id/$rel: ${t.message}")
+            null
+        }
     }
 
     /** 校验一个组件目录，返回错误列表（空 = 通过） */
