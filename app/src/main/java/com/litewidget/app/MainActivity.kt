@@ -17,6 +17,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
@@ -204,6 +205,10 @@ class MainActivity : Activity() {
             val iv = App.instance.prefs.refreshInterval(item.id)
             row.findViewById<TextView>(R.id.item_meta).text =
                 "${item.id} · ${item.size} · v${item.version}$active · 刷新:${intervalText(iv)}"
+            val sizes = supportedSizes(item.id)
+            row.findViewById<TextView>(R.id.item_sizes).text =
+                "尺寸 " + sizes.joinToString(" · ") + if (sizes.size > 1) "　（点卡片看全尺寸预览）" else ""
+            row.setOnClickListener { showGallery(item.id, item.name) }
 
             val preview = row.findViewById<ImageView>(R.id.item_preview)
             loadPreview(item.id, preview)
@@ -296,6 +301,80 @@ class MainActivity : Activity() {
             }
             .setNegativeButton("取消", null)
             .show()
+    }
+
+    /** 模板支持的尺寸（variants 键 + manifest 尺寸，按固定顺序） */
+    private fun supportedSizes(id: String): List<String> {
+        val spec = App.instance.store.readSpec(id) ?: return listOf("4x2")
+        val order = listOf("4x1", "2x2", "4x2", "2x4", "4x4")
+        val set = HashSet<String>()
+        spec.optJSONObject("variants")?.let { vs -> for (k in vs.keys()) set.add(k) }
+        val ms = App.instance.store.readManifest(id)?.optString("size", "") ?: ""
+        if (ms.isNotEmpty()) set.add(ms)
+        val list = order.filter { it in set }
+        return if (list.isEmpty()) listOf(ms.ifEmpty { "4x2" }) else list
+    }
+
+    private val SIZE_LABEL = mapOf(
+        "4x1" to "4x1 横条", "2x2" to "2x2 方形", "4x2" to "4x2 标准",
+        "2x4" to "2x4 竖长", "4x4" to "4x4 大方"
+    )
+
+    /** 点开模板 → 逐尺寸渲染预览画廊（边渲染边追加） */
+    private fun showGallery(id: String, name: String) {
+        val dm = resources.displayMetrics.density
+        val box = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding((16 * dm).toInt(), 0, (16 * dm).toInt(), 0)
+        }
+        val loading = TextView(this).apply {
+            text = "正在渲染各尺寸预览…"
+            setTextColor(0xFF9E9EA6.toInt())
+            textSize = 13f
+        }
+        box.addView(loading)
+        val scroll = ScrollView(this).apply { addView(box) }
+        val dlg = AlertDialog.Builder(this)
+            .setTitle("$name · 全尺寸预览")
+            .setView(scroll)
+            .setPositiveButton("关闭", null)
+            .create()
+        dlg.setOnDismissListener { box.removeAllViews() }
+        dlg.show()
+
+        val sizes = supportedSizes(id)
+        ui.execute {
+            var first = true
+            for (s in sizes) {
+                val bmp = try {
+                    WidgetUpdater.previewBitmap(this, id, s)
+                } catch (t: Throwable) {
+                    AppLog.e("gallery render $id/$s fail", t)
+                    null
+                }
+                runOnUiThread {
+                    if (first) { box.removeView(loading); first = false }
+                    val label = TextView(this).apply {
+                        text = SIZE_LABEL[s] ?: s
+                        setTextColor(0xFFFFFFFF.toInt())
+                        textSize = 13f
+                        setPadding(0, (6 * dm).toInt(), 0, 0)
+                    }
+                    val img = ImageView(this).apply {
+                        adjustViewBounds = true
+                        scaleType = ImageView.ScaleType.FIT_CENTER
+                        setPadding(0, (4 * dm).toInt(), 0, (10 * dm).toInt())
+                        if (bmp != null) setImageBitmap(bmp)
+                        else {
+                            setBackgroundColor(0xFF14141A.toInt())
+                            setPadding((12 * dm).toInt(), (40 * dm).toInt(), (12 * dm).toInt(), (40 * dm).toInt())
+                        }
+                    }
+                    box.addView(label)
+                    box.addView(img)
+                }
+            }
+        }
     }
 
     /** 自动刷新频率选择（每个组件独立设置） */
@@ -449,5 +528,5 @@ class MainActivity : Activity() {
 
 /** 版本号占位（避免依赖 BuildConfig 生成时机） */
 object BuildConfigCompat {
-    const val VERSION = "0.1.6"
+    const val VERSION = "0.1.7"
 }

@@ -168,4 +168,19 @@ object WidgetUpdater {
             null
         }
     }
+
+    /** 按规范尺寸出预览（画廊用）：设计空间 = 该尺寸规范 dp，渲染器自动取对应变体 */
+    fun previewBitmap(ctx: Context, id: String, size: String): Bitmap? {
+        val store = App.instance.store
+        val spec = store.readSpec(id) ?: return null
+        val c = Renderer.CANONICAL[size] ?: return previewBitmap(ctx, id, 360, 180)
+        return try {
+            val d = 3f
+            Renderer(App.instance.assetLoader.forWidget(id))
+                .render(spec, App.instance.data.forRender(), (c.first * d).toInt(), (c.second * d).toInt(), d)
+        } catch (t: Throwable) {
+            AppLog.e("$TAG gallery preview fail $id/$size", t)
+            null
+        }
+    }
 }
