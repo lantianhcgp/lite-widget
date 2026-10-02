@@ -86,6 +86,11 @@ class Renderer(private val assets: WidgetAssets) {
 
         val root = L(rootObj)
         measure(root, cw, ch)
+        if (!root.w.isFinite() || !root.h.isFinite() || root.w <= 0f || root.h <= 0f) {
+            AppLog.e("root size 非法: ${root.w}x${root.h}（spec 尺寸可能写错）")
+            root.w = cw
+            root.h = ch
+        }
 
         val w = outW.coerceAtLeast(1)
         val h = outH.coerceAtLeast(1)
@@ -238,9 +243,14 @@ class Renderer(private val assets: WidgetAssets) {
             }
         }
 
-        val innerCross = if (horiz) innerH else innerW
+        val rawCross = if (horiz) innerH else innerW
         val align = o.optString("align", "start")
-        if (align == "stretch") {
+        // 父级以 UNBOUNDED 量我们时（hug pass1），交叉轴是无穷大 ——
+        // 直接拿去算 align 会得到 Infinity/NaN 坐标，进而让 LinearGradient 崩掉。
+        // 兜底：交叉轴取子节点实测最大值，align 在真实内容盒内对齐。
+        val innerCross = if (rawCross.isFinite()) rawCross
+        else (l.kids.maxOfOrNull { crossOf(it) } ?: 0f)
+        if (align == "stretch" && rawCross.isFinite()) {
             l.kids.forEach {
                 if (!crossExplicit(it, horiz)) {
                     if (horiz) it.h = innerCross else it.w = innerCross
@@ -613,8 +623,16 @@ class Renderer(private val assets: WidgetAssets) {
         return p
     }
 
+    private fun finiteRect(r: RectF): Boolean =
+        r.left.isFinite() && r.top.isFinite() && r.right.isFinite() && r.bottom.isFinite() &&
+                r.width().isFinite() && r.height().isFinite()
+
     private fun shaderFor(f: JSONObject?, rect: RectF): Shader? {
-        if (f == null) return null
+        if (f == null || f.optString("type") == "solid" || f.optString("type") == "image") return null
+        if (!finiteRect(rect)) {
+            AppLog.w("shader skip: 坐标非法 rect=$rect type=${f.optString("type")}")
+            return null
+        }
         return try {
             when (f.optString("type", "")) {
                 "solid" -> null
@@ -644,7 +662,7 @@ class Renderer(private val assets: WidgetAssets) {
                 else -> null
             }
         } catch (t: Throwable) {
-            AppLog.w("shader error: ${t.message}")
+            AppLog.w("shader fail type=${f.optString("type")} rect=$rect: ${t.message}")
             null
         }
     }
@@ -665,7 +683,11 @@ class Renderer(private val assets: WidgetAssets) {
 
     private fun applyFill(paint: Paint, f: JSONObject?, rect: RectF, alpha: Int) {
         paint.shader = shaderFor(f, rect)
-        val c = if (f != null && f.optString("type") == "solid") parseColor(f.optString("color")) else Color.BLACK
+        val c = when {
+            f == null -> Color.BLACK
+            f.optString("type") == "solid" -> parseColor(f.optString("color"))
+            else -> colorList(f).firstOrNull() ?: Color.BLACK
+        }
         paint.color = withAlpha(c, alpha)
         paint.style = Paint.Style.FILL
     }
@@ -770,15 +792,10 @@ class Renderer(private val assets: WidgetAssets) {
 
         val rect = RectF(x, y, x + l.w, y + l.h)
         val grad = o.optJSONObject("gradient")
-        if (grad != null && grad.optString("type") != "image") {
-            paint.shader = shaderFor(grad, rect)
-        } else if (grad != null && grad.optString("type") == "image") {
-            paint.shader = null
-            paint.color = withAlpha(parseColor(o.optString("color", "#FFFFFF")), nodeAlpha)
-        } else {
-            paint.shader = null
-            paint.color = withAlpha(parseColor(o.optString("color", "#FFFFFF")), nodeAlpha)
-        }
+        val g = if (grad != null && grad.optString("type") == "image") null else shaderFor(grad, rect)
+        paint.shader = g
+        paint.color = if (g != null) paint.color
+        else withAlpha(parseColor(o.optString("color", "#FFFFFF")), nodeAlpha)
 
         val sh = o.optJSONObject("shadow")
         if (sh != null) {
