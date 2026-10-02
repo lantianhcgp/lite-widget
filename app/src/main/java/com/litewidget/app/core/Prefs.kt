@@ -36,6 +36,11 @@ class Prefs(ctx: Context) {
         get() = sp.getBoolean("server_running", false)
         set(v) = sp.edit().putBoolean("server_running", v).apply()
 
+    /** 用户对 MCP 开关的意愿：App 启动时按它自动恢复服务（重装/被杀后不丢） */
+    var serverWanted: Boolean
+        get() = sp.getBoolean("server_wanted", false)
+        set(v) = sp.edit().putBoolean("server_wanted", v).apply()
+
     /** 首次生成 32 位访问令牌 */
     fun ensureToken(): String {
         var t = token

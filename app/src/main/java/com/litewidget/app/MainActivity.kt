@@ -76,10 +76,15 @@ class MainActivity : Activity() {
             AppLog.i("bootstrap sample widget created")
         }
 
+        if (prefs.serverWanted && !McpService.isRunning()) {
+            McpService.start(this)
+            AppLog.i("MCP auto-restore (serverWanted=true)")
+        }
         serverSwitch.isChecked = McpService.isRunning()
         updateServerUi()
 
         serverSwitch.setOnCheckedChangeListener { _, checked ->
+            prefs.serverWanted = checked
             if (checked) {
                 McpService.start(this)
                 serverStatus.text = "正在启动…"
