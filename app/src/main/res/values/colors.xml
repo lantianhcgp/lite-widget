@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg">#0E0E12</color>
+    <color name="card">#17171D</color>
+    <color name="stroke">#26262E</color>
+    <color name="fg">#F2F2F5</color>
+    <color name="dim">#8A8A96</color>
+    <color name="accent">#5B8CFF</color>
+    <color name="ok">#4CAF50</color>
+    <color name="warn">#FF9800</color>
+    <color name="launcher_bg">#0E0E12</color>
+</resources>

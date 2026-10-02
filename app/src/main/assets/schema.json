@@ -1,0 +1,233 @@
+{
+  "$comment": "lite-widget 组件包 (.lwgt) 校验 schema — v1。manifest.json 用 manifest 段，widget.json 用 widget 段。additionalProperties 全为 false，写错字段名会直接报错（用于 AI 自检）。",
+  "package": "lwgt",
+  "schemaVersion": "1.0.0",
+  "manifest": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "lite-widget/manifest-1.0.0.json",
+    "title": "lwgt manifest.json",
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["id", "name", "version", "size"],
+    "properties": {
+      "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{1,63}$", "$comment": "包唯一标识，导入冲突判断依据" },
+      "name": { "type": "string", "minLength": 1, "maxLength": 32 },
+      "author": { "type": "string", "maxLength": 64, "default": "" },
+      "description": { "type": "string", "maxLength": 256, "default": "" },
+      "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+      "size": { "enum": ["2x1", "2x2", "3x2", "4x1", "4x2", "4x4", "5x2", "6x2"], "$comment": "桌面格子 宽x高" },
+      "minAppVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$", "default": "0.1.0" },
+      "preview": { "type": "string", "pattern": "^assets/", "default": "assets/preview.png" },
+      "tags": { "type": "array", "maxItems": 8, "items": { "type": "string", "maxLength": 16 } },
+      "license": { "type": "string", "maxLength": 32, "default": "all-rights-reserved" },
+      "createdAt": { "type": "string", "format": "date-time" },
+      "schemaVersion": { "type": "integer", "minimum": 1, "default": 1 }
+    }
+  },
+  "widget": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "lite-widget/widget-1.0.0.json",
+    "title": "lwgt widget.json",
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["version", "canvas", "root"],
+    "properties": {
+      "version": { "type": "integer", "minimum": 1, "maximum": 1 },
+      "canvas": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["width", "height"],
+        "properties": {
+          "width": { "type": "number", "exclusiveMinimum": 0, "maximum": 4096, "$comment": "设计坐标系宽(dp)，渲染时按桌面实际尺寸缩放" },
+          "height": { "type": "number", "exclusiveMinimum": 0, "maximum": 4096 },
+          "fit": { "enum": ["contain", "cover", "stretch", "fill"], "default": "contain", "$comment": "fill = stretch 别名" }
+        }
+      },
+      "root": { "$ref": "#/$defs/node" },
+      "vars": {
+        "type": "object",
+        "default": {},
+        "$comment": "自定义常量，节点里用 bind:'vars.xxx' 引用，便于统一改色/改字号",
+        "additionalProperties": { "type": ["string", "number", "boolean"] }
+      }
+    },
+    "$defs": {
+      "color": { "type": "string", "pattern": "^#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$" },
+      "dp": { "type": "number", "minimum": 0 },
+      "size": { "oneOf": [{ "$ref": "#/$defs/dp" }, { "enum": ["fill", "hug"] }] },
+      "box": { "oneOf": [{ "$ref": "#/$defs/dp" }, { "type": "array", "items": { "$ref": "#/$defs/dp" }, "minItems": 4, "maxItems": 4, "$comment": "[top,right,bottom,left]" }] },
+      "fill": {
+        "oneOf": [
+          { "type": "object", "additionalProperties": false, "required": ["type", "color"], "properties": { "type": { "const": "solid" }, "color": { "$ref": "#/$defs/color" } } },
+          { "type": "object", "additionalProperties": false, "required": ["type", "colors"], "properties": { "type": { "const": "linear" }, "colors": { "type": "array", "items": { "$ref": "#/$defs/color" }, "minItems": 2, "maxItems": 8 }, "angle": { "type": "number", "minimum": 0, "maximum": 360, "default": 135 } } },
+          { "type": "object", "additionalProperties": false, "required": ["type", "colors"], "properties": { "type": { "const": "radial" }, "colors": { "type": "array", "items": { "$ref": "#/$defs/color" }, "minItems": 2, "maxItems": 8 }, "center": { "type": "array", "items": { "type": "number", "minimum": 0, "maximum": 1 }, "minItems": 2, "maxItems": 2, "default": [0.5, 0.5] }, "radius": { "type": "number", "exclusiveMinimum": 0, "maximum": 2, "default": 1 } } },
+          { "type": "object", "additionalProperties": false, "required": ["type", "src"], "properties": { "type": { "const": "image" }, "src": { "type": "string", "pattern": "^assets/" }, "scale": { "enum": ["cover", "contain", "fill", "none"], "default": "cover" }, "opacity": { "type": "number", "minimum": 0, "maximum": 1, "default": 1 } } }
+        ]
+      },
+      "border": { "type": "object", "additionalProperties": false, "required": ["color", "width"], "properties": { "color": { "$ref": "#/$defs/color" }, "width": { "$ref": "#/$defs/dp" }, "style": { "enum": ["solid", "dash"], "default": "solid" } } },
+      "shadow": { "type": "object", "additionalProperties": false, "required": ["color", "blur"], "properties": { "color": { "$ref": "#/$defs/color" }, "blur": { "$ref": "#/$defs/dp" }, "x": { "type": "number", "default": 0 }, "y": { "type": "number", "default": 0 } } },
+      "style": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "width": { "$ref": "#/$defs/size" },
+          "height": { "$ref": "#/$defs/size" },
+          "radius": { "oneOf": [{ "$ref": "#/$defs/dp" }, { "type": "array", "items": { "$ref": "#/$defs/dp" }, "minItems": 4, "maxItems": 4 }] },
+          "background": { "$ref": "#/$defs/fill" },
+          "border": { "$ref": "#/$defs/border" },
+          "shadow": { "$ref": "#/$defs/shadow" },
+          "opacity": { "type": "number", "minimum": 0, "maximum": 1 },
+          "transform": { "type": "object", "additionalProperties": false, "properties": { "rotate": { "type": "number" }, "scaleX": { "type": "number" }, "scaleY": { "type": "number" } } }
+        }
+      },
+      "format": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "decimals": { "type": "integer", "minimum": 0, "maximum": 4, "default": 1 },
+          "unit": { "enum": ["auto", "B", "KB", "MB", "GB", "TB", "%", "none"], "default": "none", "$comment": "auto = 流量按 MB/GB 自动换算" },
+          "prefix": { "type": "string", "maxLength": 8 },
+          "suffix": { "type": "string", "maxLength": 8 },
+          "multiplier": { "type": "number", "default": 1 },
+          "date": { "enum": ["YYYY-MM-DD", "MM-DD", "HH:mm", "MM-DD HH:mm"] }
+        }
+      },
+      "bind": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["field"],
+        "properties": {
+          "field": { "type": "string", "pattern": "^(vars|flow|package|device|account)\\.[a-zA-Z0-9_.]+$" },
+          "format": { "$ref": "#/$defs/format" },
+          "fallback": { "type": ["string", "number"] }
+        }
+      },
+      "visibleIf": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["field", "op"],
+        "properties": {
+          "field": { "type": "string" },
+          "op": { "enum": ["eq", "ne", "gt", "gte", "lt", "lte", "exists", "missing", "contains"] },
+          "value": { "type": ["string", "number", "boolean"] }
+        }
+      },
+      "node": {
+        "oneOf": [
+          { "$ref": "#/$defs/frame" },
+          { "$ref": "#/$defs/text" },
+          { "$ref": "#/$defs/imageNode" },
+          { "$ref": "#/$defs/progress" },
+          { "$ref": "#/$defs/spacer" }
+        ]
+      },
+      "frame": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "children"],
+        "properties": {
+          "type": { "const": "frame" },
+          "id": { "type": "string" },
+          "direction": { "enum": ["vertical", "horizontal", "absolute"], "default": "vertical" },
+          "justify": { "enum": ["start", "center", "end", "space-between", "space-around"], "default": "start" },
+          "align": { "enum": ["start", "center", "end", "stretch"], "default": "start" },
+          "gap": { "$ref": "#/$defs/dp" },
+          "padding": { "$ref": "#/$defs/box" },
+          "x": { "type": "number" },
+          "y": { "type": "number" },
+          "width": { "$ref": "#/$defs/size" },
+          "height": { "$ref": "#/$defs/size" },
+          "style": { "$ref": "#/$defs/style" },
+          "visibleIf": { "$ref": "#/$defs/visibleIf" },
+          "children": { "type": "array", "maxItems": 64, "items": { "$ref": "#/$defs/node" } }
+        }
+      },
+      "text": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type"],
+        "oneOf": [{ "required": ["text"] }, { "required": ["bind"] }],
+        "properties": {
+          "type": { "const": "text" },
+          "id": { "type": "string" },
+          "text": { "type": "string", "maxLength": 200 },
+          "bind": { "$ref": "#/$defs/bind" },
+          "size": { "type": "number", "exclusiveMinimum": 0, "maximum": 400, "default": 14, "$comment": "sp" },
+          "weight": { "type": "integer", "minimum": 100, "maximum": 900, "multipleOf": 100, "default": 400 },
+          "family": { "type": "string", "default": "default", "$comment": "default / sans / serif / mono / 或 assets/font/xxx.ttf" },
+          "color": { "$ref": "#/$defs/color" },
+          "gradient": { "$ref": "#/$defs/fill", "$comment": "文字填充渐变，会覆盖 color" },
+          "letterSpacing": { "type": "number", "$comment": "em，如 0.08" },
+          "lineHeight": { "type": "number", "exclusiveMinimum": 0, "default": 1.25 },
+          "align": { "enum": ["left", "center", "right"], "default": "left" },
+          "maxLines": { "type": "integer", "minimum": 1, "maximum": 20 },
+          "case": { "enum": ["none", "upper", "lower"], "default": "none" },
+          "shadow": { "$ref": "#/$defs/shadow" },
+          "x": { "type": "number" },
+          "y": { "type": "number" },
+          "width": { "$ref": "#/$defs/size" },
+          "height": { "$ref": "#/$defs/size" },
+          "style": { "$ref": "#/$defs/style" },
+          "visibleIf": { "$ref": "#/$defs/visibleIf" }
+        }
+      },
+      "imageNode": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "src"],
+        "properties": {
+          "type": { "const": "image" },
+          "id": { "type": "string" },
+          "src": { "type": "string", "pattern": "^assets/" },
+          "scale": { "enum": ["cover", "contain", "fill", "none"], "default": "cover" },
+          "tint": { "$ref": "#/$defs/color" },
+          "alpha": { "type": "number", "minimum": 0, "maximum": 1 },
+          "x": { "type": "number" },
+          "y": { "type": "number" },
+          "width": { "$ref": "#/$defs/size" },
+          "height": { "$ref": "#/$defs/size" },
+          "style": { "$ref": "#/$defs/style" },
+          "visibleIf": { "$ref": "#/$defs/visibleIf" }
+        }
+      },
+      "progress": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type"],
+        "oneOf": [{ "required": ["value"] }, { "required": ["bind"] }],
+        "properties": {
+          "type": { "const": "progress" },
+          "id": { "type": "string" },
+          "value": { "type": "number" },
+          "bind": { "$ref": "#/$defs/bind" },
+          "min": { "type": "number", "default": 0 },
+          "max": { "type": "number", "default": 100 },
+          "shape": { "enum": ["bar", "arc"], "default": "bar" },
+          "thickness": { "type": "number", "exclusiveMinimum": 0, "default": 6 },
+          "roundCap": { "type": "boolean", "default": true },
+          "track": { "$ref": "#/$defs/fill" },
+          "bar": { "$ref": "#/$defs/fill" },
+          "label": { "type": "object", "additionalProperties": false, "properties": { "show": { "type": "boolean", "default": false }, "size": { "type": "number", "default": 12 }, "color": { "$ref": "#/$defs/color" }, "format": { "$ref": "#/$defs/format" } } },
+          "startAngle": { "type": "number", "default": -90, "$comment": "arc 专用" },
+          "sweep": { "type": "number", "default": 360, "$comment": "arc 专用，整圈角度" },
+          "x": { "type": "number" },
+          "y": { "type": "number" },
+          "width": { "$ref": "#/$defs/size" },
+          "height": { "$ref": "#/$defs/size" },
+          "style": { "$ref": "#/$defs/style" },
+          "visibleIf": { "$ref": "#/$defs/visibleIf" }
+        }
+      },
+      "spacer": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type"],
+        "properties": {
+          "type": { "const": "spacer" },
+          "size": { "oneOf": [{ "$ref": "#/$defs/dp" }, { "const": "fill" }] },
+          "visibleIf": { "$ref": "#/$defs/visibleIf" }
+        }
+      }
+    }
+  }
+}

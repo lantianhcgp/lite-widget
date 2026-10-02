@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Lite Widget</string>
+    <string name="widget_desc">轻量自定义桌面小组件</string>
+
+    <string name="label_server">MCP 服务</string>
+    <string name="label_port">端口</string>
+    <string name="label_token">访问令牌</string>
+    <string name="label_source">数据源</string>
+    <string name="hint_base_url">后台地址，如 http://pddwifi.gzkpiot.com</string>
+    <string name="hint_dev_no">充值号</string>
+    <string name="btn_save">保存数据源</string>
+    <string name="btn_import">导入组件</string>
+    <string name="btn_export">导出组件</string>
+    <string name="btn_refresh">刷新数据</string>
+    <string name="btn_logs">查看日志</string>
+    <string name="btn_add">新建组件</string>
+    <string name="empty_widgets">还没有组件，点右上「新建组件」或「导入组件」</string>
+    <string name="empty_data">尚未获取数据，点「刷新数据」</string>
+</resources>
