@@ -75,31 +75,44 @@ class Renderer(private val assets: WidgetAssets) {
 
     // ------------------------------------------------------------------ 入口
 
-    fun render(spec: JSONObject, values: Map<String, Any?>, outW: Int, outH: Int): Bitmap {
+    fun render(
+        spec: JSONObject,
+        values: Map<String, Any?>,
+        outW: Int,
+        outH: Int,
+        density: Float = 1f
+    ): Bitmap {
         val canvas = spec.optJSONObject("canvas")
         val cw = canvas?.optDouble("width", 360.0)?.toFloat() ?: 360f
         val ch = canvas?.optDouble("height", 180.0)?.toFloat() ?: 180f
         val fit = canvas?.optString("fit", "contain") ?: "contain"
+        // auto：设计坐标 = 组件实际 dp 尺寸 → 字号物理大小处处一致，布局按 flex 重排（自适应）
+        var dw = cw
+        var dh = ch
+        if (fit == "auto" && density > 0f && density.isFinite()) {
+            dw = outW / density
+            dh = outH / density
+        }
         val rootObj = spec.optJSONObject("root")
             ?: throw IllegalArgumentException("widget.json 缺少 root")
         ctx = Ctx(values, spec.optJSONObject("vars"))
 
         val root = L(rootObj)
-        measure(root, cw, ch)
+        measure(root, dw, dh)
         if (!root.w.isFinite() || !root.h.isFinite() || root.w <= 0f || root.h <= 0f) {
             AppLog.e("root size 非法: ${root.w}x${root.h}（spec 尺寸可能写错）")
-            root.w = cw
-            root.h = ch
+            root.w = dw
+            root.h = dh
         }
 
         val w = outW.coerceAtLeast(1)
         val h = outH.coerceAtLeast(1)
         val bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         val c = Canvas(bmp)
-        val sx = w / cw
-        val sy = h / ch
+        val sx = w / dw
+        val sy = h / dh
         when (fit) {
-            "stretch", "fill" -> c.scale(sx, sy)
+            "stretch", "fill", "auto" -> c.scale(sx, sy)
             "cover" -> {
                 val s = max(sx, sy)
                 c.translate((w - cw * s) / 2f, (h - ch * s) / 2f)

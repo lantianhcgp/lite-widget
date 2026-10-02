@@ -9,7 +9,7 @@ object Templates {
     fun flowCard(): String = """
 {
   "version": 1,
-  "canvas": { "width": 360, "height": 180, "fit": "fill" },
+  "canvas": { "width": 360, "height": 180, "fit": "auto" },
   "vars": {
     "bg1": "#1B1B1F",
     "bg2": "#101014",
@@ -22,6 +22,7 @@ object Templates {
   "root": {
     "type": "frame",
     "direction": "vertical",
+    "justify": "space-between",
     "width": "fill",
     "height": "fill",
     "padding": 16,
@@ -112,7 +113,7 @@ object Templates {
     fun emptyCard(id: String, name: String): String = """
 {
   "version": 1,
-  "canvas": { "width": 360, "height": 180, "fit": "fill" },
+  "canvas": { "width": 360, "height": 180, "fit": "auto" },
   "root": {
     "type": "frame",
     "width": "fill",

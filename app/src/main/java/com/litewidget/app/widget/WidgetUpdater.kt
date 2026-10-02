@@ -22,6 +22,15 @@ object WidgetUpdater {
     private const val TAG = "WidgetUpdater"
     private const val MAX_PX = 1600
 
+    /** 全部尺寸入口（改动规格时同步 Manifest） */
+    private fun providers(ctx: Context) = listOf(
+        WidgetProvider2x2::class.java,
+        WidgetProvider4x1::class.java,
+        WidgetProvider4x2::class.java,
+        WidgetProvider2x4::class.java,
+        WidgetProvider4x4::class.java
+    ).map { ComponentName(ctx, it) }
+
     /** 后台刷新数据 + 推送所有桌面小组件 */
     fun pushAll(ctx: Context, id: String? = null, refreshData: Boolean = true) {
         val widgetId = id ?: App.instance.prefs.activeWidget
@@ -56,7 +65,7 @@ object WidgetUpdater {
             return
         }
         val mgr = AppWidgetManager.getInstance(ctx)
-        val ids = mgr.getAppWidgetIds(ComponentName(ctx, WidgetProvider::class.java))
+        val ids = providers(ctx).flatMap { mgr.getAppWidgetIds(it).toList() }.distinct()
         if (ids.isEmpty()) {
             AppLog.i("$TAG no home widget instance yet（桌面还没添加组件）")
             return
@@ -66,8 +75,9 @@ object WidgetUpdater {
 
         for (appWidgetId in ids) {
             val (wPx, hPx) = sizeOf(ctx, mgr, appWidgetId)
+            val density = ctx.resources.displayMetrics.density
             try {
-                val bmp = renderer.render(spec, values, wPx, hPx)
+                val bmp = renderer.render(spec, values, wPx, hPx, density)
                 val rv = RemoteViews(ctx.packageName, R.layout.widget_host)
                 rv.setImageViewBitmap(R.id.widget_image, bmp)
                 mgr.updateAppWidget(appWidgetId, rv)
@@ -98,7 +108,9 @@ object WidgetUpdater {
         val w = (wDp * density).toInt().coerceIn(1, MAX_PX)
         val h = (hDp * density).toInt().coerceIn(1, MAX_PX)
         return try {
-            Renderer(App.instance.assetLoader.forWidget(id)).render(spec, App.instance.data.forRender(), w, h)
+            val density = Renderer.previewDensity(spec, w)
+            Renderer(App.instance.assetLoader.forWidget(id))
+                .render(spec, App.instance.data.forRender(), w, h, density)
         } catch (t: Throwable) {
             AppLog.e("$TAG preview fail $id", t)
             null

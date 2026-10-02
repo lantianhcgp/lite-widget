@@ -36,15 +36,26 @@
                 android:value="local_mcp_server" />
         </service>
 
-        <receiver
-            android:name=".widget.WidgetProvider"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/widget_provider" />
+        <!-- 5 个尺寸入口，渲染逻辑共用 WidgetProvider -->
+        <receiver android:name=".widget.WidgetProvider2x2" android:exported="true" android:label="Lite Widget · 2x2 方形">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_2x2" />
+        </receiver>
+        <receiver android:name=".widget.WidgetProvider4x1" android:exported="true" android:label="Lite Widget · 4x1 横条">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_4x1" />
+        </receiver>
+        <receiver android:name=".widget.WidgetProvider4x2" android:exported="true" android:label="Lite Widget · 4x2 标准">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_4x2" />
+        </receiver>
+        <receiver android:name=".widget.WidgetProvider2x4" android:exported="true" android:label="Lite Widget · 2x4 竖长">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_2x4" />
+        </receiver>
+        <receiver android:name=".widget.WidgetProvider4x4" android:exported="true" android:label="Lite Widget · 4x4 大方">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_4x4" />
         </receiver>
 
         <receiver

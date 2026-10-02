@@ -40,7 +40,7 @@
         "properties": {
           "width": { "type": "number", "exclusiveMinimum": 0, "maximum": 4096, "$comment": "设计坐标系宽(dp)，渲染时按桌面实际尺寸缩放" },
           "height": { "type": "number", "exclusiveMinimum": 0, "maximum": 4096 },
-          "fit": { "enum": ["contain", "cover", "stretch", "fill"], "default": "contain", "$comment": "fill = stretch 别名" }
+          "fit": { "enum": ["auto", "contain", "cover", "stretch", "fill"], "default": "auto", "$comment": "auto=画布按组件实际dp自适应（推荐）; fill=按比例拉伸; contain=留白" }
         }
       },
       "root": { "$ref": "#/$defs/node" },

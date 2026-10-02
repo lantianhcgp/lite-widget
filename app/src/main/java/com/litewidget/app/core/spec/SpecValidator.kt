@@ -67,7 +67,7 @@ object SpecValidator {
             unknown(canvas, setOf("width", "height", "fit"), "$.canvas")
             need(canvas, listOf("width", "height"), "$.canvas")
             num(canvas, "width", "$.canvas"); num(canvas, "height", "$.canvas")
-            enum(canvas, "fit", setOf("contain", "cover", "stretch", "fill"), "$.canvas")
+            enum(canvas, "fit", setOf("auto", "contain", "cover", "stretch", "fill"), "$.canvas")
         }
         val root = json.optJSONObject("root")
         if (root == null) errs.add("$.root: 缺少")

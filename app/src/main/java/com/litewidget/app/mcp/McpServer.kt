@@ -380,7 +380,8 @@ class McpServer(private val app: App) {
                 val errs = SpecValidator.widget(spec)
                 val w = args.optInt("width", 720)
                 val h = args.optInt("height", 360)
-                val bmp = Renderer(app.assetLoader.forWidget(id)).render(spec, app.data.forRender(), w, h)
+                val density = Renderer.previewDensity(spec, w)
+                val bmp = Renderer(app.assetLoader.forWidget(id)).render(spec, app.data.forRender(), w, h, density)
                 val b64 = Base64.encodeToString(bitmapToPng(bmp), Base64.NO_WRAP)
                 bmp.recycle()
                 val header = "渲染成功 ${w}x${h}" + if (errs.isEmpty()) "，schema OK" else
