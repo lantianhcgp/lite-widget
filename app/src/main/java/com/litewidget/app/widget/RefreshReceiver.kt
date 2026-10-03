@@ -7,8 +7,8 @@ import com.litewidget.app.core.AppLog
 import kotlin.concurrent.thread
 
 /**
- * AlarmManager 兜底唤醒：进程被杀后仍能按各组件的刷新频率到点重绘。
- * 具体“到没到点”由 WidgetUpdater.tickNow 判断，没到点直接返回（零开销）。
+ * AlarmManager 唤醒入口：进程被杀后由 AlarmScheduler 排的精确闹钟拉起。
+ * 具体“到没到点”由 WidgetUpdater.tickNow 判断；跑完必须 reschedule 续上下一次（闹钟链自续）。
  */
 class RefreshReceiver : BroadcastReceiver() {
     override fun onReceive(ctx: Context, intent: Intent) {
@@ -19,6 +19,7 @@ class RefreshReceiver : BroadcastReceiver() {
             } catch (t: Throwable) {
                 AppLog.w("alarm tick fail: ${t.message}")
             } finally {
+                AlarmScheduler.reschedule(ctx)
                 pending.finish()
             }
         }

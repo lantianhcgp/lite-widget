@@ -41,6 +41,11 @@ class Prefs(ctx: Context) {
         get() = sp.getBoolean("server_wanted", false)
         set(v) = sp.edit().putBoolean("server_wanted", v).apply()
 
+    /** 自启动权限引导只弹一次（用户看过就不再打扰） */
+    var autostartPrompted: Boolean
+        get() = sp.getBoolean("autostart_prompted", false)
+        set(v) = sp.edit().putBoolean("autostart_prompted", v).apply()
+
     /** 壁纸磨砂开关：关=卡底纯光洗；开=取系统壁纸做模糊层（需「所有文件访问权限」） */
     var frostWanted: Boolean
         get() = sp.getBoolean("frost_wanted", true)

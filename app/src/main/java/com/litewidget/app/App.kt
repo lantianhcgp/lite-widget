@@ -60,7 +60,8 @@ class App : Application() {
         get() = java.io.File(filesDir, "crash.txt")
 
     /**
-     * 自动刷新：进程内 Handler 45 秒轮询（主力）+ AlarmManager 每分钟兜底（进程被杀时唤醒）。
+     * 自动刷新：进程内 Handler 45 秒轮询（进程活着的主力）
+     * + AlarmScheduler 精确闹钟（按各实例刷新频率排下一次，进程死后负责拉起）。
      * 到不到点由 WidgetUpdater.tickNow 按每个组件各自设置的频率判断。
      */
     private fun startRefreshTicker() {
@@ -77,18 +78,8 @@ class App : Application() {
                 }
             }
             h.postDelayed(task, 45_000L)
-            val am = getSystemService(android.content.Context.ALARM_SERVICE) as android.app.AlarmManager
-            val pi = android.app.PendingIntent.getBroadcast(
-                this, 701,
-                android.content.Intent(this, com.litewidget.app.widget.RefreshReceiver::class.java),
-                android.app.PendingIntent.FLAG_IMMUTABLE
-            )
-            am.setInexactRepeating(
-                android.app.AlarmManager.RTC_WAKEUP,
-                System.currentTimeMillis() + 60_000L,
-                60_000L, pi
-            )
-            AppLog.i("refresh ticker started (45s handler + 60s alarm)")
+            com.litewidget.app.widget.AlarmScheduler.reschedule(this)
+            AppLog.i("refresh ticker started (45s handler + exact alarm)")
         } catch (t: Throwable) {
             AppLog.w("ticker start fail: ${t.message}")
         }

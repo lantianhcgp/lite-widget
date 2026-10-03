@@ -55,6 +55,37 @@ class MainActivity : Activity() {
         }
     }
 
+    /**
+     * 自启动权限引导：组件「关后台后到点自动唤起」建立在自启动权限上。
+     * 只在明确检测为未授权时弹一次（非 MIUI 检测不了就不打扰），点了不再提醒。
+     */
+    private fun maybePromptAutoStart() {
+        try {
+            val prefs = App.instance.prefs
+            if (prefs.autostartPrompted) return
+            if (!com.litewidget.app.core.AutoStart.needPrompt(this)) return
+            prefs.autostartPrompted = true
+            serverHandler.postDelayed({
+                if (isFinishing || isDestroyed) return@postDelayed
+                AlertDialog.Builder(this)
+                    .setTitle("开启自启动，组件才会准时刷新")
+                    .setMessage(
+                        "划掉后台后，组件要到点刷新需要系统重新拉起本 App——" +
+                            "这依赖「自启动」权限。\n\n" +
+                            "未开启时：关后台后组件数据将不再自动更新。\n" +
+                            "建议现在去安全中心开启本应用的自启动。"
+                    )
+                    .setPositiveButton("去开启") { _, _ ->
+                        com.litewidget.app.core.AutoStart.openSettings(this)
+                    }
+                    .setNegativeButton("以后再说", null)
+                    .show()
+            }, 1200)
+        } catch (t: Throwable) {
+            AppLog.w("autostart prompt fail: ${t.message}")
+        }
+    }
+
     private fun boot() {
         showCrashIfAny() // 最先弹，保证即使后面还有崩溃点也能拿到堆栈
         com.litewidget.app.core.Trace.mark(this, "8 showCrashIfAny done")
@@ -75,6 +106,7 @@ class MainActivity : Activity() {
 
         val prefs = App.instance.prefs
         prefs.ensureToken()
+        maybePromptAutoStart()
 
         // 首次启动：给个示例组件，界面不空
         if (App.instance.store.list().isEmpty()) {
