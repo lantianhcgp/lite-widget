@@ -1557,16 +1557,234 @@ object Templates {
    "root": {
     "type": "frame",
     "direction": "horizontal",
-    "justify": "space-between",
     "align": "center",
+    "gap": 9,
     "padding": [
      12,
-     18,
+     16,
      12,
-     18
+     16
     ],
     "width": "fill",
     "height": "fill",
+    "children": [
+     {
+      "type": "frame",
+      "direction": "vertical",
+      "gap": 1,
+      "children": [
+       {
+        "type": "text",
+        "size": 9,
+        "weight": 600,
+        "color": "#730D141C",
+        "lineHeight": 1.2,
+        "maxLines": 1,
+        "text": "已用流量"
+       },
+       {
+        "type": "text",
+        "size": 22,
+        "weight": 800,
+        "color": "#0D141C",
+        "lineHeight": 1.05,
+        "maxLines": 1,
+        "bind": {
+         "field": "flow.used",
+         "format": {
+          "unit": "auto",
+          "decimals": 1
+         }
+        }
+       }
+      ]
+     },
+     {
+      "type": "frame",
+      "direction": "vertical",
+      "gap": 5,
+      "width": "fill",
+      "children": [
+       {
+        "type": "progress",
+        "bind": {
+         "field": "flow.percent"
+        },
+        "min": 0,
+        "max": 100,
+        "thickness": 8,
+        "roundCap": true,
+        "width": "fill",
+        "track": {
+         "type": "solid",
+         "color": "#1F0D141C"
+        },
+        "bar": {
+         "type": "linear",
+         "colors": [
+          "#45A7FA",
+          "#0A84FF",
+          "#0057E7"
+         ],
+         "angle": 0
+        }
+       },
+       {
+        "type": "frame",
+        "direction": "horizontal",
+        "justify": "space-between",
+        "width": "fill",
+        "children": [
+         {
+          "type": "frame",
+          "direction": "horizontal",
+          "gap": 3,
+          "children": [
+           {
+            "type": "text",
+            "size": 9,
+            "weight": 500,
+            "color": "#730D141C",
+            "lineHeight": 1.25,
+            "maxLines": 1,
+            "text": "已用"
+           },
+           {
+            "type": "text",
+            "size": 9,
+            "weight": 700,
+            "color": "#B30D141C",
+            "lineHeight": 1.25,
+            "maxLines": 1,
+            "bind": {
+             "field": "flow.percent",
+             "format": {
+              "decimals": 2,
+              "suffix": "%"
+             }
+            }
+           }
+          ]
+         },
+         {
+          "type": "frame",
+          "direction": "horizontal",
+          "gap": 3,
+          "children": [
+           {
+            "type": "text",
+            "size": 9,
+            "weight": 500,
+            "color": "#730D141C",
+            "lineHeight": 1.25,
+            "maxLines": 1,
+            "text": "剩余"
+           },
+           {
+            "type": "text",
+            "size": 9,
+            "weight": 700,
+            "color": "#B30D141C",
+            "lineHeight": 1.25,
+            "maxLines": 1,
+            "bind": {
+             "field": "flow.remain",
+             "format": {
+              "unit": "auto",
+              "decimals": 1
+             }
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "frame",
+      "width": 1,
+      "height": 40,
+      "style": {
+       "background": {
+        "type": "solid",
+        "color": "#1F0D141C"
+       }
+      },
+      "children": []
+     },
+     {
+      "type": "frame",
+      "direction": "vertical",
+      "align": "end",
+      "gap": 3,
+      "children": [
+       {
+        "type": "frame",
+        "direction": "horizontal",
+        "align": "center",
+        "gap": 3,
+        "children": [
+         {
+          "type": "text",
+          "size": 9,
+          "weight": 500,
+          "color": "#730D141C",
+          "lineHeight": 1.25,
+          "maxLines": 1,
+          "text": "电量"
+         },
+         {
+          "type": "text",
+          "size": 12,
+          "weight": 750,
+          "color": "#0D141C",
+          "lineHeight": 1.25,
+          "maxLines": 1,
+          "bind": {
+           "field": "device.battery",
+           "format": {
+            "suffix": "%",
+            "decimals": 0
+           }
+          }
+         }
+        ]
+       },
+       {
+        "type": "frame",
+        "direction": "horizontal",
+        "align": "center",
+        "gap": 3,
+        "children": [
+         {
+          "type": "text",
+          "size": 9,
+          "weight": 500,
+          "color": "#730D141C",
+          "lineHeight": 1.25,
+          "maxLines": 1,
+          "text": "到期"
+         },
+         {
+          "type": "text",
+          "size": 12,
+          "weight": 750,
+          "color": "#0D141C",
+          "lineHeight": 1.25,
+          "maxLines": 1,
+          "bind": {
+           "field": "package.expire",
+           "format": {
+            "date": "MM-DD"
+           }
+          }
+         }
+        ]
+       }
+      ]
+     }
+    ],
     "style": {
      "radius": 16,
      "background": {
@@ -1587,99 +1805,7 @@ object Templates {
       "top": true,
       "bottom": true
      }
-    },
-    "children": [
-     {
-      "type": "frame",
-      "direction": "horizontal",
-      "align": "center",
-      "justify": "center",
-      "padding": [
-       5,
-       11,
-       5,
-       11
-      ],
-      "style": {
-       "background": {
-        "type": "solid",
-        "color": "#140D141C"
-       },
-       "radius": 99
-      },
-      "children": [
-       {
-        "type": "text",
-        "size": 11,
-        "weight": 650,
-        "color": "#0D141C",
-        "lineHeight": 1.25,
-        "text": "随身 WiFi",
-        "align": "center",
-        "maxLines": 1
-       }
-      ]
-     },
-     {
-      "type": "text",
-      "size": 24,
-      "weight": 750,
-      "color": "#0D141C",
-      "lineHeight": 1.05,
-      "bind": {
-       "field": "flow.used",
-       "format": {
-        "unit": "auto",
-        "decimals": 1
-       }
-      },
-      "align": "center",
-      "maxLines": 1
-     },
-     {
-      "type": "spacer"
-     },
-     {
-      "type": "text",
-      "size": 11,
-      "weight": 600,
-      "color": "#B30D141C",
-      "lineHeight": 1.25,
-      "bind": {
-       "field": "flow.remain",
-       "format": {
-        "unit": "auto",
-        "decimals": 1
-       }
-      },
-      "align": "center",
-      "maxLines": 1
-     },
-     {
-      "type": "progress",
-      "bind": {
-       "field": "flow.percent"
-      },
-      "min": 0,
-      "max": 100,
-      "thickness": 6,
-      "roundCap": true,
-      "width": 70,
-      "track": {
-       "type": "solid",
-       "color": "#1F0D141C"
-      },
-      "bar": {
-       "type": "linear",
-       "colors": [
-        "#45A7FA",
-        "#0A84FF",
-        "#0057E7"
-       ],
-       "angle": 0
-      }
-     }
-    ]
+    }
    }
   },
   "2x2": {
