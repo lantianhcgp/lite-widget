@@ -75,8 +75,10 @@ object BuiltinValues {
     private fun network(): String = try {
         val cm = com.litewidget.app.App.instance
             .getSystemService(android.content.Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val caps = cm.getNetworkCapabilities(cm.activeNetwork) ?: return "none"
-        when {
+        val caps = cm.getNetworkCapabilities(cm.activeNetwork)
+        if (caps == null) {
+            "none"
+        } else when {
             caps.hasTransport(NetworkCapabilities.TRANSPORT_VPN) -> "vpn"
             caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> "wifi"
             caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> "mobile"
