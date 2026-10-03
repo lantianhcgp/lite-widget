@@ -507,18 +507,36 @@ class Renderer(private val assets: WidgetAssets) {
         val unit = f?.optString("unit", "none") ?: "none"
         val dateFmt = f?.optString("date", "") ?: ""
 
-        if (dateFmt.isNotEmpty() && v is Number) {
+        if (dateFmt.isNotEmpty()) {
             val pat = when (dateFmt) {
                 "YYYY-MM-DD" -> "yyyy-MM-dd"
                 "MM-DD" -> "MM-dd"
                 "HH:mm" -> "HH:mm"
                 else -> "MM-dd HH:mm"
             }
-            val ms = if (v.toLong() > 100000000000L) v.toLong() else v.toLong() * 1000
-            return try {
-                prefix + SimpleDateFormat(pat, Locale.US).format(Date(ms)) + suffix
-            } catch (t: Throwable) {
-                prefix + v.toString() + suffix
+            // 数字=epoch 秒/毫秒；字符串=「2026-10-04」「2026-10-04 12:30:00」等直传日期
+            val ms: Long? = when (v) {
+                is Number -> if (v.toLong() > 100000000000L) v.toLong() else v.toLong() * 1000
+                is String -> {
+                    val s = v.trim()
+                    var d: Date? = null
+                    for (f2 in arrayOf("yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd")) {
+                        try {
+                            d = SimpleDateFormat(f2, Locale.US).parse(s)
+                        } catch (_: Throwable) {
+                        }
+                        if (d != null) break
+                    }
+                    d?.time
+                }
+                else -> null
+            }
+            if (ms != null) {
+                return try {
+                    prefix + SimpleDateFormat(pat, Locale.US).format(Date(ms)) + suffix
+                } catch (t: Throwable) {
+                    prefix + v.toString() + suffix
+                }
             }
         }
 

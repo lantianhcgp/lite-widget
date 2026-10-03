@@ -565,5 +565,5 @@ class MainActivity : Activity() {
 
 /** 版本号占位（避免依赖 BuildConfig 生成时机） */
 object BuildConfigCompat {
-    const val VERSION = "0.2.0"
+    const val VERSION = "0.2.1"
 }
