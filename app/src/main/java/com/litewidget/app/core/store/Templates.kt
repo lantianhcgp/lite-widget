@@ -381,6 +381,18 @@ object Templates {
         "size": 9,
         "color": "#6A6A72",
         "maxLines": 1
+       },
+       {
+        "type": "text",
+        "bind": {
+         "field": "sys.refreshTime",
+         "format": {
+          "prefix": "刷新 ",
+          "date": "HH:mm"
+         }
+        },
+        "size": 9,
+        "color": "#6A6A72"
        }
       ],
       "align": "end",
@@ -542,6 +554,22 @@ object Templates {
        {
         "type": "text",
         "bind": {
+         "field": "sys.refreshTime",
+         "format": {
+          "prefix": "刷新 ",
+          "date": "HH:mm"
+         }
+        },
+        "size": 10,
+        "color": "#6A6A72"
+       },
+       {
+        "type": "spacer",
+        "size": 6
+       },
+       {
+        "type": "text",
+        "bind": {
          "field": "device.ssid"
         },
         "size": 10,
@@ -585,6 +613,22 @@ object Templates {
     "type": "frame",
     "direction": "vertical",
     "children": [
+     {
+      "type": "text",
+      "bind": {
+       "field": "sys.refreshTime",
+       "format": {
+        "prefix": "刷新 ",
+        "date": "HH:mm"
+       }
+      },
+      "size": 10,
+      "color": "#6A6A72"
+     },
+     {
+      "type": "spacer",
+      "size": 8
+     },
      {
       "type": "frame",
       "direction": "horizontal",
@@ -837,6 +881,22 @@ object Templates {
     "type": "frame",
     "direction": "vertical",
     "children": [
+     {
+      "type": "text",
+      "bind": {
+       "field": "sys.refreshTime",
+       "format": {
+        "prefix": "刷新 ",
+        "date": "HH:mm"
+       }
+      },
+      "size": 11,
+      "color": "#6A6A72"
+     },
+     {
+      "type": "spacer",
+      "size": 8
+     },
      {
       "type": "frame",
       "direction": "horizontal",
@@ -1844,6 +1904,37 @@ object Templates {
           }
          }
         ]
+       },
+       {
+        "type": "frame",
+        "direction": "horizontal",
+        "align": "center",
+        "gap": 3,
+        "children": [
+         {
+          "type": "text",
+          "size": 9,
+          "weight": 500,
+          "color": "#730D141C",
+          "lineHeight": 1.25,
+          "maxLines": 1,
+          "text": "刷新"
+         },
+         {
+          "type": "text",
+          "size": 12,
+          "weight": 750,
+          "color": "#0D141C",
+          "lineHeight": 1.25,
+          "maxLines": 1,
+          "bind": {
+           "field": "sys.refreshTime",
+           "format": {
+            "date": "HH:mm"
+           }
+          }
+         }
+        ]
        }
       ]
      }
@@ -2071,6 +2162,53 @@ object Templates {
           "color": "#730D141C",
           "lineHeight": 1.2,
           "text": "到期",
+          "align": "center",
+          "maxLines": 1
+         }
+        ]
+       },
+       {
+        "type": "frame",
+        "direction": "vertical",
+        "gap": 2,
+        "width": "fill",
+        "align": "center",
+        "padding": [
+         7,
+         10,
+         7,
+         10
+        ],
+        "style": {
+         "background": {
+          "type": "solid",
+          "color": "#140D141C"
+         },
+         "radius": 16
+        },
+        "children": [
+         {
+          "type": "text",
+          "size": 14,
+          "weight": 650,
+          "color": "#0D141C",
+          "lineHeight": 1.2,
+          "bind": {
+           "field": "sys.refreshTime",
+           "format": {
+            "date": "HH:mm"
+           }
+          },
+          "align": "center",
+          "maxLines": 1
+         },
+         {
+          "type": "text",
+          "size": 9,
+          "weight": 500,
+          "color": "#730D141C",
+          "lineHeight": 1.2,
+          "text": "刷新",
           "align": "center",
           "maxLines": 1
          }
@@ -2348,6 +2486,53 @@ object Templates {
           "color": "#730D141C",
           "lineHeight": 1.2,
           "text": "到期",
+          "align": "center",
+          "maxLines": 1
+         }
+        ]
+       },
+       {
+        "type": "frame",
+        "direction": "vertical",
+        "gap": 2,
+        "width": "fill",
+        "align": "center",
+        "padding": [
+         7,
+         10,
+         7,
+         10
+        ],
+        "style": {
+         "background": {
+          "type": "solid",
+          "color": "#140D141C"
+         },
+         "radius": 16
+        },
+        "children": [
+         {
+          "type": "text",
+          "size": 14,
+          "weight": 650,
+          "color": "#0D141C",
+          "lineHeight": 1.2,
+          "bind": {
+           "field": "sys.refreshTime",
+           "format": {
+            "date": "HH:mm"
+           }
+          },
+          "align": "center",
+          "maxLines": 1
+         },
+         {
+          "type": "text",
+          "size": 9,
+          "weight": 500,
+          "color": "#730D141C",
+          "lineHeight": 1.2,
+          "text": "刷新",
           "align": "center",
           "maxLines": 1
          }
@@ -2761,16 +2946,38 @@ object Templates {
       ]
      },
      {
-      "type": "text",
-      "size": 11,
-      "weight": 500,
-      "color": "#730D141C",
-      "lineHeight": 1.25,
-      "bind": {
-       "field": "package.name"
-      },
-      "align": "center",
-      "maxLines": 1
+      "type": "frame",
+      "direction": "horizontal",
+      "children": [
+       {
+        "type": "text",
+        "size": 11,
+        "weight": 500,
+        "color": "#730D141C",
+        "lineHeight": 1.25,
+        "bind": {
+         "field": "package.name"
+        },
+        "align": "center",
+        "maxLines": 1
+       },
+       {
+        "type": "spacer",
+        "size": "fill"
+       },
+       {
+        "type": "text",
+        "bind": {
+         "field": "sys.refreshTime",
+         "format": {
+          "prefix": "刷新 ",
+          "date": "HH:mm"
+         }
+        },
+        "size": 11,
+        "color": "#6A6A72"
+       }
+      ]
      }
     ]
    }
