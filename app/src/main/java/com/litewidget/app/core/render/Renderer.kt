@@ -60,7 +60,6 @@ class Renderer(private val assets: WidgetAssets) {
     companion object {
         const val UNBOUNDED = Float.POSITIVE_INFINITY
         private var frostLogged = false
-        private var frostFailed = false
 
         fun parseColor(s: String?): Int {
             if (s.isNullOrEmpty()) return Color.TRANSPARENT
@@ -929,7 +928,6 @@ class Renderer(private val assets: WidgetAssets) {
     private fun drawFrost(c: Canvas, path: Path, rect: RectF, bg: JSONObject) {
         try {
             val app = com.litewidget.app.App.instance
-            if (frostFailed) return
             val wall = try {
                 val wm = app.getSystemService(android.content.Context.WALLPAPER_SERVICE)
                         as android.app.WallpaperManager
@@ -938,7 +936,7 @@ class Renderer(private val assets: WidgetAssets) {
             } catch (t: Throwable) {
                 if (!frostLogged) {
                     AppLog.w("frost: wallpaper unavailable: ${t.javaClass.simpleName}: ${t.message}")
-                    frostLogged = true; frostFailed = true
+                    frostLogged = true
                 }
                 return
             }
@@ -982,7 +980,7 @@ class Renderer(private val assets: WidgetAssets) {
         } catch (t: Throwable) {
             if (!frostLogged) {
                 AppLog.w("frost draw fail: ${t.javaClass.simpleName}: ${t.message}")
-                frostLogged = true; frostFailed = true
+                frostLogged = true
             }
         }
     }

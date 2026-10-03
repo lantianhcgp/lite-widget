@@ -51,6 +51,41 @@ class MainActivity : Activity() {
         }
     }
 
+    /** 壁纸磨砂可选授权：Android 11+ 需要「所有文件访问」，只提示一次，拒绝也能正常使用 */
+    private fun maybeAskWallpaperAccess() {
+        if (android.os.Build.VERSION.SDK_INT < 29) return
+        if (android.os.Environment.isExternalStorageManager()) {
+            AppLog.i("wallpaper access: all-files granted")
+            return
+        }
+        val sp = getSharedPreferences("wallpaper_gate", MODE_PRIVATE)
+        if (sp.getBoolean("asked", false)) return
+        sp.edit().putBoolean("asked", true).apply()
+        android.app.AlertDialog.Builder(this)
+            .setTitle("开启壁纸磨砂（可选）")
+            .setMessage(
+                "亮色玻璃的卡底可以取你的真实壁纸做模糊层，效果是真·磨砂玻璃。" +
+                "需要在系统设置里授予「所有文件访问权限」。不开启也能正常使用，只是卡底为纯光洗。"
+            )
+            .setPositiveButton("去开启") { _, _ ->
+                try {
+                    startActivity(android.content.Intent(
+                        android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
+                        android.net.Uri.parse("package:$packageName")
+                    ))
+                } catch (t: Throwable) {
+                    try {
+                        startActivity(android.content.Intent(
+                            android.provider.Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION))
+                    } catch (t2: Throwable) {
+                        AppLog.w("open storage settings failed: ${t2.message}")
+                    }
+                }
+            }
+            .setNegativeButton("暂不", null)
+            .show()
+    }
+
     private fun boot() {
         showCrashIfAny() // 最先弹，保证即使后面还有崩溃点也能拿到堆栈
         com.litewidget.app.core.Trace.mark(this, "8 showCrashIfAny done")
@@ -81,6 +116,8 @@ class MainActivity : Activity() {
             McpService.start(this)
             AppLog.i("MCP auto-restore (serverWanted=true)")
         }
+
+        maybeAskWallpaperAccess()
         serverSwitch.isChecked = McpService.isRunning()
         updateServerUi()
 
@@ -528,5 +565,5 @@ class MainActivity : Activity() {
 
 /** 版本号占位（避免依赖 BuildConfig 生成时机） */
 object BuildConfigCompat {
-    const val VERSION = "0.1.9"
+    const val VERSION = "0.2.0"
 }
