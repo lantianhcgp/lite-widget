@@ -62,12 +62,23 @@ object WidgetUpdater {
             val prefs = App.instance.prefs
             val store = App.instance.store
             val now = System.currentTimeMillis()
-            val due = store.list().map { it.id }.filter { wid ->
-                val iv = prefs.refreshInterval(wid)
-                iv > 0 && now - prefs.lastRender(wid) >= iv * 60_000L
-            }.toSet()
-            if (due.isEmpty()) return
-            AppLog.i("$TAG tick due=$due")
+            val mgr = AppWidgetManager.getInstance(ctx)
+            val ids = providers(ctx).flatMap { mgr.getAppWidgetIds(it).toList() }.distinct()
+            if (ids.isEmpty()) return
+            // 到点判定按桌面实例：实例显式频率优先，未设置继承模板级
+            val dueIds = HashSet<Int>()
+            val dueDesigns = HashSet<String>()
+            for (wid in ids) {
+                var design = prefs.binding(wid)
+                if (design.isEmpty() || !store.exists(design)) design = prefs.activeWidget
+                if (design.isEmpty() || !store.exists(design)) continue
+                val iv = prefs.instanceInterval(wid) ?: prefs.refreshInterval(design)
+                if (iv > 0 && now - prefs.instLastRender(wid) >= iv * 60_000L) {
+                    dueIds.add(wid); dueDesigns.add(design)
+                }
+            }
+            if (dueIds.isEmpty()) return
+            AppLog.i("$TAG tick due=$dueIds designs=$dueDesigns")
             if (prefs.hasSource()) {
                 try {
                     App.instance.data.refresh()
@@ -75,16 +86,17 @@ object WidgetUpdater {
                     AppLog.w("$TAG tick refresh fail: ${t.message}（用缓存渲染）")
                 }
             }
-            doPush(ctx, prefs.activeWidget, only = due)
+            doPush(ctx, prefs.activeWidget, only = dueDesigns, onlyInst = dueIds)
             val ts = System.currentTimeMillis()
-            due.forEach { prefs.setLastRender(it, ts) }
+            dueIds.forEach { prefs.setInstLastRender(it, ts) }
+            dueDesigns.forEach { prefs.setLastRender(it, ts) }
         } catch (t: Throwable) {
             AppLog.e("$TAG tick fail", t)
         }
     }
 
-    /** only = null 全量推；否则只推绑定到这些模板的实例 */
-    private fun doPush(ctx: Context, defaultId: String, only: Set<String>?) {
+    /** only = null 全量推；否则只推绑定到这些模板的实例。onlyInst 非空时再按实例白名单过滤 */
+    private fun doPush(ctx: Context, defaultId: String, only: Set<String>?, onlyInst: Set<Int>? = null) {
         val store = App.instance.store
         val prefs = App.instance.prefs
         var id = defaultId
@@ -111,6 +123,7 @@ object WidgetUpdater {
             var design = prefs.binding(appWidgetId)
             if (design.isEmpty() || !store.exists(design)) design = id
             if (only != null && design !in only) continue
+            if (onlyInst != null && appWidgetId !in onlyInst) continue
             if (!specCache.containsKey(design)) specCache[design] = store.readSpec(design)
             val spec = specCache[design]
             if (spec == null) {

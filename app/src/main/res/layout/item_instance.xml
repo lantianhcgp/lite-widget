@@ -5,7 +5,7 @@
     android:layout_marginBottom="10dp"
     android:background="@drawable/bg_card"
     android:orientation="vertical"
-    android:padding="12dp">
+    android:padding="14dp">
 
     <TextView
         android:id="@+id/inst_title"
@@ -19,14 +19,14 @@
         android:id="@+id/inst_meta"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="3dp"
         android:textColor="@color/dim"
         android:textSize="12sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <Button
@@ -38,16 +38,27 @@
             android:background="@drawable/bg_button"
             android:text="更换模板"
             android:textColor="#FFFFFF"
-            android:textSize="12sp" />
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/inst_freq"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="6dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_button_ghost"
+            android:text="刷新频率"
+            android:textColor="@color/fg"
+            android:textSize="11sp" />
 
         <Button
             android:id="@+id/inst_reset"
             android:layout_width="0dp"
             android:layout_height="36dp"
             android:layout_weight="1"
-            android:background="@drawable/bg_card"
+            android:background="@drawable/bg_button_ghost"
             android:text="恢复默认"
-            android:textColor="#FF5252"
-            android:textSize="12sp" />
+            android:textColor="@color/danger"
+            android:textSize="11sp" />
     </LinearLayout>
 </LinearLayout>

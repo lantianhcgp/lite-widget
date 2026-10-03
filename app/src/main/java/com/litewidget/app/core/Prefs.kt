@@ -73,8 +73,17 @@ class Prefs(ctx: Context) {
         if (varValue("devNo").isEmpty() && devNo.isNotEmpty()) setVarValue("devNo", devNo)
     }
 
-    /** 每个组件的自动刷新频率（分钟，0 = 不自动刷新） */
+    /** 每个组件的自动刷新频率（分钟，0 = 不自动刷新）——模板级默认值 */
     fun refreshInterval(id: String): Int = sp.getInt("refresh_$id", 0)
+
+    /** 每个桌面实例的自动刷新频率（分钟）。null = 未设置，继承模板级 */
+    fun instanceInterval(appWidgetId: Int): Int? =
+        if (sp.contains("inst_iv_$appWidgetId")) sp.getInt("inst_iv_$appWidgetId", 0) else null
+    fun setInstanceInterval(appWidgetId: Int, minutes: Int) =
+        sp.edit().putInt("inst_iv_$appWidgetId", minutes).apply()
+    fun instLastRender(appWidgetId: Int): Long = sp.getLong("inst_last_$appWidgetId", 0L)
+    fun setInstLastRender(appWidgetId: Int, ts: Long) =
+        sp.edit().putLong("inst_last_$appWidgetId", ts).apply()
     fun setRefreshInterval(id: String, minutes: Int) = sp.edit().putInt("refresh_$id", minutes).apply()
     fun lastRender(id: String): Long = sp.getLong("last_render_$id", 0L)
     fun setLastRender(id: String, ts: Long) = sp.edit().putLong("last_render_$id", ts).apply()

@@ -9,11 +9,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="20dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <TextView
@@ -22,26 +23,26 @@
                 android:layout_weight="1"
                 android:text="桌面管理"
                 android:textColor="@color/fg"
-                android:textSize="20sp"
+                android:textSize="22sp"
                 android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btn_back"
                 android:layout_width="wrap_content"
                 android:layout_height="34dp"
-                android:background="@drawable/bg_button"
-                android:paddingLeft="14dp"
-                android:paddingRight="14dp"
+                android:background="@drawable/bg_button_ghost"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
                 android:text="返回"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/fg"
                 android:textSize="12sp" />
         </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="桌面上已添加的小组件实例：逐个选择要显示的模板"
+            android:layout_marginTop="6dp"
+            android:text="桌面上已添加的小组件：逐个指定模板与刷新频率"
             android:textColor="@color/dim"
             android:textSize="13sp" />
 
@@ -49,7 +50,7 @@
             android:id="@+id/instance_empty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="16dp"
             android:text="桌面还没有添加组件：长按桌面 → 小部件 → Lite Widget，选一个尺寸"
             android:textColor="@color/dim"
             android:textSize="13sp" />
@@ -58,7 +59,7 @@
             android:id="@+id/instance_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="12dp"
             android:orientation="vertical" />
     </LinearLayout>
 </ScrollView>

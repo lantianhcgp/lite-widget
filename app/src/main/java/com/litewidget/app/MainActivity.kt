@@ -232,9 +232,8 @@ class MainActivity : Activity() {
             val row = inflater.inflate(R.layout.item_widget, listBox, false)
             row.findViewById<TextView>(R.id.item_title).text = "${item.name}"
             val active = if (item.id == App.instance.prefs.activeWidget) " · 已应用" else ""
-            val iv = App.instance.prefs.refreshInterval(item.id)
             row.findViewById<TextView>(R.id.item_meta).text =
-                "${item.id} · ${item.size} · v${item.version}$active · 刷新:${intervalText(iv)}"
+                "${item.id} · ${item.size} · v${item.version}$active"
             val sizes = supportedSizes(item.id)
             row.findViewById<TextView>(R.id.item_sizes).text =
                 "尺寸 " + sizes.joinToString(" · ") + if (sizes.size > 1) "　（点卡片看全尺寸预览）" else ""
@@ -269,9 +268,6 @@ class MainActivity : Activity() {
                     }
                     .setNegativeButton("取消", null)
                     .show()
-            }
-            row.findViewById<Button>(R.id.item_freq).setOnClickListener {
-                promptRefreshInterval(item.id)
             }
             listBox.addView(row)
         }
@@ -381,13 +377,14 @@ class MainActivity : Activity() {
         // 暗色弹窗底 + 按钮文字反白
         dlg.window?.setBackgroundDrawable(
             android.graphics.drawable.ColorDrawable(0xFF17171C.toInt()))
+        dlg.window?.setLayout(-1, -2) // MATCH_PARENT：消除主题左右边距，预览按容器实测宽排版
         for (bid in intArrayOf(android.R.id.button1, android.R.id.button2, android.R.id.button3)) {
             try { dlg.findViewById<Button>(bid)?.setTextColor(0xFFFFFFFF.toInt()) } catch (_: Throwable) {}
         }
 
         val sizes = supportedSizes(id)
-        // 预览宽度 = 该尺寸规范宽 / 360dp × 内容宽 → 桌面上的真实相对大小（2x2 只有 4x2 的一半宽）
-        val contentW = resources.displayMetrics.widthPixels - 32 * dm
+        // 预览宽度 = 该尺寸规范宽 / 360dp × 可用宽（优先取滚动容器实测宽，避免估宽溢出被裁）
+        val fallbackW = resources.displayMetrics.widthPixels - 64 * dm
         ui.execute {
             var first = true
             for (s in sizes) {
@@ -402,7 +399,9 @@ class MainActivity : Activity() {
                     val c = com.litewidget.app.core.render.Renderer.CANONICAL[s]
                     val wDp = c?.first ?: 360f
                     val hDp = c?.second ?: 180f
-                    val pw = contentW * (wDp / 360f)
+                    val avail = if (scroll.width > 0)
+                        scroll.width - box.paddingLeft - box.paddingRight else fallbackW
+                    val pw = avail * (wDp / 360f)
                     val ph = pw * (hDp / wDp)
                     val label = TextView(this).apply {
                         text = (SIZE_LABEL[s] ?: s) + "  " + wDp.toInt() + "×" + hDp.toInt() + "dp"
@@ -424,25 +423,6 @@ class MainActivity : Activity() {
                 }
             }
         }
-    }
-
-    /** 自动刷新频率选择（每个组件独立设置） */
-    private fun promptRefreshInterval(id: String) {
-        val items = arrayOf("关闭（不自动刷新）", "每 1 分钟", "每 5 分钟", "每 15 分钟", "每 30 分钟", "每 60 分钟")
-        val values = intArrayOf(0, 1, 5, 15, 30, 60)
-        val cur = App.instance.prefs.refreshInterval(id)
-        val checked = values.indexOf(cur).coerceAtLeast(0)
-        AlertDialog.Builder(this)
-            .setTitle("「${id}」自动刷新频率")
-            .setSingleChoiceItems(items, checked) { d, which ->
-                App.instance.prefs.setRefreshInterval(id, values[which])
-                App.instance.prefs.setLastRender(id, 0L)
-                toast(if (values[which] == 0) "已关闭自动刷新" else "每 ${values[which]} 分钟自动刷新")
-                d.dismiss()
-                renderList()
-            }
-            .setNegativeButton("取消", null)
-            .show()
     }
 
     private fun intervalText(m: Int) = if (m <= 0) "关" else "${m}分"
@@ -592,5 +572,5 @@ class MainActivity : Activity() {
 
 /** 版本号占位（避免依赖 BuildConfig 生成时机） */
 object BuildConfigCompat {
-    const val VERSION = "0.3.0"
+    const val VERSION = "0.3.1"
 }

@@ -1,120 +1,122 @@
 # Lite Widget
 
-轻量版 KWGT：**文件驱动**的 Android 桌面小组件，内置**局域网 MCP 服务**——让 AI 直接读写组件文件、渲染预览、推送到桌面，闭环开发小组件。
+轻量版 KWGT：**文件驱动的 Android 桌面小组件**。Kotlin + 纯 XML + Canvas 自绘，零第三方依赖，APK 约 1MB。组件是文件夹里的 `widget.json`，改文件就能改外观——AI 可通过内置 MCP 服务直接替你设计组件。
 
-- 渲染：Canvas 自绘引擎，零第三方依赖（Kotlin + 纯 XML），APK ~1MB
-- 尺寸：2x2 / 4x1 / 4x2 / 2x4 / 4x4 五个入口，**每种尺寸一套独立设计**（`variants`），尺寸越大信息越多
-- 数据：组件在 `widget.json` 里**声明所需变量**，App「变量管理」页自动出表单；凭据只存本机
-- 管理：App 内「桌面管理」列出已添加的组件实例，逐个选择模板；每个组件可设独立的自动刷新频率
-- 分发：组件 = 自包含压缩包 `.lwgt`（manifest + widget.json + assets），可导入导出互传
+---
 
-## 构建
+## 新手上路（从零走一遍）
 
-Push 到 `master` 触发 GitHub Actions（`.github/workflows`），产物为 debug APK artifact。
-本地：Android Studio 打开，`./gradlew assembleDebug`。
+### 第 1 步：安装
+1. 到 [Releases](../../releases) 下载最新 `lite-widget-v*.apk` → 安装（允许未知来源）
+2. 打开 App，首页是版本号和几个卡片
 
-## widget.json 规格
+### 第 2 步：往桌面添加小组件
+1. 桌面**长按空白处** → **小部件 / 小组件**
+2. 找到 **Lite Widget**，5 种尺寸：`4x1 横条`、`4x2 标准`、`2x2 方形`、`2x4 竖长`、`4x4 大方`
+3. 长按拖到桌面 → 立刻显示默认组件（自带「流量仪表盘」和「液态玻璃」）
+
+> 同一模板放任意尺寸实例都行，每个尺寸有独立布局，自动换排版。
+
+### 第 3 步：挑模板
+1. 首页**点组件卡片** → **全尺寸预览画廊**（深色底、按真实相对比例，2x2 只有 4x2 一半宽）
+2. 点 **「应用」** → 桌面立即生效
+
+内置模板：
+- **液态玻璃**：亮色磨砂玻璃，白光洗 + 深墨字 + 可选真壁纸模糊层
+- **Material Expressive**：Google M3 表达风格，紫调色块 + 平涂大圆角 + 粗进度条
+- **流量仪表盘**：渐变 + 圆弧仪表炫色风
+
+### 第 4 步：填数据（变量管理）
+1. 首页 → **变量管理** → 填「后台地址」（如 `http://pddwifi.gzkpiot.com`）和「充值号」
+2. **保存** → **刷新数据**
+3. ⚠️ 这些值只存本机：不进组件包、不导出、不通过 MCP 暴露；不填也能用（占位数据）
+
+### 第 5 步：桌面管理（按桌面实例调）
+首页 → **桌面管理**，每个桌面实例可以：
+- **更换模板**：列表标注**与实例对应的尺寸**（4x1 实例就标 4x1 有无专属布局）
+- **刷新频率**：自己输数值 + 选单位 **分钟 / 小时 / 天**（如 `2 小时`、`1 天`），也可"不自动刷新"
+- **恢复默认**：回到全局激活模板
+
+> 频率按**桌面实例**记：桌面两个组件可以一个 5 分钟刷、一个 1 天刷。
+
+### 第 6 步：壁纸磨砂（可选）
+1. 首页 **效果** 卡片 → 打开 **壁纸磨砂**
+2. 首次跳设置授 **「所有文件访问权限」**（只一次）→ 回来显示「生效中」
+3. 玻璃卡底变成**真实壁纸的模糊层**；关掉退回纯白光洗
+
+### 第 7 步：导入 / 导出
+- **导出**：组件卡片「导出」→ `.lwgt` 文件（zip），可分享
+- **导入**：首页底部「导入组件」→ 选 `.lwgt`
+- ⚠️ 凭据（充值号等）不会被打进 `.lwgt`
+
+### FAQ
+**不自动刷新？** 桌面管理 → 该实例 → 刷新频率（按实例存的）。
+**四角发黑？** 壁纸本身暗 + 旧版投影；当前版本卡片无投影，角外就是壁纸原色。
+**变量改了没生效？** 变量管理「保存」→「刷新数据」；桌面没动就到桌面管理重新"更换模板"一次。
+**MCP 是干嘛的？** 给 AI 的开发接口：开了之后 AI 能直接读写组件文件、渲染预览、查日志。普通用户可一直关着。
+
+---
+
+## 开发者：MCP 协议（AI 接入）
+
+首页打开 **MCP 服务** 后，本地端点：
+
+```
+POST http://<手机IP>:8765/mcp
+Authorization: Bearer <token>      # 首页可复制
+Content-Type: application/json
+```
+
+- JSON-RPC 2.0：`method: "tools/call"` + `params.name` / `params.arguments`
+- `GET /health` 免鉴权（只回版本号）
+
+### 13 个工具
+| 工具 | 参数 | 说明 |
+|---|---|---|
+| `fs_tree` | `path` | 列沙箱目录 |
+| `fs_read` | `path` | 读组件文件（返回解析后的 JSON） |
+| `fs_write` | `path, content` | 写组件文件（写完自动跑 schema） |
+| `fs_delete` | `path` | 删文件 |
+| `widget_list` | - | 列组件 |
+| `widget_validate` | `id` | schema 校验（写完必调） |
+| `widget_render` | `id, size?, width?, height?` | 渲染 PNG（base64）自检 |
+| `widget_reload` | `id` | 应用到桌面 |
+| `log_tail` / `log_clear` | `lines?, filter?` / - | App 日志 |
+| `data_snapshot` / `data_refresh` | - | 数据快照 / 重拉 |
+| `schema_get` | - | widget.json schema |
+
+### 沙箱文件系统
+```
+widgets/<id>/
+├── widget.json      # 组件定义
+├── manifest.json    # id/名称/版本/尺寸
+└── assets/          # 图片字体（assets/xxx 引用）
+```
+路径限定 `widgets/` 下，越权返回 `路径越权`。
+
+## 开发者：widget.json 规格（摘要）
 
 ```jsonc
 {
   "version": 1,
-  "canvas": { "width": 360, "height": 180, "fit": "auto" },   // 设计坐标系；auto=按组件实际 dp 重排
-  "vars":  { "fg": "#FFFFFF" },                                // 设计常量，text 可引用
-  "data": {                                                    // 声明外部变量（可选）
-    "source": "pddwifi",
-    "vars": {
-      "baseUrl": { "label": "后台地址", "type": "url",     "required": true, "hint": "..." },
-      "devNo":   { "label": "充值号",   "type": "string", "required": true, "secret": true }
-    }
-  },
-  "root": { "type": "frame", "...": "默认(4x2)设计，兼作无变体时的回退" },
-  "variants": {                                                // 按尺寸的独立设计（可选）
-    "4x1": { "root": { "...": "横条：核心数字+进度+电量" } },
-    "2x2": { "root": { "...": "方块：大数字+进度" } },
-    "2x4": { "root": { "...": "竖长：套餐+流量+余额/热点" } },
-    "4x4": { "root": { "...": "大方：全量信息（含余额/运行时长/SIM/上报时间）" } }
-  }
+  "canvas": { "width": 360, "height": 180, "fit": "auto" },
+  "data":   { "source": "pddwifi", "vars": { } },
+  "root":   { },                  // 节点树 = 未匹配尺寸的回退布局
+  "variants": { "4x1": {"root": {}}, "2x2": {}, "2x4": {}, "4x4": {} }
 }
 ```
 
-- 节点类型：`frame`（vertical/horizontal/absolute 布局）/ `text`（bind 数据字段）/ `image` / `progress`（bar|arc）/ `spacer`
-- 渲染时按组件实际 dp 用**对数距离**归到最接近的规范尺寸（`4x1=360x90, 4x2=360x180, 2x2=180x180, 4x4=360x360, 2x4=180x360`），取 `variants.<size>`；没有则回退 `root`
-- 数据字段命名空间：`flow.*` / `package.*` / `device.*` / `account.*`（见 MCP `data_snapshot`）
-- 完整 schema：`app/src/main/assets/schema.json`（MCP `schema_get` 直接取），**additionalProperties=false，写错字段名会报错**
+- **节点**：`frame`（direction/justify/align/gap/padding/children）、`text`（text 或 bind，size/weight/color/lineHeight/maxLines/align）、`image`、`progress`（value|bind、track/bar、roundCap）、`spacer`
+- **style**：`radius`（数或 `[t,r,b,l]`，**padding 同为四元组**）、`background`（`solid`/`linear`/`radial`/`image`/`frost` 真壁纸磨砂）、`border`、`shadow`、`shape:"squircle"`、`rim`、`innerGlow`、`opacity`、`transform`
+- **颜色**：`#RRGGBB` / `#AARRGGBB`（**8 位 alpha 在前**）
+- **bind**：`{"field": "flow.used", "format": {"unit":"auto","decimals":1}}`；字段 `flow.* / device.* / package.* / account.* / vars.*`；format：`unit/decimals/prefix/suffix/multiplier/date`
+- 完整 schema：`app/src/main/assets/schema.json` 或 `schema_get`
 
-## MCP：让 AI 开发小组件
-
-### 连接
-
-| 项 | 值 |
-|---|---|
-| 端点 | `http://<手机IP>:8765/mcp`（App 首页显示局域网地址；本机 `http://127.0.0.1:8765/mcp`） |
-| 鉴权 | `Authorization: Bearer <token>`（App 首页显示，点按复制；或 `?token=` 查询参数） |
-| 探活 | `GET /health` → `{"ok":true,"app":"lite-widget","version":"..."}`（匿名） |
-| 协议 | JSON-RPC 2.0（`initialize` / `tools/list` / `tools/call` / `ping`） |
-
-前提：App 首页「MCP 服务」开关打开（前台服务常驻）。
-
+### 构建
 ```bash
-curl -s -X POST http://127.0.0.1:8765/mcp \
-  -H 'Content-Type: application/json' \
-  -H 'Authorization: Bearer <token>' \
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call",
-       "params":{"name":"widget_list","arguments":{}}}'
+# CI：push master 触发 GitHub Actions（约 6 分钟）
+bash scripts/precheck.sh   # 本地语法预检
 ```
 
-### 工具（13 个）
-
-| 工具 | 参数 | 说明 |
-|---|---|---|
-| `fs_tree` | `path?` | 列沙箱目录（默认 widgets） |
-| `fs_read` | `path` | 读文件，**返回文件原文**（widget.json 即 JSON 文本） |
-| `fs_write` | `path`, `content` | 覆盖写；widget.json/manifest.json 会**自动跑 schema 校验**并把问题带在返回里 |
-| `fs_delete` | `path` | 删文件/目录 |
-| `widget_list` | | 列出所有组件 |
-| `widget_validate` | `id` | 对存储的组件跑 schema 校验 |
-| `widget_render` | `id`, `size?`(2x2/4x1/4x2/2x4/4x4), `width?`, `height?` | 渲染预览图。返回文本：`渲染成功 ...\nimage/png;base64:\n<base64>`，取 `base64:` 之后解码 |
-| `widget_reload` | `id?` | 应用到桌面（不填用当前激活组件），所有实例立即重绘 |
-| `log_tail` | `lines?`, `filter?` | App 日志（渲染报错都在这） |
-| `log_clear` | | 清空日志 |
-| `data_snapshot` | | 当前数据快照（21 个字段） |
-| `data_refresh` | | 重新拉后台数据（需要变量已填） |
-| `schema_get` | | 返回 widget.json / manifest.json 的 JSON Schema |
-
-### 标准工作流
-
-```
-fs_read(widget.json) → 修改 → fs_write（返回里直接带 schema 校验结果）
-→ widget_render(id, size="4x4") → 解码 base64 看图、自查样式
-→ 再改、再渲染（迭代）
-→ widget_reload(id) → 桌面生效
-→ log_tail(filter="WidgetUpdater") 确认无渲染异常
-```
-
-### 沙箱文件系统（App filesDir）
-
-```
-widgets/<id>/
-  manifest.json     # id/name/version/size...
-  widget.json       # 设计（上面的规格）
-  assets/           # 图片、字体
-data/snapshot.json  # 后台数据快照（MCP 可读，data_snapshot 也走这里）
-logs/app.log        # 应用日志（滚动 512KB）
-exports/            # 导出的 .lwgt
-schema.json         # 内置 schema
-```
-
-读权限：`widgets/ logs/ data/ exports/`；写权限：`widgets/ logs/`。路径越权（`..`、绝对路径）直接拒绝。
-
-### 安全边界
-
-- `data.vars` 声明的变量**值**存在 App SharedPreferences（`var_<name>`），**不写进组件包、不进日志、不通过 MCP 暴露**——MCP 只能看到声明本身
-- `.lwgt` 导出包内同样不含任何凭据
-
-## 组件包 .lwgt
-
-zip：`manifest.json` + `widget.json` + `assets/`（可多套一层目录）。导入在 App 首页，导出在组件卡片上。
-
-## License
-
-MIT
+## 隐私
+敏感变量仅本机 SharedPreferences：不进组件包、不导出、不进日志、不通过 MCP 返回。`.lwgt` = `widget.json` + `manifest.json` + `assets/`。

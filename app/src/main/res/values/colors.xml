@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="bg">#0E0E12</color>
-    <color name="card">#17171D</color>
-    <color name="stroke">#26262E</color>
-    <color name="fg">#F2F2F5</color>
-    <color name="dim">#8A8A96</color>
-    <color name="accent">#5B8CFF</color>
-    <color name="ok">#4CAF50</color>
-    <color name="warn">#FF9800</color>
-    <color name="launcher_bg">#0E0E12</color>
+    <color name="bg">#0B0C10</color>
+    <color name="card">#15171E</color>
+    <color name="card2">#1C1F28</color>
+    <color name="stroke">#2A2E3A</color>
+    <color name="fg">#F4F5F8</color>
+    <color name="dim">#8B90A0</color>
+    <color name="accent">#7C6CFF</color>
+    <color name="ok">#3DDC84</color>
+    <color name="warn">#FFB74D</color>
+    <color name="danger">#FF6B6B</color>
+    <color name="launcher_bg">#0B0C10</color>
 </resources>

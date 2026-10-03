@@ -9,32 +9,41 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="20dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/app_name"
             android:textColor="@color/fg"
-            android:textSize="24sp"
+            android:textSize="26sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="3dp"
             android:textColor="@color/dim"
             android:textSize="13sp" />
 
-        <!-- MCP 服务 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:letterSpacing="1.2"
+            android:text="服务"
+            android:textColor="@color/dim"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/bg_card"
             android:orientation="vertical"
-            android:padding="14dp">
+            android:padding="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -53,7 +62,9 @@
                 <Switch
                     android:id="@+id/server_switch"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:thumbTint="@color/accent"
+                    android:trackTint="@color/accent" />
             </LinearLayout>
 
             <TextView
@@ -64,10 +75,39 @@
                 android:textColor="@color/dim"
                 android:textSize="13sp" />
 
+            <TextView
+                android:id="@+id/server_token"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_preview"
+                android:padding="10dp"
+                android:textColor="@color/ok"
+                android:textIsSelectable="true"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:letterSpacing="1.2"
+            android:text="效果"
+            android:textColor="@color/dim"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_card"
+            android:orientation="vertical"
+            android:padding="16dp">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -82,7 +122,9 @@
                 <Switch
                     android:id="@+id/frost_switch"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:thumbTint="@color/accent"
+                    android:trackTint="@color/accent" />
             </LinearLayout>
 
             <TextView
@@ -92,25 +134,25 @@
                 android:layout_marginTop="8dp"
                 android:textColor="@color/dim"
                 android:textSize="13sp" />
-
-            <TextView
-                android:id="@+id/server_token"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textColor="@color/ok"
-                android:textIsSelectable="true"
-                android:textSize="13sp" />
         </LinearLayout>
 
-        <!-- 管理：桌面实例 / 变量 / 数据刷新 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:letterSpacing="1.2"
+            android:text="工具"
+            android:textColor="@color/dim"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/bg_card"
             android:orientation="vertical"
-            android:padding="14dp">
+            android:padding="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -123,9 +165,9 @@
                     android:layout_height="42dp"
                     android:layout_marginEnd="6dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_button"
+                    android:background="@drawable/bg_button_ghost"
                     android:text="桌面管理"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/fg"
                     android:textSize="13sp" />
 
                 <Button
@@ -134,9 +176,9 @@
                     android:layout_height="42dp"
                     android:layout_marginEnd="6dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_button"
+                    android:background="@drawable/bg_button_ghost"
                     android:text="变量管理"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/fg"
                     android:textSize="13sp" />
 
                 <Button
@@ -144,9 +186,9 @@
                     android:layout_width="0dp"
                     android:layout_height="42dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_button"
+                    android:background="@drawable/bg_button_ghost"
                     android:text="刷新数据"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/fg"
                     android:textSize="13sp" />
             </LinearLayout>
 
@@ -154,25 +196,26 @@
                 android:id="@+id/source_status"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
                 android:textColor="@color/dim"
-                android:textSize="13sp" />
+                android:textSize="12sp" />
         </LinearLayout>
 
-        <!-- 组件 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="22dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:letterSpacing="1.2"
                 android:text="组件"
-                android:textColor="@color/fg"
-                android:textSize="15sp"
+                android:textColor="@color/dim"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <Button
@@ -180,8 +223,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="34dp"
                 android:background="@drawable/bg_button"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
                 android:text="@string/btn_add"
                 android:textColor="#FFFFFF"
                 android:textSize="12sp" />
@@ -191,7 +234,7 @@
             android:id="@+id/empty_tip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
             android:text="@string/empty_widgets"
             android:textColor="@color/dim"
             android:textSize="13sp" />
@@ -200,14 +243,14 @@
             android:id="@+id/widget_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
             android:orientation="vertical" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="28dp"
             android:orientation="horizontal">
 
             <Button
@@ -216,9 +259,9 @@
                 android:layout_height="42dp"
                 android:layout_marginEnd="6dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_button"
+                android:background="@drawable/bg_button_ghost"
                 android:text="@string/btn_import"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/fg"
                 android:textSize="13sp" />
 
             <Button
@@ -226,9 +269,9 @@
                 android:layout_width="0dp"
                 android:layout_height="42dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_button"
+                android:background="@drawable/bg_button_ghost"
                 android:text="@string/btn_logs"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/fg"
                 android:textSize="13sp" />
         </LinearLayout>
     </LinearLayout>
