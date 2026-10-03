@@ -45,6 +45,8 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.statusBarColor = 0xFF0B0C10.toInt()
+        window.navigationBarColor = 0xFF0B0C10.toInt()
         com.litewidget.app.core.Trace.mark(this, "7 MainActivity.onCreate start")
         try {
             boot()
@@ -243,8 +245,27 @@ class MainActivity : Activity() {
             loadPreview(item.id, preview)
 
             row.findViewById<Button>(R.id.item_apply).setOnClickListener {
-                App.instance.prefs.activeWidget = item.id
-                toast("已应用「${item.name}」")
+                val prefs = App.instance.prefs
+                prefs.activeWidget = item.id
+                // 一键应用：把桌面全部实例的绑定都换成这套模板（覆盖逐实例设置）
+                var n = 0
+                try {
+                    val mgr = android.appwidget.AppWidgetManager.getInstance(this)
+                    for (cls in listOf(
+                            com.litewidget.app.widget.WidgetProvider2x2::class.java,
+                            com.litewidget.app.widget.WidgetProvider4x1::class.java,
+                            com.litewidget.app.widget.WidgetProvider4x2::class.java,
+                            com.litewidget.app.widget.WidgetProvider2x4::class.java,
+                            com.litewidget.app.widget.WidgetProvider4x4::class.java
+                        )) {
+                        val arr = mgr.getAppWidgetIds(
+                            android.content.ComponentName(this, cls)) ?: IntArray(0)
+                        for (wid in arr) { prefs.setBinding(wid, item.id); n++ }
+                    }
+                } catch (t: Throwable) {
+                    AppLog.e("apply: bind all fail", t)
+                }
+                toast(if (n > 0) "已应用「${item.name}」到 $n 个桌面组件" else "已应用「${item.name}」")
                 WidgetUpdater.pushAll(this, item.id, refreshData = false)
                 renderList()
             }
@@ -573,5 +594,5 @@ class MainActivity : Activity() {
 
 /** 版本号占位（避免依赖 BuildConfig 生成时机） */
 object BuildConfigCompat {
-    const val VERSION = "0.3.1"
+    const val VERSION = "0.3.2"
 }

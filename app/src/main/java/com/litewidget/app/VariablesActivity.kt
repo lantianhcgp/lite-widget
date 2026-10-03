@@ -31,6 +31,8 @@ class VariablesActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.statusBarColor = 0xFF0B0C10.toInt()
+        window.navigationBarColor = 0xFF0B0C10.toInt()
         setContentView(R.layout.activity_vars)
         box = findViewById(R.id.vars_box)
         status = findViewById(R.id.vars_status)
@@ -48,10 +50,12 @@ class VariablesActivity : Activity() {
         box.removeAllViews()
         val prefs = App.instance.prefs
         val seen = LinkedHashMap<String, Decl>()
+        val fromMap = LinkedHashMap<String, MutableList<String>>() // 变量名 -> 所有声明它的组件
         for (item in App.instance.store.list()) {
             val spec = App.instance.store.readSpec(item.id) ?: continue
             val vars = spec.optJSONObject("data")?.optJSONObject("vars") ?: continue
             for (k in vars.keys()) {
+                fromMap.getOrPut(k) { ArrayList() }.add(item.name)
                 if (seen.containsKey(k)) continue
                 val v = vars.optJSONObject(k) ?: continue
                 seen[k] = Decl(
@@ -109,8 +113,12 @@ class VariablesActivity : Activity() {
                 }
             }
             space(3)
+            val froms = (fromMap[d.name] ?: arrayListOf(d.from)).distinct()
+            val declText = if (froms.size > 1)
+                froms.joinToString("、") { "「$it」" } + " 共同声明"
+                else "「${froms.first()}」声明"
             val meta = TextView(this).apply {
-                text = "由「${d.from}」声明 · var_${d.name}" + if (d.secret) " · 仅存本机" else ""
+                text = "由 $declText · var_${d.name}" + if (d.secret) " · 仅存本机" else ""
                 setTextColor(0xFF6A6A72.toInt())
                 textSize = 11f
             }

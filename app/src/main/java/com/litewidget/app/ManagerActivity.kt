@@ -32,6 +32,8 @@ class ManagerActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.statusBarColor = 0xFF0B0C10.toInt()
+        window.navigationBarColor = 0xFF0B0C10.toInt()
         setContentView(R.layout.activity_manager)
         container = findViewById(R.id.instance_list)
         emptyTip = findViewById(R.id.instance_empty)
@@ -135,56 +137,62 @@ class ManagerActivity : Activity() {
 
     private fun intervalText(m: Int) = if (m <= 0) "关" else "${m}分"
 
-    private fun fmtInterval(m: Int) = when {
-        m <= 0 -> "关"
-        m % 1440 == 0 -> "${m / 1440} 天"
-        m % 60 == 0 -> "${m / 60} 小时"
-        else -> "${m} 分钟"
+    private fun fmtInterval(m: Int): String {
+        if (m <= 0) return "关"
+        val d = m / 1440
+        val h = (m % 1440) / 60
+        val mm = m % 60
+        val sb = StringBuilder()
+        if (d > 0) sb.append(d).append("天")
+        if (h > 0) sb.append(h).append("小时")
+        if (mm > 0) sb.append(mm).append("分")
+        return sb.toString()
     }
 
-    /** 桌面实例的自动刷新：数值 + 单位（分钟/小时/天）自选，像闹钟设置那样 */
+    /** 桌面实例的自动刷新：天/小时/分钟三个输入框组合（可混合，如 1天2小时30分） */
     private fun promptInstanceInterval(e: Entry) {
         val prefs = App.instance.prefs
         val bound = prefs.binding(e.appWidgetId).ifEmpty { prefs.activeWidget }
         val cur = prefs.instanceInterval(e.appWidgetId) ?: prefs.refreshInterval(bound)
         val dm = resources.displayMetrics.density
         val pad = (24 * dm).toInt()
-        val num = android.widget.EditText(this).apply {
-            inputType = android.text.InputType.TYPE_CLASS_NUMBER
-            hint = "输入数值"
-            setText(when {
-                cur <= 0 -> ""
-                cur % 1440 == 0 -> (cur / 1440).toString()
-                cur % 60 == 0 -> (cur / 60).toString()
-                else -> cur.toString()
-            })
-        }
-        val group = android.widget.RadioGroup(this).apply {
-            orientation = android.widget.RadioGroup.HORIZONTAL
-            setPadding(0, (12 * dm).toInt(), 0, 0)
-        }
-        val rMin = android.widget.RadioButton(this).apply { text = "分钟"; id = View.generateViewId() }
-        val rHour = android.widget.RadioButton(this).apply { text = "小时"; id = View.generateViewId() }
-        val rDay = android.widget.RadioButton(this).apply { text = "天"; id = View.generateViewId() }
-        group.addView(rMin); group.addView(rHour); group.addView(rDay)
-        when {
-            cur > 0 && cur % 1440 == 0 -> group.check(rDay.id)
-            cur > 0 && cur % 60 == 0 -> group.check(rHour.id)
-            else -> group.check(rMin.id)
+        val d = cur / 1440
+        val h = (cur % 1440) / 60
+        val m = cur % 60
+        fun field(hintTxt: String, value: Int): android.widget.EditText =
+            android.widget.EditText(this).apply {
+                inputType = android.text.InputType.TYPE_CLASS_NUMBER
+                hint = hintTxt
+                if (value > 0) setText(value.toString())
+                layoutParams = LinearLayout.LayoutParams(0, -2, 1f)
+                    .apply { marginEnd = (6 * dm).toInt() }
+            }
+        val fDay = field("天", d)
+        val fHour = field("小时", h)
+        val fMin = field("分钟", m)
+        val row = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            addView(fDay); addView(fHour); addView(fMin)
         }
         val layout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(pad, (8 * dm).toInt(), pad, 0)
-            addView(num, LinearLayout.LayoutParams(-1, -2))
-            addView(group)
+            addView(row, LinearLayout.LayoutParams(-1, -2))
+            addView(TextView(this).apply {
+                text = "三项可组合填写，例如 1天2小时30分；只填一项也行"
+                setTextColor(0xFF6A6A72.toInt())
+                textSize = 12f
+                setPadding(0, (10 * dm).toInt(), 0, 0)
+            })
         }
         AlertDialog.Builder(this)
             .setTitle("实例 #${e.appWidgetId} · 自动刷新")
             .setView(layout)
             .setPositiveButton("确定") { _, _ ->
-                val n = num.text.toString().toLongOrNull() ?: 0L
-                val mult = when (group.checkedRadioButtonId) { rHour.id -> 60L; rDay.id -> 1440L; else -> 1L }
-                val minutes = (n * mult).coerceIn(0L, 525600L).toInt()
+                val dd = fDay.text.toString().toLongOrNull() ?: 0L
+                val hh = fHour.text.toString().toLongOrNull() ?: 0L
+                val mm = fMin.text.toString().toLongOrNull() ?: 0L
+                val minutes = (dd * 1440 + hh * 60 + mm).coerceIn(0L, 525600L).toInt()
                 prefs.setInstanceInterval(e.appWidgetId, minutes)
                 prefs.setInstLastRender(e.appWidgetId, 0L)
                 toast(if (minutes <= 0) "已关闭自动刷新" else "实例 #${e.appWidgetId}：每 ${fmtInterval(minutes)} 刷新")
