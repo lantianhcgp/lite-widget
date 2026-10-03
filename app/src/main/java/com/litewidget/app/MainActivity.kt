@@ -450,15 +450,20 @@ class MainActivity : Activity() {
     private fun intervalText(m: Int) = if (m <= 0) "关" else "${m}分"
 
     private fun showLogs() {
+        val f = AppLog.todayFile()
+        val content = AppLog.tail(20000)
+        val count = content.count { it == '\n' }
         val tv = TextView(this).apply {
             setPadding(32, 24, 32, 24)
             textSize = 11f
             typeface = android.graphics.Typeface.MONOSPACE
             setTextIsSelectable(true)
-            text = AppLog.tail(300)
+            text = "文件: ${f?.name ?: "-"} · $count 行\n" +
+                "目录: ${f?.parent ?: "-"}（一天一张，次日自动删昨天）\n" +
+                "————————————————\n" + content
         }
         AlertDialog.Builder(this)
-            .setTitle("日志（最近 300 行）")
+            .setTitle("今日日志（完整）")
             .setView(tv)
             .setPositiveButton("关闭", null)
             .setNeutralButton("清空") { _, _ ->
@@ -594,5 +599,5 @@ class MainActivity : Activity() {
 
 /** 版本号占位（避免依赖 BuildConfig 生成时机） */
 object BuildConfigCompat {
-    const val VERSION = "0.3.2"
+    const val VERSION = "0.3.3"
 }

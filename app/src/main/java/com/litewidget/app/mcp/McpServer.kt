@@ -293,8 +293,8 @@ class McpServer(private val app: App) {
         a.put(tool("widget_reload", "把组件应用到桌面小组件", obj {
             prop("id", "string", "组件 id，缺省用当前激活组件")
         }))
-        a.put(tool("log_tail", "读取 App 日志（改完看渲染报错）", obj {
-            prop("lines", "integer", "行数，默认 200")
+        a.put(tool("log_tail", "读取当天 App 日志（一天一个文件，次日自动删昨天；改完看渲染报错）", obj {
+            prop("lines", "integer", "行数，默认 500，上限 20000（当天全量）")
             prop("filter", "string", "关键字过滤")
         }))
         a.put(tool("log_clear", "清空日志", obj {}))
@@ -412,7 +412,7 @@ class McpServer(private val app: App) {
                 "已应用 $id 到桌面（home widget 已更新）" to false
             }
             "log_tail" -> {
-                val lines = args.optInt("lines", 200)
+                val lines = args.optInt("lines", 500)
                 val filter = if (args.has("filter")) args.optString("filter") else null
                 val t = AppLog.tail(lines, filter)
                 if (t.isEmpty()) "（日志为空）" to false else t to false
@@ -498,7 +498,7 @@ class McpServer(private val app: App) {
     }
 
     companion object {
-        const val VERSION = "0.3.2"
+        const val VERSION = "0.3.3"
         private const val MAX_BODY = 2 * 1024 * 1024
         private val ALLOWED = setOf("widgets", "logs", "data", "exports")
         private val WRITABLE = setOf("widgets", "logs")
