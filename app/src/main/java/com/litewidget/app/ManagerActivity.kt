@@ -174,16 +174,17 @@ class ManagerActivity : Activity() {
             orientation = LinearLayout.HORIZONTAL
             addView(fDay); addView(fHour); addView(fMin)
         }
+        val hintView = TextView(this).apply {
+            text = "三项可组合填写，例如 1天2小时30分；只填一项也行"
+            setTextColor(0xFF6A6A72.toInt())
+            textSize = 12f
+            setPadding(0, (10 * dm).toInt(), 0, 0)
+        }
         val layout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(pad, (8 * dm).toInt(), pad, 0)
             addView(row, LinearLayout.LayoutParams(-1, -2))
-            addView(TextView(this).apply {
-                text = "三项可组合填写，例如 1天2小时30分；只填一项也行"
-                setTextColor(0xFF6A6A72.toInt())
-                textSize = 12f
-                setPadding(0, (10 * dm).toInt(), 0, 0)
-            })
+            addView(hintView)
         }
         AlertDialog.Builder(this)
             .setTitle("实例 #${e.appWidgetId} · 自动刷新")
