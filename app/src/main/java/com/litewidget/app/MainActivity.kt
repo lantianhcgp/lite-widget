@@ -399,8 +399,9 @@ class MainActivity : Activity() {
                     val c = com.litewidget.app.core.render.Renderer.CANONICAL[s]
                     val wDp = c?.first ?: 360f
                     val hDp = c?.second ?: 180f
-                    val avail = if (scroll.width > 0)
-                        scroll.width - box.paddingLeft - box.paddingRight else fallbackW
+                    val avail = (if (scroll.width > 0)
+                        (scroll.width - box.paddingLeft - box.paddingRight).toFloat()
+                        else fallbackW)
                     val pw = avail * (wDp / 360f)
                     val ph = pw * (hDp / wDp)
                     val label = TextView(this).apply {

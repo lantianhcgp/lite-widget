@@ -160,7 +160,7 @@ class ManagerActivity : Activity() {
             })
         }
         val group = android.widget.RadioGroup(this).apply {
-            orientation = RadioGroup.HORIZONTAL
+            orientation = android.widget.RadioGroup.HORIZONTAL
             setPadding(0, (12 * dm).toInt(), 0, 0)
         }
         val rMin = android.widget.RadioButton(this).apply { text = "分钟"; id = View.generateViewId() }
