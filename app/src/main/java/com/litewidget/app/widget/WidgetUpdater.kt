@@ -4,19 +4,12 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.RectF
-import android.graphics.Typeface
 import android.widget.RemoteViews
 import com.litewidget.app.App
 import com.litewidget.app.R
 import com.litewidget.app.core.AppLog
 import com.litewidget.app.core.render.Renderer
 import org.json.JSONObject
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import kotlin.concurrent.thread
 import kotlin.math.max
 import kotlin.math.min
@@ -180,9 +173,8 @@ object WidgetUpdater {
             try {
                 val bmp = Renderer(App.instance.assetLoader.forWidget(design))
                     .render(spec, values, wPx, hPx, density)
-                val stamped = stamp(bmp, System.currentTimeMillis(), density)
                 val rv = RemoteViews(ctx.packageName, R.layout.widget_host)
-                rv.setImageViewBitmap(R.id.widget_image, stamped)
+                rv.setImageViewBitmap(R.id.widget_image, bmp)
                 mgr.updateAppWidget(appWidgetId, rv)
                 pushed++
             } catch (t: Throwable) {
@@ -192,42 +184,6 @@ object WidgetUpdater {
         AppLog.i("$TAG pushed $id -> $pushed widget(s)" + if (only != null) " due=$only" else "")
     }
 
-    /**
-     * 组件右下角盖「上次刷新时间」角标：半透明圆角底衬 + 浅色小字，深浅底都可读。
-     * 只在真正推桌面的路径调（列表预览/画廊不打戳）。
-     */
-    private fun stamp(bmp: Bitmap, ts: Long, density: Float): Bitmap {
-        val out = if (bmp.isMutable) bmp else bmp.copy(Bitmap.Config.ARGB_8888, true)
-        val c = Canvas(out)
-        val textSize = 9.5f * density
-        val padH = 5f * density
-        val padV = 3f * density
-        val p = Paint(Paint.ANTI_ALIAS_FLAG)
-        p.typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
-        p.textSize = textSize
-        val text = formatStamp(ts)
-        val w = p.measureText(text) + padH * 2
-        val h = textSize + padV * 2
-        val right = out.width - 4f * density
-        val bottom = out.height - 4f * density
-        p.color = 0xE6000000.toInt() // 黑 90% 底衬
-        c.drawRoundRect(RectF(right - w, bottom - h, right, bottom), 4f * density, 4f * density, p)
-        p.color = 0xCCFFFFFF.toInt() // 白 80% 文字
-        c.drawText(text, right - padH - p.measureText(text), bottom - padV - p.descent(), p)
-        return out
-    }
-
-    /** 今天只显 HH:mm，跨天补 MM-dd 前缀 */
-    private fun formatStamp(ts: Long): String {
-        val now = System.currentTimeMillis()
-        val pat = if (sameDay(ts, now)) "刷新 HH:mm" else "刷新 MM-dd HH:mm"
-        return SimpleDateFormat(pat, Locale.US).format(Date(ts))
-    }
-
-    private fun sameDay(a: Long, b: Long): Boolean {
-        val f = SimpleDateFormat("yyyyMMdd", Locale.US)
-        return f.format(Date(a)) == f.format(Date(b))
-    }
 
     private fun sizeOf(ctx: Context, mgr: AppWidgetManager, appWidgetId: Int): Pair<Int, Int> {
         val opts = mgr.getAppWidgetOptions(appWidgetId)

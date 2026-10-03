@@ -714,7 +714,8 @@
         "properties": {
           "field": {
             "type": "string",
-            "pattern": "^(vars|flow|package|device|account)\\.[a-zA-Z0-9_.]+$"
+            "pattern": "^(vars|flow|package|device|account|sys)\\.[a-zA-Z0-9_.]+$",
+            "$comment": "sys.* = App 内置状态量（免授权，随时可用）：sys.refreshTime 刷新时刻ms(配format.date)、sys.timezone 时区id、sys.uptimeMin 开机分钟、sys.battery 电量0-100、sys.charging 充电中、sys.network wifi/mobile/vpn/none/other、sys.memFreeMB/sys.memTotalMB 内存MB、sys.storageFreeMB 磁盘可用MB、sys.nightMode 深色模式、sys.sdk API级别、sys.locale 语言区域。其余前缀来自数据源/组件vars。"
           },
           "format": {
             "$ref": "#/$defs/format"

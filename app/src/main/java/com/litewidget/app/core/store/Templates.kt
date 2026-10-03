@@ -92,6 +92,22 @@ object Templates {
      {
       "type": "text",
       "bind": {
+       "field": "sys.refreshTime",
+       "format": {
+        "prefix": "刷新 ",
+        "date": "HH:mm"
+       }
+      },
+      "size": 11,
+      "color": "#6A6A72"
+     },
+     {
+      "type": "spacer",
+      "size": 8
+     },
+     {
+      "type": "text",
+      "bind": {
        "field": "package.expire"
       },
       "size": 11,
@@ -1543,6 +1559,53 @@ object Templates {
         "color": "#730D141C",
         "lineHeight": 1.2,
         "text": "到期",
+        "align": "center",
+        "maxLines": 1
+       }
+      ]
+     },
+     {
+      "type": "frame",
+      "direction": "vertical",
+      "gap": 2,
+      "width": "fill",
+      "align": "center",
+      "padding": [
+       7,
+       10,
+       7,
+       10
+      ],
+      "style": {
+       "background": {
+        "type": "solid",
+        "color": "#140D141C"
+       },
+       "radius": 16
+      },
+      "children": [
+       {
+        "type": "text",
+        "size": 14,
+        "weight": 650,
+        "color": "#0D141C",
+        "lineHeight": 1.2,
+        "bind": {
+         "field": "sys.refreshTime",
+         "format": {
+          "date": "HH:mm"
+         }
+        },
+        "align": "center",
+        "maxLines": 1
+       },
+       {
+        "type": "text",
+        "size": 9,
+        "weight": 500,
+        "color": "#730D141C",
+        "lineHeight": 1.2,
+        "text": "刷新",
         "align": "center",
         "maxLines": 1
        }

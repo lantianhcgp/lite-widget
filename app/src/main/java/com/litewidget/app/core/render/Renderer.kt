@@ -491,6 +491,9 @@ class Renderer(private val assets: WidgetAssets) {
     // ------------------------------------------------------------------ 取值 / 格式化
 
     fun valueOf(field: String): Any? {
+        if (field.startsWith("sys.")) {
+            return com.litewidget.app.core.data.BuiltinValues.resolve(field)
+        }
         if (field.startsWith("vars.")) {
             val v = ctx.vars?.opt(field.substring(5))
             return if (v === JSONObject.NULL) null else v
