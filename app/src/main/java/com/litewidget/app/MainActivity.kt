@@ -355,8 +355,16 @@ class MainActivity : Activity() {
         val dm = resources.displayMetrics.density
         val box = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding((16 * dm).toInt(), 0, (16 * dm).toInt(), 0)
+            setPadding((16 * dm).toInt(), (10 * dm).toInt(), (16 * dm).toInt(), (6 * dm).toInt())
         }
+        // 暗底自定义头部（透明位图组件在暗底上才看得清，不依赖系统 title 配色）
+        box.addView(TextView(this).apply {
+            text = "$name · 全尺寸预览"
+            setTextColor(0xFFFFFFFF.toInt())
+            textSize = 16f
+            typeface = android.graphics.Typeface.DEFAULT_BOLD
+            setPadding((4 * dm).toInt(), (4 * dm).toInt(), (4 * dm).toInt(), (12 * dm).toInt())
+        })
         val loading = TextView(this).apply {
             text = "正在渲染各尺寸预览…"
             setTextColor(0xFF9E9EA6.toInt())
@@ -365,14 +373,21 @@ class MainActivity : Activity() {
         box.addView(loading)
         val scroll = ScrollView(this).apply { addView(box) }
         val dlg = AlertDialog.Builder(this)
-            .setTitle("$name · 全尺寸预览")
             .setView(scroll)
             .setPositiveButton("关闭", null)
             .create()
         dlg.setOnDismissListener { box.removeAllViews() }
         dlg.show()
+        // 暗色弹窗底 + 按钮文字反白
+        dlg.window?.setBackgroundDrawable(
+            android.graphics.drawable.ColorDrawable(0xFF17171C.toInt()))
+        for (bid in intArrayOf(android.R.id.button1, android.R.id.button2, android.R.id.button3)) {
+            try { dlg.findViewById<Button>(bid)?.setTextColor(0xFFFFFFFF.toInt()) } catch (_: Throwable) {}
+        }
 
         val sizes = supportedSizes(id)
+        // 预览宽度 = 该尺寸规范宽 / 360dp × 内容宽 → 桌面上的真实相对大小（2x2 只有 4x2 的一半宽）
+        val contentW = resources.displayMetrics.widthPixels - 32 * dm
         ui.execute {
             var first = true
             for (s in sizes) {
@@ -384,21 +399,25 @@ class MainActivity : Activity() {
                 }
                 runOnUiThread {
                     if (first) { box.removeView(loading); first = false }
+                    val c = com.litewidget.app.core.render.Renderer.CANONICAL[s]
+                    val wDp = c?.first ?: 360f
+                    val hDp = c?.second ?: 180f
+                    val pw = contentW * (wDp / 360f)
+                    val ph = pw * (hDp / wDp)
                     val label = TextView(this).apply {
-                        text = SIZE_LABEL[s] ?: s
-                        setTextColor(0xFFFFFFFF.toInt())
-                        textSize = 13f
-                        setPadding(0, (6 * dm).toInt(), 0, 0)
+                        text = (SIZE_LABEL[s] ?: s) + "  " + wDp.toInt() + "×" + hDp.toInt() + "dp"
+                        setTextColor(0xFF9E9EA6.toInt())
+                        textSize = 12f
+                        setPadding((4 * dm).toInt(), (8 * dm).toInt(), 0, (4 * dm).toInt())
                     }
                     val img = ImageView(this).apply {
-                        adjustViewBounds = true
-                        scaleType = ImageView.ScaleType.FIT_CENTER
-                        setPadding(0, (4 * dm).toInt(), 0, (10 * dm).toInt())
-                        if (bmp != null) setImageBitmap(bmp)
-                        else {
-                            setBackgroundColor(0xFF14141A.toInt())
-                            setPadding((12 * dm).toInt(), (40 * dm).toInt(), (12 * dm).toInt(), (40 * dm).toInt())
+                        scaleType = ImageView.ScaleType.FIT_XY
+                        layoutParams = LinearLayout.LayoutParams(pw.toInt(), ph.toInt()).apply {
+                            gravity = android.view.Gravity.CENTER_HORIZONTAL
+                            bottomMargin = (10 * dm).toInt()
                         }
+                        if (bmp != null) setImageBitmap(bmp)
+                        else setBackgroundColor(0xFF2A2A32.toInt())
                     }
                     box.addView(label)
                     box.addView(img)
@@ -573,5 +592,5 @@ class MainActivity : Activity() {
 
 /** 版本号占位（避免依赖 BuildConfig 生成时机） */
 object BuildConfigCompat {
-    const val VERSION = "0.2.2"
+    const val VERSION = "0.3.0"
 }

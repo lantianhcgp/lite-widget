@@ -33,6 +33,7 @@ class App : Application() {
             com.litewidget.app.core.Trace.mark(this, "3 AppLog.init OK")
             prefs = Prefs(this)
             store = WidgetStore(filesDir)
+            store.ensureBuiltins()
             com.litewidget.app.core.Trace.mark(this, "4 WidgetStore OK")
             assetLoader = AssetLoader(filesDir)
             data = DataRepo(this)

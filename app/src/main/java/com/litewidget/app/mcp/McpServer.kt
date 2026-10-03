@@ -498,7 +498,7 @@ class McpServer(private val app: App) {
     }
 
     companion object {
-        const val VERSION = "0.2.2"
+        const val VERSION = "0.3.0"
         private const val MAX_BODY = 2 * 1024 * 1024
         private val ALLOWED = setOf("widgets", "logs", "data", "exports")
         private val WRITABLE = setOf("widgets", "logs")

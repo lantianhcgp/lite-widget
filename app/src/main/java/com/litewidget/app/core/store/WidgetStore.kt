@@ -141,6 +141,19 @@ class WidgetStore(filesDir: File) {
         return true
     }
 
+    /** 内置模板播种：不存在才写，绝不覆盖用户已有组件（幂等） */
+    fun ensureBuiltins() {
+        try {
+            if (!exists("lightwash")) {
+                create("lightwash", "液态玻璃")
+                writeText("lightwash", "widget.json", Templates.lightGlass())
+                AppLog.i("builtin template seeded: lightwash")
+            }
+        } catch (t: Throwable) {
+            AppLog.e("ensureBuiltins fail", t)
+        }
+    }
+
     // ---------------- 导入 / 导出 ----------------
 
     /** 导入 .lwgt，返回组件 id；失败抛异常带中文原因 */

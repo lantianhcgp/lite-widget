@@ -1191,6 +1191,1405 @@ object Templates {
 }
 """.trimIndent()
 
+    /** 内置模板：液态玻璃（亮色磨砂玻璃，App 自带默认组件） */
+    fun lightGlass(): String = """
+{
+ "version": 1,
+ "canvas": {
+  "width": 360,
+  "height": 180,
+  "fit": "auto"
+ },
+ "data": {
+  "source": "pddwifi",
+  "vars": {
+   "baseUrl": {
+    "label": "后台地址",
+    "type": "url",
+    "required": true,
+    "hint": "随身 WiFi 管理后台，如 http://pddwifi.gzkpiot.com"
+   },
+   "devNo": {
+    "label": "充值号",
+    "type": "string",
+    "required": true,
+    "secret": true,
+    "hint": "SIM 卡对应的充值号"
+   }
+  }
+ },
+ "root": {
+  "type": "frame",
+  "direction": "vertical",
+  "justify": "space-between",
+  "align": "start",
+  "padding": [
+   18,
+   22,
+   16,
+   22
+  ],
+  "width": "fill",
+  "height": "fill",
+  "style": {
+   "radius": 32,
+   "background": {
+    "type": "frost",
+    "blur": 20,
+    "opacity": 0.95,
+    "tint": "#C7FFFFFF"
+   },
+   "rim": {
+    "top": "#FFFFFF",
+    "bottom": "#B3FFFFFF",
+    "sides": "#80FFFFFF",
+    "width": 1.2
+   },
+   "innerGlow": {
+    "color": "#FFFFFF",
+    "width": 44,
+    "top": true,
+    "bottom": true
+   }
+  },
+  "children": [
+   {
+    "type": "frame",
+    "direction": "horizontal",
+    "justify": "space-between",
+    "align": "center",
+    "width": "fill",
+    "children": [
+     {
+      "type": "frame",
+      "direction": "horizontal",
+      "align": "center",
+      "justify": "center",
+      "padding": [
+       5,
+       11,
+       5,
+       11
+      ],
+      "style": {
+       "background": {
+        "type": "solid",
+        "color": "#140D141C"
+       },
+       "radius": 99
+      },
+      "children": [
+       {
+        "type": "text",
+        "size": 11,
+        "weight": 650,
+        "color": "#0D141C",
+        "lineHeight": 1.25,
+        "text": "随身 WiFi",
+        "align": "center",
+        "maxLines": 1
+       }
+      ]
+     },
+     {
+      "type": "frame",
+      "direction": "horizontal",
+      "align": "center",
+      "justify": "center",
+      "padding": [
+       5,
+       11,
+       5,
+       11
+      ],
+      "style": {
+       "background": {
+        "type": "solid",
+        "color": "#140D141C"
+       },
+       "radius": 99
+      },
+      "children": [
+       {
+        "type": "text",
+        "size": 11,
+        "weight": 600,
+        "color": "#B30D141C",
+        "lineHeight": 1.25,
+        "bind": {
+         "field": "device.ssid"
+        },
+        "align": "center",
+        "maxLines": 1
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "type": "frame",
+    "direction": "horizontal",
+    "justify": "space-between",
+    "align": "end",
+    "width": "fill",
+    "children": [
+     {
+      "type": "text",
+      "size": 40,
+      "weight": 750,
+      "color": "#0D141C",
+      "lineHeight": 1.05,
+      "bind": {
+       "field": "flow.used",
+       "format": {
+        "unit": "auto",
+        "decimals": 1
+       }
+      }
+     },
+     {
+      "type": "frame",
+      "direction": "vertical",
+      "align": "end",
+      "gap": 3,
+      "children": [
+       {
+        "type": "text",
+        "size": 10,
+        "weight": 500,
+        "color": "#730D141C",
+        "lineHeight": 1.25,
+        "text": "已用占比"
+       },
+       {
+        "type": "text",
+        "size": 14,
+        "weight": 650,
+        "color": "#0D141C",
+        "lineHeight": 1.25,
+        "bind": {
+         "field": "flow.percent",
+         "format": {
+          "decimals": 2,
+          "suffix": "%"
+         }
+        }
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "type": "progress",
+    "bind": {
+     "field": "flow.percent"
+    },
+    "min": 0,
+    "max": 100,
+    "thickness": 7,
+    "roundCap": true,
+    "width": "fill",
+    "track": {
+     "type": "solid",
+     "color": "#1F0D141C"
+    },
+    "bar": {
+     "type": "linear",
+     "colors": [
+      "#45A7FA",
+      "#0A84FF",
+      "#0057E7"
+     ],
+     "angle": 0
+    }
+   },
+   {
+    "type": "frame",
+    "direction": "horizontal",
+    "justify": "space-between",
+    "width": "fill",
+    "children": [
+     {
+      "type": "frame",
+      "direction": "vertical",
+      "gap": 2,
+      "width": "fill",
+      "align": "center",
+      "padding": [
+       7,
+       10,
+       7,
+       10
+      ],
+      "style": {
+       "background": {
+        "type": "solid",
+        "color": "#140D141C"
+       },
+       "radius": 16
+      },
+      "children": [
+       {
+        "type": "text",
+        "size": 14,
+        "weight": 650,
+        "color": "#0D141C",
+        "lineHeight": 1.2,
+        "bind": {
+         "field": "device.battery",
+         "format": {
+          "suffix": "%",
+          "decimals": 0
+         }
+        },
+        "align": "center",
+        "maxLines": 1
+       },
+       {
+        "type": "text",
+        "size": 9,
+        "weight": 500,
+        "color": "#730D141C",
+        "lineHeight": 1.2,
+        "text": "电量",
+        "align": "center",
+        "maxLines": 1
+       }
+      ]
+     },
+     {
+      "type": "frame",
+      "direction": "vertical",
+      "gap": 2,
+      "width": "fill",
+      "align": "center",
+      "padding": [
+       7,
+       10,
+       7,
+       10
+      ],
+      "style": {
+       "background": {
+        "type": "solid",
+        "color": "#140D141C"
+       },
+       "radius": 16
+      },
+      "children": [
+       {
+        "type": "text",
+        "size": 14,
+        "weight": 650,
+        "color": "#0D141C",
+        "lineHeight": 1.2,
+        "bind": {
+         "field": "device.running"
+        },
+        "align": "center",
+        "maxLines": 1
+       },
+       {
+        "type": "text",
+        "size": 9,
+        "weight": 500,
+        "color": "#730D141C",
+        "lineHeight": 1.2,
+        "text": "在线时长",
+        "align": "center",
+        "maxLines": 1
+       }
+      ]
+     },
+     {
+      "type": "frame",
+      "direction": "vertical",
+      "gap": 2,
+      "width": "fill",
+      "align": "center",
+      "padding": [
+       7,
+       10,
+       7,
+       10
+      ],
+      "style": {
+       "background": {
+        "type": "solid",
+        "color": "#140D141C"
+       },
+       "radius": 16
+      },
+      "children": [
+       {
+        "type": "text",
+        "size": 14,
+        "weight": 650,
+        "color": "#0D141C",
+        "lineHeight": 1.2,
+        "bind": {
+         "field": "package.expire",
+         "format": {
+          "date": "MM-DD"
+         }
+        },
+        "align": "center",
+        "maxLines": 1
+       },
+       {
+        "type": "text",
+        "size": 9,
+        "weight": 500,
+        "color": "#730D141C",
+        "lineHeight": 1.2,
+        "text": "到期",
+        "align": "center",
+        "maxLines": 1
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "variants": {
+  "4x1": {
+   "root": {
+    "type": "frame",
+    "direction": "horizontal",
+    "justify": "space-between",
+    "align": "center",
+    "padding": [
+     12,
+     18,
+     12,
+     18
+    ],
+    "width": "fill",
+    "height": "fill",
+    "style": {
+     "radius": 16,
+     "background": {
+      "type": "frost",
+      "blur": 20,
+      "opacity": 0.95,
+      "tint": "#C7FFFFFF"
+     },
+     "rim": {
+      "top": "#FFFFFF",
+      "bottom": "#B3FFFFFF",
+      "sides": "#80FFFFFF",
+      "width": 1.2
+     },
+     "innerGlow": {
+      "color": "#FFFFFF",
+      "width": 44,
+      "top": true,
+      "bottom": true
+     }
+    },
+    "children": [
+     {
+      "type": "frame",
+      "direction": "horizontal",
+      "align": "center",
+      "justify": "center",
+      "padding": [
+       5,
+       11,
+       5,
+       11
+      ],
+      "style": {
+       "background": {
+        "type": "solid",
+        "color": "#140D141C"
+       },
+       "radius": 99
+      },
+      "children": [
+       {
+        "type": "text",
+        "size": 11,
+        "weight": 650,
+        "color": "#0D141C",
+        "lineHeight": 1.25,
+        "text": "随身 WiFi",
+        "align": "center",
+        "maxLines": 1
+       }
+      ]
+     },
+     {
+      "type": "text",
+      "size": 24,
+      "weight": 750,
+      "color": "#0D141C",
+      "lineHeight": 1.05,
+      "bind": {
+       "field": "flow.used",
+       "format": {
+        "unit": "auto",
+        "decimals": 1
+       }
+      },
+      "align": "center",
+      "maxLines": 1
+     },
+     {
+      "type": "spacer"
+     },
+     {
+      "type": "text",
+      "size": 11,
+      "weight": 600,
+      "color": "#B30D141C",
+      "lineHeight": 1.25,
+      "bind": {
+       "field": "flow.remain",
+       "format": {
+        "unit": "auto",
+        "decimals": 1
+       }
+      },
+      "align": "center",
+      "maxLines": 1
+     },
+     {
+      "type": "progress",
+      "bind": {
+       "field": "flow.percent"
+      },
+      "min": 0,
+      "max": 100,
+      "thickness": 6,
+      "roundCap": true,
+      "width": 70,
+      "track": {
+       "type": "solid",
+       "color": "#1F0D141C"
+      },
+      "bar": {
+       "type": "linear",
+       "colors": [
+        "#45A7FA",
+        "#0A84FF",
+        "#0057E7"
+       ],
+       "angle": 0
+      }
+     }
+    ]
+   }
+  },
+  "2x2": {
+   "root": {
+    "type": "frame",
+    "direction": "vertical",
+    "justify": "space-between",
+    "align": "center",
+    "padding": [
+     16
+    ],
+    "width": "fill",
+    "height": "fill",
+    "style": {
+     "radius": 32,
+     "background": {
+      "type": "frost",
+      "blur": 20,
+      "opacity": 0.95,
+      "tint": "#C7FFFFFF"
+     },
+     "rim": {
+      "top": "#FFFFFF",
+      "bottom": "#B3FFFFFF",
+      "sides": "#80FFFFFF",
+      "width": 1.2
+     },
+     "innerGlow": {
+      "color": "#FFFFFF",
+      "width": 44,
+      "top": true,
+      "bottom": true
+     }
+    },
+    "children": [
+     {
+      "type": "frame",
+      "direction": "horizontal",
+      "align": "center",
+      "justify": "center",
+      "padding": [
+       5,
+       11,
+       5,
+       11
+      ],
+      "style": {
+       "background": {
+        "type": "solid",
+        "color": "#140D141C"
+       },
+       "radius": 99
+      },
+      "children": [
+       {
+        "type": "text",
+        "size": 11,
+        "weight": 650,
+        "color": "#0D141C",
+        "lineHeight": 1.25,
+        "text": "随身 WiFi",
+        "align": "center",
+        "maxLines": 1
+       }
+      ]
+     },
+     {
+      "type": "text",
+      "size": 30,
+      "weight": 750,
+      "color": "#0D141C",
+      "lineHeight": 1.05,
+      "bind": {
+       "field": "flow.used",
+       "format": {
+        "unit": "auto",
+        "decimals": 1
+       }
+      },
+      "align": "center",
+      "maxLines": 1
+     },
+     {
+      "type": "progress",
+      "bind": {
+       "field": "flow.percent"
+      },
+      "min": 0,
+      "max": 100,
+      "thickness": 6,
+      "roundCap": true,
+      "width": "fill",
+      "track": {
+       "type": "solid",
+       "color": "#1F0D141C"
+      },
+      "bar": {
+       "type": "linear",
+       "colors": [
+        "#45A7FA",
+        "#0A84FF",
+        "#0057E7"
+       ],
+       "angle": 0
+      }
+     },
+     {
+      "type": "frame",
+      "direction": "horizontal",
+      "justify": "space-between",
+      "width": "fill",
+      "children": [
+       {
+        "type": "frame",
+        "direction": "vertical",
+        "gap": 2,
+        "width": "fill",
+        "align": "center",
+        "padding": [
+         7,
+         10,
+         7,
+         10
+        ],
+        "style": {
+         "background": {
+          "type": "solid",
+          "color": "#140D141C"
+         },
+         "radius": 16
+        },
+        "children": [
+         {
+          "type": "text",
+          "size": 14,
+          "weight": 650,
+          "color": "#0D141C",
+          "lineHeight": 1.2,
+          "bind": {
+           "field": "device.battery",
+           "format": {
+            "suffix": "%",
+            "decimals": 0
+           }
+          },
+          "align": "center",
+          "maxLines": 1
+         },
+         {
+          "type": "text",
+          "size": 9,
+          "weight": 500,
+          "color": "#730D141C",
+          "lineHeight": 1.2,
+          "text": "电量",
+          "align": "center",
+          "maxLines": 1
+         }
+        ]
+       },
+       {
+        "type": "frame",
+        "direction": "vertical",
+        "gap": 2,
+        "width": "fill",
+        "align": "center",
+        "padding": [
+         7,
+         10,
+         7,
+         10
+        ],
+        "style": {
+         "background": {
+          "type": "solid",
+          "color": "#140D141C"
+         },
+         "radius": 16
+        },
+        "children": [
+         {
+          "type": "text",
+          "size": 14,
+          "weight": 650,
+          "color": "#0D141C",
+          "lineHeight": 1.2,
+          "bind": {
+           "field": "package.expire",
+           "format": {
+            "date": "MM-DD"
+           }
+          },
+          "align": "center",
+          "maxLines": 1
+         },
+         {
+          "type": "text",
+          "size": 9,
+          "weight": 500,
+          "color": "#730D141C",
+          "lineHeight": 1.2,
+          "text": "到期",
+          "align": "center",
+          "maxLines": 1
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "2x4": {
+   "root": {
+    "type": "frame",
+    "direction": "vertical",
+    "justify": "space-between",
+    "align": "start",
+    "padding": [
+     20,
+     14,
+     20,
+     14
+    ],
+    "width": "fill",
+    "height": "fill",
+    "style": {
+     "radius": 32,
+     "background": {
+      "type": "frost",
+      "blur": 20,
+      "opacity": 0.95,
+      "tint": "#C7FFFFFF"
+     },
+     "rim": {
+      "top": "#FFFFFF",
+      "bottom": "#B3FFFFFF",
+      "sides": "#80FFFFFF",
+      "width": 1.2
+     },
+     "innerGlow": {
+      "color": "#FFFFFF",
+      "width": 44,
+      "top": true,
+      "bottom": true
+     }
+    },
+    "children": [
+     {
+      "type": "frame",
+      "direction": "horizontal",
+      "align": "center",
+      "justify": "center",
+      "padding": [
+       5,
+       11,
+       5,
+       11
+      ],
+      "style": {
+       "background": {
+        "type": "solid",
+        "color": "#140D141C"
+       },
+       "radius": 99
+      },
+      "children": [
+       {
+        "type": "text",
+        "size": 11,
+        "weight": 650,
+        "color": "#0D141C",
+        "lineHeight": 1.25,
+        "text": "随身 WiFi",
+        "align": "center",
+        "maxLines": 1
+       }
+      ]
+     },
+     {
+      "type": "frame",
+      "direction": "vertical",
+      "gap": 8,
+      "width": "fill",
+      "children": [
+       {
+        "type": "text",
+        "size": 32,
+        "weight": 750,
+        "color": "#0D141C",
+        "lineHeight": 1.05,
+        "bind": {
+         "field": "flow.used",
+         "format": {
+          "unit": "auto",
+          "decimals": 1
+         }
+        }
+       },
+       {
+        "type": "progress",
+        "bind": {
+         "field": "flow.percent"
+        },
+        "min": 0,
+        "max": 100,
+        "thickness": 6,
+        "roundCap": true,
+        "width": "fill",
+        "track": {
+         "type": "solid",
+         "color": "#1F0D141C"
+        },
+        "bar": {
+         "type": "linear",
+         "colors": [
+          "#45A7FA",
+          "#0A84FF",
+          "#0057E7"
+         ],
+         "angle": 0
+        }
+       },
+       {
+        "type": "text",
+        "size": 11,
+        "weight": 600,
+        "color": "#B30D141C",
+        "lineHeight": 1.25,
+        "bind": {
+         "field": "flow.percent",
+         "format": {
+          "decimals": 2,
+          "suffix": "%"
+         }
+        }
+       }
+      ]
+     },
+     {
+      "type": "frame",
+      "direction": "vertical",
+      "gap": 6,
+      "width": "fill",
+      "children": [
+       {
+        "type": "frame",
+        "direction": "vertical",
+        "gap": 2,
+        "width": "fill",
+        "align": "center",
+        "padding": [
+         7,
+         10,
+         7,
+         10
+        ],
+        "style": {
+         "background": {
+          "type": "solid",
+          "color": "#140D141C"
+         },
+         "radius": 16
+        },
+        "children": [
+         {
+          "type": "text",
+          "size": 14,
+          "weight": 650,
+          "color": "#0D141C",
+          "lineHeight": 1.2,
+          "bind": {
+           "field": "device.battery",
+           "format": {
+            "suffix": "%",
+            "decimals": 0
+           }
+          },
+          "align": "center",
+          "maxLines": 1
+         },
+         {
+          "type": "text",
+          "size": 9,
+          "weight": 500,
+          "color": "#730D141C",
+          "lineHeight": 1.2,
+          "text": "电量",
+          "align": "center",
+          "maxLines": 1
+         }
+        ]
+       },
+       {
+        "type": "frame",
+        "direction": "vertical",
+        "gap": 2,
+        "width": "fill",
+        "align": "center",
+        "padding": [
+         7,
+         10,
+         7,
+         10
+        ],
+        "style": {
+         "background": {
+          "type": "solid",
+          "color": "#140D141C"
+         },
+         "radius": 16
+        },
+        "children": [
+         {
+          "type": "text",
+          "size": 14,
+          "weight": 650,
+          "color": "#0D141C",
+          "lineHeight": 1.2,
+          "bind": {
+           "field": "device.running"
+          },
+          "align": "center",
+          "maxLines": 1
+         },
+         {
+          "type": "text",
+          "size": 9,
+          "weight": 500,
+          "color": "#730D141C",
+          "lineHeight": 1.2,
+          "text": "在线时长",
+          "align": "center",
+          "maxLines": 1
+         }
+        ]
+       },
+       {
+        "type": "frame",
+        "direction": "vertical",
+        "gap": 2,
+        "width": "fill",
+        "align": "center",
+        "padding": [
+         7,
+         10,
+         7,
+         10
+        ],
+        "style": {
+         "background": {
+          "type": "solid",
+          "color": "#140D141C"
+         },
+         "radius": 16
+        },
+        "children": [
+         {
+          "type": "text",
+          "size": 14,
+          "weight": 650,
+          "color": "#0D141C",
+          "lineHeight": 1.2,
+          "bind": {
+           "field": "package.expire",
+           "format": {
+            "date": "MM-DD"
+           }
+          },
+          "align": "center",
+          "maxLines": 1
+         },
+         {
+          "type": "text",
+          "size": 9,
+          "weight": 500,
+          "color": "#730D141C",
+          "lineHeight": 1.2,
+          "text": "到期",
+          "align": "center",
+          "maxLines": 1
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "frame",
+      "direction": "horizontal",
+      "align": "center",
+      "justify": "center",
+      "padding": [
+       5,
+       11,
+       5,
+       11
+      ],
+      "style": {
+       "background": {
+        "type": "solid",
+        "color": "#140D141C"
+       },
+       "radius": 99
+      },
+      "children": [
+       {
+        "type": "text",
+        "size": 11,
+        "weight": 600,
+        "color": "#B30D141C",
+        "lineHeight": 1.25,
+        "bind": {
+         "field": "device.ssid"
+        },
+        "align": "center",
+        "maxLines": 1
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "4x4": {
+   "root": {
+    "type": "frame",
+    "direction": "vertical",
+    "justify": "space-between",
+    "align": "start",
+    "padding": [
+     22,
+     24,
+     22,
+     24
+    ],
+    "width": "fill",
+    "height": "fill",
+    "style": {
+     "radius": 32,
+     "background": {
+      "type": "frost",
+      "blur": 20,
+      "opacity": 0.95,
+      "tint": "#C7FFFFFF"
+     },
+     "rim": {
+      "top": "#FFFFFF",
+      "bottom": "#B3FFFFFF",
+      "sides": "#80FFFFFF",
+      "width": 1.2
+     },
+     "innerGlow": {
+      "color": "#FFFFFF",
+      "width": 44,
+      "top": true,
+      "bottom": true
+     }
+    },
+    "children": [
+     {
+      "type": "frame",
+      "direction": "horizontal",
+      "justify": "space-between",
+      "align": "center",
+      "width": "fill",
+      "children": [
+       {
+        "type": "frame",
+        "direction": "horizontal",
+        "align": "center",
+        "justify": "center",
+        "padding": [
+         5,
+         11,
+         5,
+         11
+        ],
+        "style": {
+         "background": {
+          "type": "solid",
+          "color": "#140D141C"
+         },
+         "radius": 99
+        },
+        "children": [
+         {
+          "type": "text",
+          "size": 11,
+          "weight": 650,
+          "color": "#0D141C",
+          "lineHeight": 1.25,
+          "text": "随身 WiFi",
+          "align": "center",
+          "maxLines": 1
+         }
+        ]
+       },
+       {
+        "type": "frame",
+        "direction": "horizontal",
+        "align": "center",
+        "justify": "center",
+        "padding": [
+         5,
+         11,
+         5,
+         11
+        ],
+        "style": {
+         "background": {
+          "type": "solid",
+          "color": "#140D141C"
+         },
+         "radius": 99
+        },
+        "children": [
+         {
+          "type": "text",
+          "size": 11,
+          "weight": 600,
+          "color": "#B30D141C",
+          "lineHeight": 1.25,
+          "bind": {
+           "field": "device.ssid"
+          },
+          "align": "center",
+          "maxLines": 1
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "frame",
+      "direction": "vertical",
+      "gap": 14,
+      "align": "center",
+      "width": "fill",
+      "children": [
+       {
+        "type": "text",
+        "size": 54,
+        "weight": 750,
+        "color": "#0D141C",
+        "lineHeight": 1.05,
+        "bind": {
+         "field": "flow.used",
+         "format": {
+          "unit": "auto",
+          "decimals": 1
+         }
+        }
+       },
+       {
+        "type": "progress",
+        "bind": {
+         "field": "flow.percent"
+        },
+        "min": 0,
+        "max": 100,
+        "thickness": 8,
+        "roundCap": true,
+        "width": "fill",
+        "track": {
+         "type": "solid",
+         "color": "#1F0D141C"
+        },
+        "bar": {
+         "type": "linear",
+         "colors": [
+          "#45A7FA",
+          "#0A84FF",
+          "#0057E7"
+         ],
+         "angle": 0
+        }
+       }
+      ]
+     },
+     {
+      "type": "frame",
+      "direction": "vertical",
+      "gap": 8,
+      "width": "fill",
+      "children": [
+       {
+        "type": "frame",
+        "direction": "horizontal",
+        "justify": "space-between",
+        "width": "fill",
+        "gap": 8,
+        "children": [
+         {
+          "type": "frame",
+          "direction": "vertical",
+          "gap": 2,
+          "width": "fill",
+          "align": "center",
+          "padding": [
+           7,
+           10,
+           7,
+           10
+          ],
+          "style": {
+           "background": {
+            "type": "solid",
+            "color": "#140D141C"
+           },
+           "radius": 16
+          },
+          "children": [
+           {
+            "type": "text",
+            "size": 14,
+            "weight": 650,
+            "color": "#0D141C",
+            "lineHeight": 1.2,
+            "bind": {
+             "field": "device.battery",
+             "format": {
+              "suffix": "%",
+              "decimals": 0
+             }
+            },
+            "align": "center",
+            "maxLines": 1
+           },
+           {
+            "type": "text",
+            "size": 9,
+            "weight": 500,
+            "color": "#730D141C",
+            "lineHeight": 1.2,
+            "text": "电量",
+            "align": "center",
+            "maxLines": 1
+           }
+          ]
+         },
+         {
+          "type": "frame",
+          "direction": "vertical",
+          "gap": 2,
+          "width": "fill",
+          "align": "center",
+          "padding": [
+           7,
+           10,
+           7,
+           10
+          ],
+          "style": {
+           "background": {
+            "type": "solid",
+            "color": "#140D141C"
+           },
+           "radius": 16
+          },
+          "children": [
+           {
+            "type": "text",
+            "size": 14,
+            "weight": 650,
+            "color": "#0D141C",
+            "lineHeight": 1.2,
+            "bind": {
+             "field": "package.expire",
+             "format": {
+              "date": "MM-DD"
+             }
+            },
+            "align": "center",
+            "maxLines": 1
+           },
+           {
+            "type": "text",
+            "size": 9,
+            "weight": 500,
+            "color": "#730D141C",
+            "lineHeight": 1.2,
+            "text": "到期",
+            "align": "center",
+            "maxLines": 1
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "frame",
+        "direction": "horizontal",
+        "justify": "space-between",
+        "width": "fill",
+        "gap": 8,
+        "children": [
+         {
+          "type": "frame",
+          "direction": "vertical",
+          "gap": 2,
+          "width": "fill",
+          "align": "center",
+          "padding": [
+           7,
+           10,
+           7,
+           10
+          ],
+          "style": {
+           "background": {
+            "type": "solid",
+            "color": "#140D141C"
+           },
+           "radius": 16
+          },
+          "children": [
+           {
+            "type": "text",
+            "size": 14,
+            "weight": 650,
+            "color": "#0D141C",
+            "lineHeight": 1.2,
+            "bind": {
+             "field": "device.running"
+            },
+            "align": "center",
+            "maxLines": 1
+           },
+           {
+            "type": "text",
+            "size": 9,
+            "weight": 500,
+            "color": "#730D141C",
+            "lineHeight": 1.2,
+            "text": "在线时长",
+            "align": "center",
+            "maxLines": 1
+           }
+          ]
+         },
+         {
+          "type": "frame",
+          "direction": "vertical",
+          "gap": 2,
+          "width": "fill",
+          "align": "center",
+          "padding": [
+           7,
+           10,
+           7,
+           10
+          ],
+          "style": {
+           "background": {
+            "type": "solid",
+            "color": "#140D141C"
+           },
+           "radius": 16
+          },
+          "children": [
+           {
+            "type": "text",
+            "size": 14,
+            "weight": 650,
+            "color": "#0D141C",
+            "lineHeight": 1.2,
+            "bind": {
+             "field": "package.spec",
+             "format": {
+              "unit": "auto",
+              "decimals": 0
+             }
+            },
+            "align": "center",
+            "maxLines": 1
+           },
+           {
+            "type": "text",
+            "size": 9,
+            "weight": 500,
+            "color": "#730D141C",
+            "lineHeight": 1.2,
+            "text": "套餐总量",
+            "align": "center",
+            "maxLines": 1
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "text",
+      "size": 11,
+      "weight": 500,
+      "color": "#730D141C",
+      "lineHeight": 1.25,
+      "bind": {
+       "field": "package.name"
+      },
+      "align": "center",
+      "maxLines": 1
+     }
+    ]
+   }
+  }
+ }
+}
+"""
+
     fun emptyCard(id: String, name: String): String = """
 {
   "version": 1,
