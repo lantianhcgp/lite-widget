@@ -37,6 +37,8 @@ class MainActivity : Activity() {
     private lateinit var serverStatus: TextView
     private lateinit var serverToken: TextView
     private lateinit var serverSwitch: Switch
+    private lateinit var frostSwitch: Switch
+    private lateinit var frostStatus: TextView
     private lateinit var sourceStatus: TextView
     private lateinit var listBox: LinearLayout
     private lateinit var emptyTip: TextView
@@ -51,41 +53,6 @@ class MainActivity : Activity() {
         }
     }
 
-    /** 壁纸磨砂可选授权：Android 11+ 需要「所有文件访问」，只提示一次，拒绝也能正常使用 */
-    private fun maybeAskWallpaperAccess() {
-        if (android.os.Build.VERSION.SDK_INT < 29) return
-        if (android.os.Environment.isExternalStorageManager()) {
-            AppLog.i("wallpaper access: all-files granted")
-            return
-        }
-        val sp = getSharedPreferences("wallpaper_gate", MODE_PRIVATE)
-        if (sp.getBoolean("asked", false)) return
-        sp.edit().putBoolean("asked", true).apply()
-        android.app.AlertDialog.Builder(this)
-            .setTitle("开启壁纸磨砂（可选）")
-            .setMessage(
-                "亮色玻璃的卡底可以取你的真实壁纸做模糊层，效果是真·磨砂玻璃。" +
-                "需要在系统设置里授予「所有文件访问权限」。不开启也能正常使用，只是卡底为纯光洗。"
-            )
-            .setPositiveButton("去开启") { _, _ ->
-                try {
-                    startActivity(android.content.Intent(
-                        android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
-                        android.net.Uri.parse("package:$packageName")
-                    ))
-                } catch (t: Throwable) {
-                    try {
-                        startActivity(android.content.Intent(
-                            android.provider.Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION))
-                    } catch (t2: Throwable) {
-                        AppLog.w("open storage settings failed: ${t2.message}")
-                    }
-                }
-            }
-            .setNegativeButton("暂不", null)
-            .show()
-    }
-
     private fun boot() {
         showCrashIfAny() // 最先弹，保证即使后面还有崩溃点也能拿到堆栈
         com.litewidget.app.core.Trace.mark(this, "8 showCrashIfAny done")
@@ -98,6 +65,8 @@ class MainActivity : Activity() {
         serverStatus = findViewById(R.id.server_status)
         serverToken = findViewById(R.id.server_token)
         serverSwitch = findViewById(R.id.server_switch)
+        frostSwitch = findViewById(R.id.frost_switch)
+        frostStatus = findViewById(R.id.frost_status)
         sourceStatus = findViewById(R.id.source_status)
         listBox = findViewById(R.id.widget_list)
         emptyTip = findViewById(R.id.empty_tip)
@@ -117,7 +86,6 @@ class MainActivity : Activity() {
             AppLog.i("MCP auto-restore (serverWanted=true)")
         }
 
-        maybeAskWallpaperAccess()
         serverSwitch.isChecked = McpService.isRunning()
         updateServerUi()
 
@@ -137,6 +105,31 @@ class MainActivity : Activity() {
             val cm = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             cm.setPrimaryClip(ClipData.newPlainText("mcp token", prefs.token))
             toast("令牌已复制")
+        }
+
+        frostSwitch.isChecked = prefs.frostWanted
+        updateFrostUi()
+        frostSwitch.setOnCheckedChangeListener { _, checked ->
+            prefs.frostWanted = checked
+            if (checked && android.os.Build.VERSION.SDK_INT >= 29 &&
+                !android.os.Environment.isExternalStorageManager()
+            ) {
+                toast("需要授予「所有文件访问权限」")
+                try {
+                    startActivity(android.content.Intent(
+                        android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
+                        android.net.Uri.parse("package:$packageName")
+                    ))
+                } catch (t: Throwable) {
+                    try {
+                        startActivity(android.content.Intent(
+                            android.provider.Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION))
+                    } catch (t2: Throwable) {
+                        AppLog.w("open all-files settings failed: ${t2.message}")
+                    }
+                }
+            }
+            updateFrostUi()
         }
 
         findViewById<Button>(R.id.btn_refresh).setOnClickListener { refreshData() }
@@ -540,11 +533,26 @@ class MainActivity : Activity() {
     private fun toast(msg: String) =
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
 
+    /** 磨砂开关状态行：开关意愿 × 权限状态 */
+    private fun updateFrostUi() {
+        if (!::frostSwitch.isInitialized) return
+        val on = App.instance.prefs.frostWanted
+        frostSwitch.isChecked = on
+        val granted = android.os.Build.VERSION.SDK_INT < 29 ||
+            android.os.Environment.isExternalStorageManager()
+        frostStatus.text = when {
+            !on -> "已关闭 · 卡底为纯光洗"
+            granted -> "已开启 · 壁纸模糊层生效中"
+            else -> "已开启 · 缺「所有文件访问权限」，切一下开关跳转设置授权"
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         try {
             if (::serverSwitch.isInitialized && ::listBox.isInitialized) {
                 updateServerUi()
+                updateFrostUi()
                 renderList()
             }
         } catch (t: Throwable) {
@@ -565,5 +573,5 @@ class MainActivity : Activity() {
 
 /** 版本号占位（避免依赖 BuildConfig 生成时机） */
 object BuildConfigCompat {
-    const val VERSION = "0.2.1"
+    const val VERSION = "0.2.2"
 }

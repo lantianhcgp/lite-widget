@@ -3,6 +3,7 @@
     <string name="app_name">Lite Widget</string>
     <string name="widget_desc">轻量自定义桌面小组件</string>
 
+    <string name="label_frost">壁纸磨砂</string>
     <string name="label_server">MCP 服务</string>
     <string name="label_port">端口</string>
     <string name="label_token">访问令牌</string>

@@ -41,6 +41,11 @@ class Prefs(ctx: Context) {
         get() = sp.getBoolean("server_wanted", false)
         set(v) = sp.edit().putBoolean("server_wanted", v).apply()
 
+    /** 壁纸磨砂开关：关=卡底纯光洗；开=取系统壁纸做模糊层（需「所有文件访问权限」） */
+    var frostWanted: Boolean
+        get() = sp.getBoolean("frost_wanted", true)
+        set(v) = sp.edit().putBoolean("frost_wanted", v).apply()
+
     /** 首次生成 32 位访问令牌 */
     fun ensureToken(): String {
         var t = token

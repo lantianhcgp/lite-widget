@@ -945,6 +945,7 @@ class Renderer(private val assets: WidgetAssets) {
      *  拿不到壁纸（权限/机型）时静默跳过，仅记一次日志。 */
     private fun drawFrost(c: Canvas, path: Path, rect: RectF, bg: JSONObject) {
         try {
+            if (!com.litewidget.app.App.instance.prefs.frostWanted) return
             val app = com.litewidget.app.App.instance
             val wall = try {
                 val wm = app.getSystemService(android.content.Context.WALLPAPER_SERVICE)
