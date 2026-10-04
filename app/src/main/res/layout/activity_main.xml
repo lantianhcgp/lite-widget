@@ -219,6 +219,18 @@
                 android:textStyle="bold" />
 
             <Button
+                android:id="@+id/btn_pin"
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_button_ghost"
+                android:paddingLeft="14dp"
+                android:paddingRight="14dp"
+                android:text="装到桌面"
+                android:textColor="@color/fg"
+                android:textSize="12sp" />
+
+            <Button
                 android:id="@+id/btn_add"
                 android:layout_width="wrap_content"
                 android:layout_height="34dp"

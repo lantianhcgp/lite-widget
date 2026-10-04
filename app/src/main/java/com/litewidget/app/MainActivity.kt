@@ -176,6 +176,8 @@ class MainActivity : Activity() {
 
         findViewById<Button>(R.id.btn_add).setOnClickListener { promptNewWidget() }
 
+        findViewById<Button>(R.id.btn_pin).setOnClickListener { promptPinToDesktop() }
+
         findViewById<Button>(R.id.btn_import).setOnClickListener {
             pendingImport = true
             val i = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
@@ -590,6 +592,86 @@ class MainActivity : Activity() {
 
     private fun toast(msg: String) =
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+
+    /**
+     * 实验（负一屏）：给 provider 加了 miuiWidget=true 后，桌面会把组件从「安卓小部件」
+     * 列表里剔除（BaseWidgetsVerticalAdapter 过滤 isMIUIWidget），所以选择器里找不到它。
+     * 这里改走 MIUI 桌面的导出广播 com.miui.home.launcher.action.INSTALL_WIDGET 直装，
+     * 该 receiver 是 exported + protectionLevel=normal 权限；没生效再退回系统 requestPinWidget。
+     */
+    private fun promptPinToDesktop() {
+        val labels = arrayOf(
+            "4x2 标准",
+            "2x2 方形",
+            "4x4 大方",
+            "2x4 竖长",
+            "4x1 横条（对照：预期弹「负一屏暂不支持该尺寸」）"
+        )
+        val classes = listOf(
+            com.litewidget.app.widget.WidgetProvider4x2::class.java,
+            com.litewidget.app.widget.WidgetProvider2x2::class.java,
+            com.litewidget.app.widget.WidgetProvider4x4::class.java,
+            com.litewidget.app.widget.WidgetProvider2x4::class.java,
+            com.litewidget.app.widget.WidgetProvider4x1::class.java
+        )
+        AlertDialog.Builder(this)
+            .setTitle("把哪个组件装到桌面")
+            .setItems(labels) { _, i -> pinToDesktop(classes[i], labels[i]) }
+            .setNegativeButton("取消", null)
+            .show()
+    }
+
+    private fun pinToDesktop(cls: Class<*>, label: String) {
+        val cn = android.content.ComponentName(this, cls)
+        val mgr = android.appwidget.AppWidgetManager.getInstance(this)
+        fun count(): Int = try {
+            (mgr.getAppWidgetIds(cn) ?: IntArray(0)).size
+        } catch (t: Throwable) {
+            AppLog.e("pin[$label]: count fail", t)
+            0
+        }
+        val before = count()
+        try {
+            sendBroadcast(Intent("com.miui.home.launcher.action.INSTALL_WIDGET").apply {
+                setPackage("com.miui.home")
+                putExtra("miui.intent.extra.provider_component_name", cn)
+            })
+            AppLog.i("pin[$label]: MIUI INSTALL_WIDGET broadcast sent, before=$before")
+        } catch (t: Throwable) {
+            AppLog.e("pin[$label]: broadcast fail", t)
+        }
+        toast("已请求安装 $label，1.5 秒后检查…")
+        serverHandler.postDelayed({
+            val now = count()
+            when {
+                now > before -> {
+                    AppLog.i("pin[$label]: ok $before -> $now")
+                    toast("$label 已在桌面（$before→$now），长按它拖向负一屏")
+                }
+                else -> {
+                    AppLog.i("pin[$label]: broadcast no effect (count=$now)，退回 requestPin")
+                    tryPin(cn, label)
+                }
+            }
+        }, 1500)
+    }
+
+    private fun tryPin(cn: android.content.ComponentName, label: String) {
+        try {
+            val mgr = android.appwidget.AppWidgetManager.getInstance(this)
+            if (mgr.isRequestPinAppWidgetSupported) {
+                mgr.requestPinWidget(cn, null)
+                AppLog.i("pin[$label]: requestPinWidget fired")
+                toast("广播没生效，已改用系统「固定到桌面」，确认弹窗即可")
+            } else {
+                AppLog.i("pin[$label]: pin not supported by launcher")
+                toast("$label：广播和系统固定都不支持，需要换路子")
+            }
+        } catch (t: Throwable) {
+            AppLog.e("pin[$label]: requestPin fail", t)
+            toast("固定失败：${t.message}")
+        }
+    }
 
     /** 磨砂开关状态行：开关意愿 × 权限状态 */
     private fun updateFrostUi() {
