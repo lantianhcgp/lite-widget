@@ -13,8 +13,8 @@ android {
         applicationId = "com.litewidget.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 21
-            versionName = "0.3.7"
+        versionCode = 22
+            versionName = "0.3.8-exp1"
     }
 
     signingConfigs {
