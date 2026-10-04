@@ -170,6 +170,11 @@ object WidgetUpdater {
                 continue
             }
             val (wPx, hPx) = sizeOf(ctx, mgr, appWidgetId)
+            // 记录宿主上报的实际尺寸（桌面 vs 负一屏 PA 上报不同，调比例时的证据）
+            AppLog.i(
+                "$TAG inst=$appWidgetId design=$design " +
+                    "${(wPx / density).toInt()}x${(hPx / density).toInt()}dp ($wPx x $hPx px)"
+            )
             try {
                 val bmp = Renderer(App.instance.assetLoader.forWidget(design))
                     .render(spec, values, wPx, hPx, density)

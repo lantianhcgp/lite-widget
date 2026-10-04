@@ -600,37 +600,60 @@ class MainActivity : Activity() {
      * 该 receiver 是 exported + protectionLevel=normal 权限；没生效再退回系统 requestPinWidget。
      */
     private fun promptPinToDesktop() {
-        val labels = arrayOf(
-            "4x2 标准",
-            "2x2 方形",
-            "4x4 大方",
-            "2x4 竖长",
-            "4x1 横条（对照：预期弹「负一屏暂不支持该尺寸」）"
-        )
-        val classes = listOf(
-            com.litewidget.app.widget.WidgetProvider4x2::class.java,
-            com.litewidget.app.widget.WidgetProvider2x2::class.java,
-            com.litewidget.app.widget.WidgetProvider4x4::class.java,
-            com.litewidget.app.widget.WidgetProvider2x4::class.java,
-            com.litewidget.app.widget.WidgetProvider4x1::class.java
-        )
+        val items = App.instance.store.list()
+        if (items.isEmpty()) {
+            toast("还没有组件模板，先导入 .lwgt 或用内置模板")
+            return
+        }
+        val labels = items.map { i ->
+            val sizes = supportedSizes(i.id).joinToString("/")
+            val act = if (i.id == App.instance.prefs.activeWidget) "（已应用）" else ""
+            "${i.name}$act　[$sizes]"
+        }.toTypedArray()
         AlertDialog.Builder(this)
-            .setTitle("把哪个组件装到桌面")
-            .setItems(labels) { _, i -> pinToDesktop(classes[i], labels[i]) }
+            .setTitle("装到桌面：选模板（${items.size} 个）")
+            .setItems(labels) { _, i ->
+                promptPinSize(items[i].id, items[i].name)
+            }
             .setNegativeButton("取消", null)
             .show()
     }
 
-    private fun pinToDesktop(cls: Class<*>, label: String) {
+    /** 第二步：选尺寸。标注每个尺寸能不能拖进负一屏（canDragToPa：spanX≠1 且 spanY∉{1,3}） */
+    private fun promptPinSize(templateId: String, templateName: String) {
+        val order = listOf("4x2", "2x2", "4x4", "2x4", "4x1")
+        val classes = mapOf(
+            "4x2" to com.litewidget.app.widget.WidgetProvider4x2::class.java,
+            "2x2" to com.litewidget.app.widget.WidgetProvider2x2::class.java,
+            "4x4" to com.litewidget.app.widget.WidgetProvider4x4::class.java,
+            "2x4" to com.litewidget.app.widget.WidgetProvider2x4::class.java,
+            "4x1" to com.litewidget.app.widget.WidgetProvider4x1::class.java
+        )
+        val supported = supportedSizes(templateId)
+        val labels = order.map { s ->
+            val pa = if (s == "4x1") "负一屏✗" else "负一屏✓"
+            val extra = if (s in supported) "" else "（无对应变体，用顶层布局）"
+            "${SIZE_LABEL[s] ?: s}　$pa$extra"
+        }.toTypedArray()
+        AlertDialog.Builder(this)
+            .setTitle("「$templateName」选尺寸")
+            .setItems(labels) { _, i ->
+                pinToDesktop(classes[order[i]]!!, labels[i], templateId)
+            }
+            .setNegativeButton("取消", null)
+            .show()
+    }
+
+    private fun pinToDesktop(cls: Class<*>, label: String, templateId: String?) {
         val cn = android.content.ComponentName(this, cls)
         val mgr = android.appwidget.AppWidgetManager.getInstance(this)
-        fun count(): Int = try {
-            (mgr.getAppWidgetIds(cn) ?: IntArray(0)).size
+        fun ids(): Set<Int> = try {
+            (mgr.getAppWidgetIds(cn) ?: IntArray(0)).toSet()
         } catch (t: Throwable) {
             AppLog.e("pin[$label]: count fail", t)
-            0
+            emptySet()
         }
-        val before = count()
+        val before = ids()
         try {
             sendBroadcast(Intent("com.miui.home.launcher.action.INSTALL_WIDGET").apply {
                 component = android.content.ComponentName(
@@ -639,21 +662,26 @@ class MainActivity : Activity() {
                 )
                 putExtra("miui.intent.extra.provider_component_name", cn)
             })
-            AppLog.i("pin[$label]: MIUI INSTALL_WIDGET broadcast sent, before=$before")
+            AppLog.i("pin[$label]: MIUI INSTALL_WIDGET broadcast sent, before=${before.size} tpl=$templateId")
         } catch (t: Throwable) {
             AppLog.e("pin[$label]: broadcast fail", t)
         }
         toast("已请求安装 $label，1.5 秒后检查…")
         serverHandler.postDelayed({
-            val now = count()
+            val fresh = ids() - before
             when {
-                now > before -> {
-                    AppLog.i("pin[$label]: ok $before -> $now")
-                    toast("$label 已在桌面（$before→$now），长按它拖向负一屏")
+                fresh.isNotEmpty() -> {
+                    // 新实例直接绑定到用户选的模板（否则回退到「当前激活」）
+                    if (templateId != null) {
+                        for (wid in fresh) App.instance.prefs.setBinding(wid, templateId)
+                        WidgetUpdater.pushAll(this, templateId, refreshData = false)
+                    }
+                    AppLog.i("pin[$label]: ok new=$fresh tpl=$templateId")
+                    toast("已装上 ${fresh.size} 个：$label + 模板绑定，长按它拖向负一屏")
                 }
                 else -> {
                     val opState = checkInstallShortcutOp()
-                    AppLog.i("pin[$label]: broadcast no effect (count=$now) op10017=$opState")
+                    AppLog.i("pin[$label]: broadcast no effect (before=${before.size}) op10017=$opState")
                     showPinFailureDialog(cn, label, opState)
                 }
             }
