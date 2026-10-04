@@ -660,9 +660,12 @@ class MainActivity : Activity() {
         try {
             val mgr = android.appwidget.AppWidgetManager.getInstance(this)
             if (mgr.isRequestPinAppWidgetSupported) {
-                mgr.requestPinWidget(cn, null)
-                AppLog.i("pin[$label]: requestPinWidget fired")
-                toast("广播没生效，已改用系统「固定到桌面」，确认弹窗即可")
+                val accepted = mgr.requestPinAppWidget(cn, null, null)
+                AppLog.i("pin[$label]: requestPinAppWidget accepted=$accepted")
+                toast(
+                    if (accepted) "广播没生效，已发起系统「固定到桌面」，确认弹窗即可"
+                    else "广播没生效，系统 pin 也被拒绝（accepted=false）"
+                )
             } else {
                 AppLog.i("pin[$label]: pin not supported by launcher")
                 toast("$label：广播和系统固定都不支持，需要换路子")
