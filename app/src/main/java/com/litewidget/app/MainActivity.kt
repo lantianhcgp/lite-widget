@@ -633,7 +633,10 @@ class MainActivity : Activity() {
         val before = count()
         try {
             sendBroadcast(Intent("com.miui.home.launcher.action.INSTALL_WIDGET").apply {
-                setPackage("com.miui.home")
+                component = android.content.ComponentName(
+                    "com.miui.home",
+                    "com.miui.home.launcher.InstallWidgetReceiver"
+                )
                 putExtra("miui.intent.extra.provider_component_name", cn)
             })
             AppLog.i("pin[$label]: MIUI INSTALL_WIDGET broadcast sent, before=$before")
@@ -649,11 +652,94 @@ class MainActivity : Activity() {
                     toast("$label 已在桌面（$before→$now），长按它拖向负一屏")
                 }
                 else -> {
-                    AppLog.i("pin[$label]: broadcast no effect (count=$now)，退回 requestPin")
-                    tryPin(cn, label)
+                    val opState = checkInstallShortcutOp()
+                    AppLog.i("pin[$label]: broadcast no effect (count=$now) op10017=$opState")
+                    showPinFailureDialog(cn, label, opState)
                 }
             }
         }, 1500)
+    }
+
+    /**
+     * 读自己的 AppOps 10017（MIUI OP_INSTALL_SHORTCUT）状态。
+     * 桌面的 InstallWidgetReceiver 用 `hasAddShortcutPermission()` = noteOpNoThrow(10017) 把关，
+     * 被拒时它只是 return，不弹任何提示——所以必须自己读出来告诉用户。
+     */
+    private fun checkInstallShortcutOp(): String {
+        return try {
+            val am = getSystemService(android.app.AppOpsManager::class.java)
+            val m = am.javaClass.getMethod(
+                "checkOpNoThrow",
+                Integer.TYPE,
+                Integer.TYPE,
+                String::class.java
+            )
+            when (val mode = m.invoke(am, 10017, android.os.Process.myUid(), packageName) as Int) {
+                0 -> "允许"
+                1 -> "被拒绝（就是它拦的）"
+                2 -> "被禁止（就是它拦的）"
+                else -> "默认/未设置(mode=$mode)"
+            }
+        } catch (t: Throwable) {
+            AppLog.e("checkOp10017 fail", t)
+            "读不到（${t.javaClass.simpleName}），请人工检查"
+        }
+    }
+
+    private fun showPinFailureDialog(cn: android.content.ComponentName, label: String, opState: String) {
+        val items = arrayOf(
+            "打开权限页：创建桌面快捷方式（当前：$opState）",
+            "打开小部件中心，手动找「安卓小部件」添加",
+            "再试一次系统固定（requestPinAppWidget）"
+        )
+        AlertDialog.Builder(this)
+            .setTitle("广播没生效：$label 桌面实例数未变")
+            .setItems(items) { _, which ->
+                when (which) {
+                    0 -> openAppPermissionPage()
+                    1 -> openWidgetCenter()
+                    2 -> tryPin(cn, label)
+                }
+            }
+            .setNegativeButton("取消", null)
+            .show()
+    }
+
+    private fun openAppPermissionPage() {
+        val candidates = listOf(
+            Intent("miui.intent.action.APP_PERM_EDITOR").apply {
+                setPackage("com.miui.securitycenter")
+                putExtra("extra_pkgname", packageName)
+                putExtra("android.intent.extra.PACKAGE_NAME", packageName)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            },
+            Intent(
+                android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                android.net.Uri.parse("package:$packageName")
+            ).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
+        )
+        for (i in candidates) {
+            try {
+                startActivity(i)
+                AppLog.i("openPerm: ok via ${i.action}")
+                return
+            } catch (t: Throwable) {
+                AppLog.e("openPerm fail ${i.action}", t)
+            }
+        }
+        toast("打不开权限页，请手动：设置→应用管理→Lite Widget→权限→创建桌面快捷方式")
+    }
+
+    /** 官方小部件中心的 BROWSABLE 深链（PA PickerHomeActivity 的 intent-filter：widget://picker） */
+    private fun openWidgetCenter() {
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse("widget://picker")))
+            AppLog.i("openPicker: widget://picker fired")
+            toast("小部件中心已打开 → 搜 lite → 安卓小部件")
+        } catch (t: Throwable) {
+            AppLog.e("openPicker fail", t)
+            toast("打不开小部件中心：${t.message}")
+        }
     }
 
     private fun tryPin(cn: android.content.ComponentName, label: String) {
