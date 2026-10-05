@@ -1,5 +1,8 @@
 name: build
 on: push
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -36,3 +39,23 @@ jobs:
           name: lite-widget-debug-apk
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
+
+      - name: publish release apk
+        if: github.ref == 'refs/heads/master'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VER=$(sed -n 's/.*versionName[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' app/build.gradle.kts | head -1)
+          if [ -z "$VER" ]; then echo "::error::versionName 未找到"; exit 1; fi
+          APK=$(ls app/build/outputs/apk/debug/*.apk | head -1)
+          if [ -z "$APK" ]; then echo "::error::APK 未找到"; exit 1; fi
+          ASSET="lite-widget-v${VER}.apk"
+          TAG="v${VER}"
+          cp "$APK" "$ASSET"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$ASSET" --clobber
+            echo "已覆盖上传 $ASSET -> release $TAG"
+          else
+            gh release create "$TAG" "$ASSET" --title "$TAG" --generate-notes
+            echo "已创建 release $TAG 并上传 $ASSET"
+          fi
