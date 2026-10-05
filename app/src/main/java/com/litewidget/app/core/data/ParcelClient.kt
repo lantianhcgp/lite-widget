@@ -24,7 +24,7 @@ import java.util.Locale
 object ParcelClient {
 
     private const val TAG = "ParcelClient"
-    private const val TIMEOUT = 6000
+    private const val TIMEOUT = 10000
     private const val TTL_MS = 30L * 60 * 1000
     private const val MAX_FETCH = 6
     const val MAX_SLOTS = 8
@@ -84,12 +84,13 @@ object ParcelClient {
             }
             .filter { it[0].isNotEmpty() }
 
-    private fun detect(tn: String): String {
+    /** 返回快递编码；识别不出返回 null（免费口不支持 type=auto，只能让用户提供编码） */
+    private fun detect(tn: String): String? {
         val u = tn.uppercase(Locale.US)
         // 长前缀优先，避免 "768" 同时命中申通/中通
         val cands = mutableListOf<Pair<Int, String>>()
         for ((com, ps) in PREFIX) for (p in ps) if (u.startsWith(p)) cands.add(p.length to com)
-        return cands.maxByOrNull { it.first }?.second ?: "auto"
+        return cands.maxByOrNull { it.first }?.second
     }
 
     /** 主入口：把 parcel.* 全部写进 out（与随身WiFi字段并存在同一份快照） */
@@ -110,7 +111,11 @@ object ParcelClient {
         val results = mutableListOf<Item>()
         for (arr in items) {
             val tn = arr[0]
-            val com = arr[1].ifEmpty { detect(tn) }
+            val com = arr[1].ifEmpty { detect(tn) ?: "" }
+            if (com.isEmpty()) {
+                lastErr = "$tn 识别不出快递公司，写成 单号:快递编码"
+                continue
+            }
             val phone = arr[2]
             val hit = cache.optJSONObject(tn)
             val fresh = hit != null && now - hit.optLong("ts", 0) < TTL_MS
@@ -151,7 +156,7 @@ object ParcelClient {
             out.put("$k.comName", p.comName)
             out.put("$k.state", p.state)
             out.put("$k.stateCn", p.stateCn)
-            out.put("$k.title", "${p.comName.removeSuffix("快递").removeSuffix("速运")} · ${p.no.takeLast(4)}")
+            out.put("$k.title", "${shortName(p.comName)} · ${p.no.takeLast(4)}")
             out.put("$k.line", p.line)
             out.put("$k.time", p.time)
             out.put("$k.loc", p.loc)
@@ -181,14 +186,26 @@ object ParcelClient {
             "7" -> Triple("other", "转投中", 3)
             else -> Triple("transit", "运输中", if (freshNode) 2 else 3)
         }
+        val prettyLine = when {
+            line.isEmpty() || line == "查无结果" -> "暂无轨迹"
+            else -> line
+        }
         return Item(
             no = tn, com = com, comName = COM_NAME[com] ?: o.optString("com").ifEmpty { "快递" },
             state = state, stateCn = stateCn,
-            line = line, time = time, loc = loc, score = score
+            line = prettyLine, time = time, loc = loc, score = score
         )
     }
 
     private fun now10(): Long = System.currentTimeMillis() / 1000
+
+    /** 圆通速递→圆通、顺丰速运→顺丰、中通快递→中通（标题里省字） */
+    private fun shortName(n: String): String {
+        for (s in listOf("快递", "速递", "速运", "物流", "EMS")) {
+            if (n.endsWith(s) && n.length > s.length) return n.removeSuffix(s)
+        }
+        return n
+    }
 
     private fun parseTime(s: String): Long = try {
         for (f in arrayOf("yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm")) {
