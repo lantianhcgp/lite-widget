@@ -40,16 +40,29 @@ class DataRepo(private val ctx: Context) {
         null
     }
 
-    /** 必须在后台线程调用 */
+    /** 必须在后台线程调用。并集刷新：随身WiFi 变量和 parcel.list 单号清单各自独立生效 */
     fun refresh(): Map<String, Any?> {
         val prefs = Prefs(ctx)
-        if (!prefs.hasSource()) throw IllegalStateException("变量未填写：App → 变量管理，填后台地址和充值号")
-        val data = WifiClient.loginCard(prefs.effectiveBaseUrl, prefs.effectiveDevNo)
+        val list = prefs.varValue("parcel.list")
+        val hasWifi = prefs.hasSource()
+        if (!hasWifi && list.isEmpty()) {
+            throw IllegalStateException("变量未填写：填随身WiFi变量，或物流组件的 parcel.list 单号清单")
+        }
+        val out = JSONObject()
+        if (hasWifi) {
+            val wifi = WifiClient.loginCard(prefs.effectiveBaseUrl, prefs.effectiveDevNo)
+            for (k in wifi.keys()) out.put(k, wifi.get(k))
+        }
+        if (list.isNotEmpty()) ParcelClient.refreshInto(out, list, ctx)
+
         file.parentFile?.mkdirs()
-        file.writeText(data.toString())
-        val m = fromJson(data)
+        file.writeText(out.toString())
+        val m = fromJson(out)
         cache = m
-        AppLog.i("data refreshed: pkg=${m["package.name"]} remain=${m["flow.remain"]} battery=${m["device.battery"]}")
+        AppLog.i(
+            "data refreshed: pkg=${m["package.name"]} remain=${m["flow.remain"]}" +
+                    " battery=${m["device.battery"]} parcels=${m["parcel.count"] ?: "-"}"
+        )
         return m
     }
 
@@ -95,7 +108,14 @@ class DataRepo(private val ctx: Context) {
             "account.realname" to d.optString("realname_status", ""),
             "account.status" to d.optString("status", ""),
             "account.invite" to d.optString("invite_code", "")
-        )
+        ).toMutableMap().apply {
+            // 物流字段与随身WiFi字段并存于同一份快照
+            for (k in d.keys()) {
+                if (!k.startsWith("parcel.")) continue
+                val v = d.get(k)
+                put(k, if (v === JSONObject.NULL) null else v)
+            }
+        }
     }
 
     /** 取当前用于渲染的值：真实数据优先，没有就用示例数据（新装机也能看到效果） */
