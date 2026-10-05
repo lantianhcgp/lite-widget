@@ -83,7 +83,7 @@ class DataRepo(private val ctx: Context) {
             }
         }
 
-        return mapOf(
+        return mapOf<String, Any?>(
             "package.name" to d.optString("packageName", ""),
             "package.expire" to d.optString("expiretime", ""),
             "package.spec" to d.optInt("packageSpec", 0),
