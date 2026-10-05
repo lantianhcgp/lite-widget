@@ -96,11 +96,9 @@ object ParcelClient {
     fun refreshInto(out: JSONObject, listRaw: String, ctx: Context) {
         val items = parseList(listRaw)
         if (items.isEmpty()) {
-            out.put("parcel.count", 0)
-            out.put("parcel.active", 0)
-            out.put("parcel.signed", 0)
+            // 不写 count → 组件用 `visibleIf missing` 显示空状态引导
             out.put("parcel.error", "单号清单为空")
-            out.put("parcel.updated", System.currentTimeMillis() / 1000)
+            out.put("parcel.updated", now10())
             return
         }
         val cacheFile = File(File(ctx.filesDir, "data"), "parcel_cache.json")
@@ -189,6 +187,8 @@ object ParcelClient {
             line = line, time = time, loc = loc, score = score
         )
     }
+
+    private fun now10(): Long = System.currentTimeMillis() / 1000
 
     private fun parseTime(s: String): Long = try {
         for (f in arrayOf("yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm")) {
