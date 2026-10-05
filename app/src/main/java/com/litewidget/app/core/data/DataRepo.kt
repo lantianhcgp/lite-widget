@@ -43,7 +43,7 @@ class DataRepo(private val ctx: Context) {
     /** 必须在后台线程调用。并集刷新：随身WiFi 变量和 parcel.list 单号清单各自独立生效 */
     fun refresh(): Map<String, Any?> {
         val prefs = Prefs(ctx)
-        val list = prefs.varValue("parcel.list")
+        val list = prefs.varValue("parcelList")
         val hasWifi = prefs.hasSource()
         if (!hasWifi && list.isEmpty()) {
             throw IllegalStateException("变量未填写：填随身WiFi变量，或物流组件的 parcel.list 单号清单")
