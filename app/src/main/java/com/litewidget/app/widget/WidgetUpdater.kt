@@ -182,17 +182,15 @@ object WidgetUpdater {
                     .render(spec, values, wPx, hPx, density)
                 val rv = RemoteViews(ctx.packageName, R.layout.widget_host)
                 rv.setImageViewBitmap(R.id.widget_image, bmp)
-                // 模板声明 "click": "app" 时整卡可点，打开 App（物流组件用来看全部包裹）
-                if (spec.optString("click", "") == "app") {
-                    val pi = PendingIntent.getActivity(
-                        ctx, appWidgetId,
-                        Intent(ctx, com.litewidget.app.MainActivity::class.java).apply {
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                        },
-                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                    )
-                    rv.setOnClickPendingIntent(R.id.widget_image, pi)
-                }
+                // 整卡可点 → 打开 App（想看全部包裹/改单号清单都在 App 里）
+                val pi = PendingIntent.getActivity(
+                    ctx, appWidgetId,
+                    Intent(ctx, com.litewidget.app.MainActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    },
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+                rv.setOnClickPendingIntent(R.id.widget_image, pi)
                 mgr.updateAppWidget(appWidgetId, rv)
                 pushed++
             } catch (t: Throwable) {
