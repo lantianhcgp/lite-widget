@@ -55,26 +55,36 @@
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_2x2" />
             <meta-data android:name="miuiWidget" android:value="true" />
+            <meta-data android:name="miuiWidgetRefresh" android:value="exposure" />
+            <meta-data android:name="miuiWidgetRefreshMinInterval" android:value="60000" />
         </receiver>
         <receiver android:name=".widget.WidgetProvider4x1" android:exported="true" android:label="Lite Widget · 4x1 横条">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_4x1" />
             <meta-data android:name="miuiWidget" android:value="true" />
+            <meta-data android:name="miuiWidgetRefresh" android:value="exposure" />
+            <meta-data android:name="miuiWidgetRefreshMinInterval" android:value="60000" />
         </receiver>
         <receiver android:name=".widget.WidgetProvider4x2" android:exported="true" android:label="Lite Widget · 4x2 标准">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_4x2" />
             <meta-data android:name="miuiWidget" android:value="true" />
+            <meta-data android:name="miuiWidgetRefresh" android:value="exposure" />
+            <meta-data android:name="miuiWidgetRefreshMinInterval" android:value="60000" />
         </receiver>
         <receiver android:name=".widget.WidgetProvider2x4" android:exported="true" android:label="Lite Widget · 2x4 竖长">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_2x4" />
             <meta-data android:name="miuiWidget" android:value="true" />
+            <meta-data android:name="miuiWidgetRefresh" android:value="exposure" />
+            <meta-data android:name="miuiWidgetRefreshMinInterval" android:value="60000" />
         </receiver>
         <receiver android:name=".widget.WidgetProvider4x4" android:exported="true" android:label="Lite Widget · 4x4 大方">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_4x4" />
             <meta-data android:name="miuiWidget" android:value="true" />
+            <meta-data android:name="miuiWidgetRefresh" android:value="exposure" />
+            <meta-data android:name="miuiWidgetRefreshMinInterval" android:value="60000" />
         </receiver>
 
         <receiver

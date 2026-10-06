@@ -4,6 +4,9 @@ import android.content.Context
 import java.security.MessageDigest
 import java.util.UUID
 
+/** 实例/模板都没显式设过刷新频率时的默认自动刷新间隔（分钟）。显式 0 = 关闭，优先级最高 */
+const val DEFAULT_REFRESH_MIN = 15
+
 /**
  * 本地配置：数据源（后台地址 + 充值号）、MCP 端口/令牌、当前组件。
  * 凭据只存本地，不进组件包、不进日志、不通过 MCP 暴露。
@@ -78,8 +81,15 @@ class Prefs(ctx: Context) {
         if (varValue("devNo").isEmpty() && devNo.isNotEmpty()) setVarValue("devNo", devNo)
     }
 
-    /** 每个组件的自动刷新频率（分钟，0 = 不自动刷新）——模板级默认值 */
-    fun refreshInterval(id: String): Int = sp.getInt("refresh_$id", 0)
+    /**
+     * 每个组件的自动刷新频率（分钟，0 = 不自动刷新）——模板级默认值。
+     * 未显式设置过（key 不存在）时返回默认 15 分钟：0.3.8-exp4 实测踩坑——
+     * `setRefreshInterval` 全项目无调用方、新实例也没设实例级频率 → interval 恒为 0 →
+     * AlarmScheduler 判定 "no auto-refresh instance" 直接关闹钟、tick 永不到点，
+     * 组件只剩手动刷新能更新。显式写过 0（桌面管理里关掉）仍然保持关闭。
+     */
+    fun refreshInterval(id: String): Int =
+        if (sp.contains("refresh_$id")) sp.getInt("refresh_$id", 0) else DEFAULT_REFRESH_MIN
 
     /** 每个桌面实例的自动刷新频率（分钟）。null = 未设置，继承模板级 */
     fun instanceInterval(appWidgetId: Int): Int? =
