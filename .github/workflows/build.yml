@@ -11,13 +11,9 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - id: ks
-        uses: actions/cache@v4
-        with:
-          path: debug.keystore
-          key: debug-keystore-v1
-
-      - if: steps.ks.outputs.cache-hit != 'true'
+      # 签名钥匙 = 仓内 debug.keystore（2026-11-15 钉死：曾因 actions/cache 7天过期
+      # 导致每次缓存失效就换钥匙 → 新旧包签名不兼容、无法覆盖安装）。仅文件缺失时兜底生成。
+      - if: ${{ !hashFiles('debug.keystore') }}
         run: |
           keytool -genkeypair -keystore debug.keystore -alias androiddebugkey \
             -keyalg RSA -keysize 2048 -validity 10000 \
