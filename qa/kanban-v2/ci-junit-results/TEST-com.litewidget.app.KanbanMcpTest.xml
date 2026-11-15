@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.litewidget.app.KanbanMcpTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-11-15T11:49:45" hostname="runnervmccnms" time="8.099">
+  <properties/>
+  <testcase name="fixedBoardPathSupportsWriteReadSnapshotAndRejectsInvalidPayload" classname="com.litewidget.app.KanbanMcpTest" time="8.099"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

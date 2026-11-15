@@ -1,0 +1,56 @@
+{
+  "2x2": {
+    "width": 360,
+    "height": 360,
+    "density": 2,
+    "classification": "2x2"
+  },
+  "4x2": {
+    "width": 720,
+    "height": 360,
+    "density": 2,
+    "classification": "4x2"
+  },
+  "2x4": {
+    "width": 360,
+    "height": 720,
+    "density": 2,
+    "classification": "2x4"
+  },
+  "4x4": {
+    "width": 720,
+    "height": 720,
+    "density": 2,
+    "classification": "4x4"
+  },
+  "host-2x2": {
+    "width": 276,
+    "height": 336,
+    "density": 2,
+    "classification": "2x2"
+  },
+  "host-4x2": {
+    "width": 688,
+    "height": 320,
+    "density": 2,
+    "classification": "4x2"
+  },
+  "host-2x4": {
+    "width": 276,
+    "height": 770,
+    "density": 2,
+    "classification": "2x4"
+  },
+  "host-4x4": {
+    "width": 570,
+    "height": 770,
+    "density": 2,
+    "classification": "4x4"
+  },
+  "host-pa-4x2": {
+    "width": 570,
+    "height": 336,
+    "density": 2,
+    "classification": "4x2"
+  }
+}

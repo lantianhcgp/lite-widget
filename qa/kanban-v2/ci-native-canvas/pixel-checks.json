@@ -1,0 +1,159 @@
+{
+  "source": "real Renderer Android native Canvas",
+  "passed": true,
+  "images": {
+    "2x2": {
+      "size": [
+        360,
+        360
+      ],
+      "classification": "2x2",
+      "expected_slots": 2,
+      "solid_pixel_counts": {
+        "running": 855,
+        "blocked": 837,
+        "waiting": 42,
+        "incident": 40,
+        "bar": 1537,
+        "track": 1422
+      },
+      "bright_text_pixels": 2159
+    },
+    "4x2": {
+      "size": [
+        720,
+        360
+      ],
+      "classification": "4x2",
+      "expected_slots": 4,
+      "solid_pixel_counts": {
+        "running": 857,
+        "blocked": 849,
+        "waiting": 885,
+        "incident": 889,
+        "bar": 1920,
+        "track": 4212
+      },
+      "bright_text_pixels": 3447
+    },
+    "2x4": {
+      "size": [
+        360,
+        720
+      ],
+      "classification": "2x4",
+      "expected_slots": 8,
+      "solid_pixel_counts": {
+        "running": 1157,
+        "blocked": 1144,
+        "waiting": 1102,
+        "incident": 1104,
+        "bar": 4512,
+        "track": 3144
+      },
+      "bright_text_pixels": 6127
+    },
+    "4x4": {
+      "size": [
+        720,
+        720
+      ],
+      "classification": "4x4",
+      "expected_slots": 8,
+      "solid_pixel_counts": {
+        "running": 2137,
+        "blocked": 2110,
+        "waiting": 2157,
+        "incident": 2167,
+        "bar": 6009,
+        "track": 4134
+      },
+      "bright_text_pixels": 8361
+    },
+    "host-2x2": {
+      "size": [
+        276,
+        336
+      ],
+      "classification": "2x2",
+      "expected_slots": 2,
+      "solid_pixel_counts": {
+        "running": 855,
+        "blocked": 837,
+        "waiting": 42,
+        "incident": 40,
+        "bar": 1027,
+        "track": 924
+      },
+      "bright_text_pixels": 2161
+    },
+    "host-4x2": {
+      "size": [
+        688,
+        320
+      ],
+      "classification": "4x2",
+      "expected_slots": 4,
+      "solid_pixel_counts": {
+        "running": 857,
+        "blocked": 849,
+        "waiting": 885,
+        "incident": 889,
+        "bar": 1800,
+        "track": 3936
+      },
+      "bright_text_pixels": 3448
+    },
+    "host-2x4": {
+      "size": [
+        276,
+        770
+      ],
+      "classification": "2x4",
+      "expected_slots": 8,
+      "solid_pixel_counts": {
+        "running": 1157,
+        "blocked": 1144,
+        "waiting": 1102,
+        "incident": 1104,
+        "bar": 2208,
+        "track": 1578
+      },
+      "bright_text_pixels": 6128
+    },
+    "host-4x4": {
+      "size": [
+        570,
+        770
+      ],
+      "classification": "4x4",
+      "expected_slots": 8,
+      "solid_pixel_counts": {
+        "running": 2137,
+        "blocked": 1866,
+        "waiting": 2157,
+        "incident": 1923,
+        "bar": 3953,
+        "track": 2742
+      },
+      "bright_text_pixels": 8367
+    },
+    "host-pa-4x2": {
+      "size": [
+        570,
+        336
+      ],
+      "classification": "4x2",
+      "expected_slots": 4,
+      "solid_pixel_counts": {
+        "running": 857,
+        "blocked": 757,
+        "waiting": 885,
+        "incident": 797,
+        "bar": 1380,
+        "track": 2946
+      },
+      "bright_text_pixels": 3448
+    }
+  }
+}

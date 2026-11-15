@@ -25,7 +25,9 @@ Fixed point: 68d3aa945b44393ec1f003a96ad3a9cce6ab0c4c.
 - palette-red.log -> palette-green.log: requested running blue instead of former green.
 - partial-red.log -> partial-green.log: inactive pairs collapse with their slots.
 - precise-progress-red.log -> precise-progress-green.log: 0.01% / 99.99% do not display falsely as 0.0% / 100.0%; legacy percent remains compatible.
-- elapsed child evidence: elapsed-red.log / elapsed-green.log (where present); final 55-test integration includes elapsed.
+- elapsed child evidence: elapsed-red.log -> elapsed-green.log; final 55-test integration includes elapsed.
+
+Delivery-verifier correction evidence: expected numbers were initially typed as 28 JVM tests and 5 pixel images. The real downloaded XML declared and executed 27 tests (12+5+5+4+1), and render-manifest declares 9 images (4 canonical + 5 hosts). Initial assertions correctly blocked publication. Source-method-to-XML exact set equality, no skipped/error/failure, and full manifest-to-report exact names replaced the guessed minima. Final verification passed, saved in delivery.json; no product test/threshold was removed or weakened. This was a local fetch-verifier mistake, not an incomplete CI run.
 
 ## Reviews
 
@@ -35,6 +37,6 @@ QUALITY integrated read-only review 19:44:40 CST: APPROVED, zero must-fix; curre
 
 ## Evidence boundary
 
-Fixture tasks are synthetic and explicitly labelled 自检; these are actual native Canvas PNGs, not a browser/Pillow recreation of the UI. Pixel montage only arranges original PNGs. Existing App 0.3.9 was used to exercise the unchanged Renderer. New package's own native Canvas and live socket tests run separately in CI. This is NOT proof of new-version desktop installation. Device installation is exclusively the requesting party's step; no install, clear-data, force-start, reload of real widget, real-board push, new timer/permission, master merge or release was performed here.
+Fixture tasks are synthetic and explicitly labelled in this report as 自检; these are actual native Canvas PNGs, not a browser/Pillow recreation of the UI. Pixel montage only arranges original PNGs. Existing App 0.3.9 was used to exercise the unchanged Renderer. New package's own native Canvas and live socket tests run separately in CI. This is NOT proof of new-version desktop installation. Device installation is exclusively the requesting party's step; no install, clear-data, force-start, reload of real widget, real-board push, new timer/permission, master merge or release was performed here.
 
 Existing task-kanban files are not overwritten by seeding on overlay upgrade. Requesting party should back them up, explicitly copy updated manifest/widget via MCP after installation, read back, then manually --push/reload and capture actual desktop.

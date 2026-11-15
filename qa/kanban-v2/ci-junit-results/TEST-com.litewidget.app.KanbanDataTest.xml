@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.litewidget.app.KanbanDataTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-11-15T11:49:44" hostname="runnervmccnms" time="0.198">
+  <properties/>
+  <testcase name="fileChangesAreVisibleWithoutRefreshAndBadWriteKeepsPrevious" classname="com.litewidget.app.KanbanDataTest" time="0.094"/>
+  <testcase name="fieldParsingSkipsUnknownNonzeroButAcceptsUnknownZero" classname="com.litewidget.app.KanbanDataTest" time="0.002"/>
+  <testcase name="malformedHeadersAndUnexpectedFieldsAreRejected" classname="com.litewidget.app.KanbanDataTest" time="0.001"/>
+  <testcase name="validContractBecomesSlotsWithoutInventingTasks" classname="com.litewidget.app.KanbanDataTest" time="0.001"/>
+  <testcase name="byteLimitIncludesUtf8AndAcceptsExactly256KiB" classname="com.litewidget.app.KanbanDataTest" time="0.041"/>
+  <testcase name="kanbanPinSizesAreSafeAndPreferFourByFourWhileLegacyIsUnchanged" classname="com.litewidget.app.KanbanDataTest" time="0.0"/>
+  <testcase name="headerDatesUseTheSameRfc3339CalendarSubset" classname="com.litewidget.app.KanbanDataTest" time="0.003"/>
+  <testcase name="invalidTasksDoNotBreakGoodSlotsButStrictWritesRejectThem" classname="com.litewidget.app.KanbanDataTest" time="0.001"/>
+  <testcase name="eightTaskLimitAndCompactSummaryAreExplicit" classname="com.litewidget.app.KanbanDataTest" time="0.002"/>
+  <testcase name="oversizedWhitespaceJsonWritesRejectAndKeepLastGoodFile" classname="com.litewidget.app.KanbanDataTest" time="0.047"/>
+  <testcase name="unknownProgressIsNotInventedAndZeroCanStillBeKnown" classname="com.litewidget.app.KanbanDataTest" time="0.001"/>
+  <testcase name="unknownNonzeroProgressIsRejected" classname="com.litewidget.app.KanbanDataTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

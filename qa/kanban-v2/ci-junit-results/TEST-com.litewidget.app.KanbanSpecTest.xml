@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.litewidget.app.KanbanSpecTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-15T11:49:57" hostname="runnervmccnms" time="0.177">
+  <properties/>
+  <testcase name="schemaRequiresZeroOnlyWhenNoteStartsWithUnknownPrefix" classname="com.litewidget.app.KanbanSpecTest" time="0.001"/>
+  <testcase name="pinDialogUsesKanbanSizeHelperWithoutChangingLegacyOrder" classname="com.litewidget.app.KanbanSpecTest" time="0.004"/>
+  <testcase name="slotsAreHiddenAsAWholeForEmptyDataInEverySize" classname="com.litewidget.app.KanbanSpecTest" time="0.052"/>
+  <testcase name="manifestAcceptsTwoByFourButBindingsStillRejectTypos" classname="com.litewidget.app.KanbanSpecTest" time="0.051"/>
+  <testcase name="builtInSpecHasOnlySafeSizesAndPassesRuntimeSchema" classname="com.litewidget.app.KanbanSpecTest" time="0.069"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

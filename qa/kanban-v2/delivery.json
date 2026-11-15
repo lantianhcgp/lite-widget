@@ -1,0 +1,26 @@
+{
+  "source_sha": "a2bf4a4eff42fd9c6f5ac794f7283996c60581ea",
+  "run_id": 43710660862,
+  "run_attempt": 1,
+  "package": "com.litewidget.app",
+  "versionCode": 28,
+  "versionName": "0.3.10",
+  "ci_url": "https://github.com/lantianhcgp/lite-widget/actions/runs/43710660862",
+  "ci_conclusion": "success",
+  "artifacts": {
+    "lite-widget-debug-apk": 14159884737,
+    "kanban-tests-and-preview": 14160482150
+  },
+  "apk_path": "/storage/emulated/0/Documents/lite-widget-0.3.10-kanban.apk",
+  "apk_bytes": 1071062,
+  "apk_sha256": "71225da7f4daebf59d421bf15ec4f8376d1cf357f377b61f684e05341751e5b5",
+  "signing_cert_sha256": "9f4fbf1cb2ad703eb1b1035115f31658c75f6de93853add8076a8e7339fda105",
+  "overlay_cert_matches_previous": true,
+  "jvm_tests": 27,
+  "jvm_failures": 0,
+  "jvm_errors": 0,
+  "ci_canvas_images": 9,
+  "all_pixel_reports_readback_equal": true,
+  "apk_assets_equal_source": true,
+  "tests_path": "/data/data/com.termux/files/home/.hermes/tmp/kanban-v2-delivery/tests"
+}

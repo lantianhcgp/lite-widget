@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.litewidget.app.KanbanRenderTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-15T11:49:53" hostname="runnervmccnms" time="3.757">
+  <properties/>
+  <testcase name="emptyAndPartialBoardsAreRealNotDemoTasks" classname="com.litewidget.app.KanbanRenderTest" time="3.039"/>
+  <testcase name="actualCanvasRendersFourSafeSizesIncludingNarrowMiuiHosts" classname="com.litewidget.app.KanbanRenderTest" time="0.562"/>
+  <testcase name="builtinSeedingPreservesUserSpecAndBoard" classname="com.litewidget.app.KanbanRenderTest" time="0.107"/>
+  <testcase name="localDataIsReadAtRenderWithoutNetworkOrCacheInvalidation" classname="com.litewidget.app.KanbanRenderTest" time="0.047"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

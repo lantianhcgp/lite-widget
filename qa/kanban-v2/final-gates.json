@@ -1,0 +1,8 @@
+{
+  "checked_at": "2026-11-15T20:05:43.375178+08:00",
+  "elapsed_minutes": 68.79,
+  "within_90_minutes": true,
+  "product_files_identical_to_built_source": 80,
+  "changed_product_files": [],
+  "source_sha": "a2bf4a4eff42fd9c6f5ac794f7283996c60581ea"
+}

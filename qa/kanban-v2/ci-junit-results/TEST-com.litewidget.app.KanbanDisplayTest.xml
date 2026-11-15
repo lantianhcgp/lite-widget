@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.litewidget.app.KanbanDisplayTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-15T11:49:45" hostname="runnervmccnms" time="0.019">
+  <properties/>
+  <testcase name="elapsedAllowsZeroAndHoursButRejectsMalformedValues" classname="com.litewidget.app.KanbanDisplayTest" time="0.009"/>
+  <testcase name="knownProgressDisplayDoesNotRoundIncompleteWorkToOneHundred" classname="com.litewidget.app.KanbanDisplayTest" time="0.004"/>
+  <testcase name="optionalElapsedFormatsMinutesWithoutInventingMissingValues" classname="com.litewidget.app.KanbanDisplayTest" time="0.002"/>
+  <testcase name="textualStatusAndCountsDescribeAllValidTasksOnly" classname="com.litewidget.app.KanbanDisplayTest" time="0.002"/>
+  <testcase name="unknownDisplayIsOngoingWhileLegacyPercentRemainsCompatible" classname="com.litewidget.app.KanbanDisplayTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
