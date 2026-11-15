@@ -17,7 +17,8 @@
           "line": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "\\S"},
           "status": {"enum": ["running", "blocked", "waiting", "incident"]},
           "progress": {"type": "number", "minimum": 0, "maximum": 100},
-          "note": {"type": "string", "maxLength": 240, "description": "百分比未量化时必须以 [进度未量化] 开头并使用 progress=0，组件显示 —，不伪造百分比"}
+          "note": {"type": "string", "maxLength": 240, "description": "百分比未量化时必须以 [进度未量化] 开头并使用 progress=0，组件显示静态分段条与进行中，不伪造百分比"},
+          "elapsed": {"type": "integer", "minimum": 0, "maximum": 2147483647, "description": "可选的完整分钟数，来自 task_keeper start/last_seen；缺失时留空，不推测时长"}
         },
         "if": {
           "required": ["note"],

@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 from PIL import Image
 
-COLORS = {"running": (82, 201, 155), "blocked": (232, 187, 83),
+COLORS = {"running": (90, 189, 247), "blocked": (232, 187, 83),
           "waiting": (137, 147, 165), "incident": (239, 118, 126)}
 BAR = (175, 163, 255)
 TRACK = (40, 46, 58)
@@ -26,7 +26,7 @@ def verify(folder):
         slots = {"2x2": 2, "4x2": 4, "2x4": 8, "4x4": 8}[dimensions["classification"]]
         required = ("running", "blocked") if slots == 2 else tuple(COLORS)
         for key in required:
-            assert counts[key] >= 10, f"{name}: missing visible {key} status dot"
+            assert counts[key] >= 10, f"{name}: missing visible {key} status color"
         assert counts["bar"] >= 16 and counts["track"] >= 16, f"{name}: missing actual progress pixels"
         bright = sum(1 for rgba in pixels if min(rgba[:3]) >= 170 and rgba[3] == 255)
         assert bright >= 100, f"{name}: text is absent/black"

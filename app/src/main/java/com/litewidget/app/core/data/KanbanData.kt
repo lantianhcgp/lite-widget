@@ -3,6 +3,7 @@ package com.litewidget.app.core.data
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
+import java.math.BigDecimal
 import java.nio.file.AtomicMoveNotSupportedException
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
@@ -15,8 +16,9 @@ object KanbanData {
     const val MAX_TASKS = 8
     const val MAX_BYTES = 256 * 1024
     const val UNKNOWN_PREFIX = "[进度未量化]"
-    private val statuses = mapOf("running" to "进行", "blocked" to "受阻", "waiting" to "等待", "incident" to "事故")
+    private val statuses = mapOf("running" to "运行中", "blocked" to "受阻", "waiting" to "等待", "incident" to "事故")
     private val taskKeys = setOf("name", "line", "status", "progress", "note")
+    private val optionalTaskKeys = setOf("elapsed")
     private val timestamp = Regex("""^(?!0000)[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\.[0-9]{1,6})?(?:Z|[+-](?:(?:0[0-9]|1[0-7]):[0-5][0-9]|18:00))$(?![\s\S])""")
 
     fun pinSizes(templateId: String, legacyOrder: List<String>): List<String> =
@@ -24,7 +26,17 @@ object KanbanData {
 
     private fun taskErrors(task: JSONObject, path: String): List<String> {
         val errors = ArrayList<String>()
-        if (task.keys().asSequence().toSet() != taskKeys) errors.add("$path: 必须且只能含 name/line/status/progress/note")
+        val keys = task.keys().asSequence().toSet()
+        if (!keys.containsAll(taskKeys) || !(taskKeys + optionalTaskKeys).containsAll(keys)) {
+            errors.add("$path: 需 name/line/status/progress/note，仅 elapsed 可选")
+        }
+        if (task.has("elapsed")) {
+            val elapsed = task.opt("elapsed") as? Number
+            val minutes = elapsed?.toDouble()
+            if (minutes == null || !minutes.isFinite() || minutes < 0 || minutes > Int.MAX_VALUE || minutes % 1.0 != 0.0) {
+                errors.add("$path.elapsed: 必须为非负整数分钟")
+            }
+        }
         for ((key, limit) in listOf("name" to 64, "line" to 64, "note" to 240)) {
             val value = task.opt(key)
             if (value !is String || value.length > limit || (key != "note" && value.isBlank())) errors.add("$path.$key: 无效字符串")
@@ -68,6 +80,7 @@ object KanbanData {
     fun fields(board: JSONObject): Map<String, Any?> {
         require(headerErrors(board).isEmpty()) { "看板顶层契约无效" }
         val fields = linkedMapOf<String, Any?>()
+        val counts = statuses.keys.associateWith { 0 }.toMutableMap()
         val tasks = board.getJSONArray("tasks")
         var slot = 0
         for (i in 0 until tasks.length()) {
@@ -76,12 +89,27 @@ object KanbanData {
             if (taskErrors(task, "task").isNotEmpty()) continue
             val prefix = "parcel.$slot."
             for (key in taskKeys) fields[prefix + key] = task.get(key)
+            val elapsed = (task.opt("elapsed") as? Number)?.toInt()
+            if (elapsed != null) fields[prefix + "elapsed"] = elapsed
+            fields[prefix + "elapsedLabel"] = when {
+                elapsed == null -> ""
+                elapsed < 60 -> "${elapsed}m"
+                elapsed % 60 == 0 -> "${elapsed / 60}h"
+                else -> "${elapsed / 60}h${elapsed % 60}m"
+            }
             val progress = task.getDouble("progress")
             val note = task.getString("note")
             fields[prefix + "percent"] = if (note.startsWith(UNKNOWN_PREFIX)) "—"
                 else if (progress == progress.toInt().toDouble()) "${progress.toInt()}%"
                 else String.format(Locale.ROOT, "%.1f%%", progress)
-            fields[prefix + "statusLabel"] = statuses[task.getString("status")]
+            val status = task.getString("status")
+            counts[status] = counts.getValue(status) + 1
+            fields[prefix + "statusLabel"] = statuses[status]
+            val unknown = note.startsWith(UNKNOWN_PREFIX)
+            fields[prefix + "progressUnknown"] = unknown
+            fields[prefix + "progressLabel"] = if (unknown) "进行中"
+                else BigDecimal.valueOf(progress).stripTrailingZeros().toPlainString() + "%"
+            fields[prefix + "displayNote"] = note.removePrefix(UNKNOWN_PREFIX).trim()
             fields[prefix + "detail"] = (task.getString("line") + " · " + note.removePrefix(UNKNOWN_PREFIX).trim()).trimEnd(' ', '·')
             slot++
         }
@@ -90,6 +118,8 @@ object KanbanData {
         fields["parcel.updated_at"] = board.getString("updated_at")
         fields["parcel.updated_ms"] = updated.toInstant().toEpochMilli()
         fields["parcel.summary"] = "$slot 个任务"
+        for ((status, count) in counts) fields["parcel.${status}Count"] = count
+        fields["parcel.statusSummary"] = "运行 ${counts["running"]} · 受阻 ${counts["blocked"]} · 事故 ${counts["incident"]} · 等待 ${counts["waiting"]}"
         fields["parcel.more2"] = if (slot > 2) "另 ${slot - 2} 项 · 切换 4x4 查看" else ""
         fields["parcel.more4"] = if (slot > 4) "另 ${slot - 4} 项 · 切换 4x4 查看" else ""
         return fields

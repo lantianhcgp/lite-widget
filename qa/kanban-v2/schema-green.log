@@ -1,0 +1,6 @@
+test_elapsed_is_optional_non_negative_integer_with_int32_bound (test_kanban_elapsed_schema.ElapsedSchemaTests.test_elapsed_is_optional_non_negative_integer_with_int32_bound) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+OK

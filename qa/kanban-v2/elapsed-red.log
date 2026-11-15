@@ -1,0 +1,488 @@
+COMMAND: /data/data/com.termux/files/home/hermes-env-3.13/bin/python -B -m unittest discover -s scripts/tests -p test_kanban_elapsed.py -v
+test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) ... 
+  test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (valid=0) ... FAIL
+  test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (valid=83) ... FAIL
+  test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (valid=83.0) ... FAIL
+  test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (valid=2147483647) ... FAIL
+  test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (valid=2147483647.0) ... FAIL
+  test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=True) ... FAIL
+  test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=False) ... FAIL
+  test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid='83') ... FAIL
+  test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=None) ... FAIL
+  test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=-1) ... FAIL
+  test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=-0.1) ... FAIL
+  test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=0.5) ... FAIL
+  test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=83.25) ... FAIL
+  test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=nan) ... FAIL
+  test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=inf) ... FAIL
+  test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=-inf) ... FAIL
+  test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=2147483648) ... FAIL
+  test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=2147483647.5) ... FAIL
+  test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000) ... FAIL
+
+======================================================================
+FAIL: test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (valid=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 15, in test_optional_elapsed_contract_accepts_only_bounded_integral_numbers
+    self.assertEqual(task, self.module._task(task, {}, "unused"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'nam[26 chars], 'status': 'running', 'progress': 0, 'note': '', 'elapsed': 0} != {'nam[26 chars], 'status': 'running', 'progress': 0, 'note': ''}
++ {'line': 'widget', 'name': '任务', 'note': '', 'progress': 0, 'status': 'running'}
+- {'elapsed': 0,
+-  'line': 'widget',
+-  'name': '任务',
+-  'note': '',
+-  'progress': 0,
+-  'status': 'running'}
+
+======================================================================
+FAIL: test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (valid=83)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 15, in test_optional_elapsed_contract_accepts_only_bounded_integral_numbers
+    self.assertEqual(task, self.module._task(task, {}, "unused"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'nam[27 chars] 'status': 'running', 'progress': 0, 'note': '', 'elapsed': 83} != {'nam[27 chars] 'status': 'running', 'progress': 0, 'note': ''}
++ {'line': 'widget', 'name': '任务', 'note': '', 'progress': 0, 'status': 'running'}
+- {'elapsed': 83,
+-  'line': 'widget',
+-  'name': '任务',
+-  'note': '',
+-  'progress': 0,
+-  'status': 'running'}
+
+======================================================================
+FAIL: test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (valid=83.0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 15, in test_optional_elapsed_contract_accepts_only_bounded_integral_numbers
+    self.assertEqual(task, self.module._task(task, {}, "unused"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'nam[29 chars]status': 'running', 'progress': 0, 'note': '', 'elapsed': 83.0} != {'nam[29 chars]status': 'running', 'progress': 0, 'note': ''}
++ {'line': 'widget', 'name': '任务', 'note': '', 'progress': 0, 'status': 'running'}
+- {'elapsed': 83.0,
+-  'line': 'widget',
+-  'name': '任务',
+-  'note': '',
+-  'progress': 0,
+-  'status': 'running'}
+
+======================================================================
+FAIL: test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (valid=2147483647)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 15, in test_optional_elapsed_contract_accepts_only_bounded_integral_numbers
+    self.assertEqual(task, self.module._task(task, {}, "unused"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'nam[35 chars]': 'running', 'progress': 0, 'note': '', 'elapsed': 2147483647} != {'nam[35 chars]': 'running', 'progress': 0, 'note': ''}
++ {'line': 'widget', 'name': '任务', 'note': '', 'progress': 0, 'status': 'running'}
+- {'elapsed': 2147483647,
+-  'line': 'widget',
+-  'name': '任务',
+-  'note': '',
+-  'progress': 0,
+-  'status': 'running'}
+
+======================================================================
+FAIL: test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (valid=2147483647.0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 15, in test_optional_elapsed_contract_accepts_only_bounded_integral_numbers
+    self.assertEqual(task, self.module._task(task, {}, "unused"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'nam[37 chars] 'running', 'progress': 0, 'note': '', 'elapsed': 2147483647.0} != {'nam[37 chars] 'running', 'progress': 0, 'note': ''}
++ {'line': 'widget', 'name': '任务', 'note': '', 'progress': 0, 'status': 'running'}
+- {'elapsed': 2147483647.0,
+-  'line': 'widget',
+-  'name': '任务',
+-  'note': '',
+-  'progress': 0,
+-  'status': 'running'}
+
+======================================================================
+FAIL: test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 23, in test_optional_elapsed_contract_accepts_only_bounded_integral_numbers
+    self.assertIsNone(self.module._task(task, {}, "unused"))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'name': '任务', 'line': 'widget', 'status': 'running', 'progress': 0, 'note': ''} is not None
+
+======================================================================
+FAIL: test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 23, in test_optional_elapsed_contract_accepts_only_bounded_integral_numbers
+    self.assertIsNone(self.module._task(task, {}, "unused"))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'name': '任务', 'line': 'widget', 'status': 'running', 'progress': 0, 'note': ''} is not None
+
+======================================================================
+FAIL: test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid='83')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 23, in test_optional_elapsed_contract_accepts_only_bounded_integral_numbers
+    self.assertIsNone(self.module._task(task, {}, "unused"))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'name': '任务', 'line': 'widget', 'status': 'running', 'progress': 0, 'note': ''} is not None
+
+======================================================================
+FAIL: test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 23, in test_optional_elapsed_contract_accepts_only_bounded_integral_numbers
+    self.assertIsNone(self.module._task(task, {}, "unused"))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'name': '任务', 'line': 'widget', 'status': 'running', 'progress': 0, 'note': ''} is not None
+
+======================================================================
+FAIL: test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=-1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 23, in test_optional_elapsed_contract_accepts_only_bounded_integral_numbers
+    self.assertIsNone(self.module._task(task, {}, "unused"))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'name': '任务', 'line': 'widget', 'status': 'running', 'progress': 0, 'note': ''} is not None
+
+======================================================================
+FAIL: test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=-0.1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 23, in test_optional_elapsed_contract_accepts_only_bounded_integral_numbers
+    self.assertIsNone(self.module._task(task, {}, "unused"))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'name': '任务', 'line': 'widget', 'status': 'running', 'progress': 0, 'note': ''} is not None
+
+======================================================================
+FAIL: test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=0.5)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 23, in test_optional_elapsed_contract_accepts_only_bounded_integral_numbers
+    self.assertIsNone(self.module._task(task, {}, "unused"))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'name': '任务', 'line': 'widget', 'status': 'running', 'progress': 0, 'note': ''} is not None
+
+======================================================================
+FAIL: test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=83.25)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 23, in test_optional_elapsed_contract_accepts_only_bounded_integral_numbers
+    self.assertIsNone(self.module._task(task, {}, "unused"))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'name': '任务', 'line': 'widget', 'status': 'running', 'progress': 0, 'note': ''} is not None
+
+======================================================================
+FAIL: test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=nan)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 23, in test_optional_elapsed_contract_accepts_only_bounded_integral_numbers
+    self.assertIsNone(self.module._task(task, {}, "unused"))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'name': '任务', 'line': 'widget', 'status': 'running', 'progress': 0, 'note': ''} is not None
+
+======================================================================
+FAIL: test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=inf)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 23, in test_optional_elapsed_contract_accepts_only_bounded_integral_numbers
+    self.assertIsNone(self.module._task(task, {}, "unused"))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'name': '任务', 'line': 'widget', 'status': 'running', 'progress': 0, 'note': ''} is not None
+
+======================================================================
+FAIL: test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=-inf)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 23, in test_optional_elapsed_contract_accepts_only_bounded_integral_numbers
+    self.assertIsNone(self.module._task(task, {}, "unused"))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'name': '任务', 'line': 'widget', 'status': 'running', 'progress': 0, 'note': ''} is not None
+
+======================================================================
+FAIL: test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=2147483648)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 23, in test_optional_elapsed_contract_accepts_only_bounded_integral_numbers
+    self.assertIsNone(self.module._task(task, {}, "unused"))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'name': '任务', 'line': 'widget', 'status': 'running', 'progress': 0, 'note': ''} is not None
+
+======================================================================
+FAIL: test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=2147483647.5)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 23, in test_optional_elapsed_contract_accepts_only_bounded_integral_numbers
+    self.assertIsNone(self.module._task(task, {}, "unused"))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'name': '任务', 'line': 'widget', 'status': 'running', 'progress': 0, 'note': ''} is not None
+
+======================================================================
+FAIL: test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) (invalid=10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 23, in test_optional_elapsed_contract_accepts_only_bounded_integral_numbers
+    self.assertIsNone(self.module._task(task, {}, "unused"))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'name': '任务', 'line': 'widget', 'status': 'running', 'progress': 0, 'note': ''} is not None
+
+----------------------------------------------------------------------
+Ran 1 test in 0.014s
+
+FAILED (failures=19)
+
+EXIT_CODE: 1
+
+COMMAND: /data/data/com.termux/files/home/hermes-env-3.13/bin/python -B -m unittest discover -s scripts/tests -p test_kanban_elapsed.py -v
+test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid (test_kanban_elapsed.ElapsedBuildTests.test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid) ... 
+  test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid (test_kanban_elapsed.ElapsedBuildTests.test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid) (start=1700000000.25, last_seen=1700005039.75) ... FAIL
+  test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid (test_kanban_elapsed.ElapsedBuildTests.test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid) (start=1700000000.25, last_seen=1700000000.25) ... FAIL
+  test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid (test_kanban_elapsed.ElapsedBuildTests.test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid) (start=1700000000.25, last_seen=1700000059.75) ... FAIL
+  test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid (test_kanban_elapsed.ElapsedBuildTests.test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid) (start=0, last_seen=60) ... FAIL
+  test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid (test_kanban_elapsed.ElapsedBuildTests.test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid) (start=0, last_seen=128849018820) ... FAIL
+test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) ... ok
+
+======================================================================
+FAIL: test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid (test_kanban_elapsed.ElapsedBuildTests.test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid) (start=1700000000.25, last_seen=1700005039.75)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 38, in test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid
+    self.assertEqual(expected, task.get("elapsed"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 83 != None
+
+======================================================================
+FAIL: test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid (test_kanban_elapsed.ElapsedBuildTests.test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid) (start=1700000000.25, last_seen=1700000000.25)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 38, in test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid
+    self.assertEqual(expected, task.get("elapsed"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != None
+
+======================================================================
+FAIL: test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid (test_kanban_elapsed.ElapsedBuildTests.test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid) (start=1700000000.25, last_seen=1700000059.75)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 38, in test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid
+    self.assertEqual(expected, task.get("elapsed"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != None
+
+======================================================================
+FAIL: test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid (test_kanban_elapsed.ElapsedBuildTests.test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid) (start=0, last_seen=60)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 38, in test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid
+    self.assertEqual(expected, task.get("elapsed"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != None
+
+======================================================================
+FAIL: test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid (test_kanban_elapsed.ElapsedBuildTests.test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid) (start=0, last_seen=128849018820)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 38, in test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid
+    self.assertEqual(expected, task.get("elapsed"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 2147483647 != None
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.044s
+
+FAILED (failures=5)
+
+EXIT_CODE: 1
+
+COMMAND: /data/data/com.termux/files/home/hermes-env-3.13/bin/python -B -m unittest discover -s scripts/tests -p test_kanban_elapsed.py -v
+test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid (test_kanban_elapsed.ElapsedBuildTests.test_elapsed_is_complete_keeper_minutes_only_when_the_time_pair_is_valid) ... ok
+test_folded_query_or_resume_uses_earliest_valid_start_and_latest_valid_seen (test_kanban_elapsed.ElapsedBuildTests.test_folded_query_or_resume_uses_earliest_valid_start_and_latest_valid_seen) ... 
+  test_folded_query_or_resume_uses_earliest_valid_start_and_latest_valid_seen (test_kanban_elapsed.ElapsedBuildTests.test_folded_query_or_resume_uses_earliest_valid_start_and_latest_valid_seen) (identity="hermes chat --query-file '/test/a brief.md'") ... FAIL
+  test_folded_query_or_resume_uses_earliest_valid_start_and_latest_valid_seen (test_kanban_elapsed.ElapsedBuildTests.test_folded_query_or_resume_uses_earliest_valid_start_and_latest_valid_seen) (identity='hermes chat --resume session-A') ... FAIL
+test_unmapped_wrappers_get_elapsed_without_inventing_progress (test_kanban_elapsed.ElapsedBuildTests.test_unmapped_wrappers_get_elapsed_without_inventing_progress) ... FAIL
+test_optional_elapsed_contract_accepts_only_bounded_integral_numbers (test_kanban_elapsed.ElapsedContractTests.test_optional_elapsed_contract_accepts_only_bounded_integral_numbers) ... ok
+
+======================================================================
+FAIL: test_folded_query_or_resume_uses_earliest_valid_start_and_latest_valid_seen (test_kanban_elapsed.ElapsedBuildTests.test_folded_query_or_resume_uses_earliest_valid_start_and_latest_valid_seen) (identity="hermes chat --query-file '/test/a brief.md'")
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 77, in test_folded_query_or_resume_uses_earliest_valid_start_and_latest_valid_seen
+    self.assertEqual(83, tasks[0].get("elapsed"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 83 != 5
+
+======================================================================
+FAIL: test_folded_query_or_resume_uses_earliest_valid_start_and_latest_valid_seen (test_kanban_elapsed.ElapsedBuildTests.test_folded_query_or_resume_uses_earliest_valid_start_and_latest_valid_seen) (identity='hermes chat --resume session-A')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 77, in test_folded_query_or_resume_uses_earliest_valid_start_and_latest_valid_seen
+    self.assertEqual(83, tasks[0].get("elapsed"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 83 != 5
+
+======================================================================
+FAIL: test_unmapped_wrappers_get_elapsed_without_inventing_progress (test_kanban_elapsed.ElapsedBuildTests.test_unmapped_wrappers_get_elapsed_without_inventing_progress)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 86, in test_unmapped_wrappers_get_elapsed_without_inventing_progress
+    self.assertEqual([83, 1], [task.get("elapsed") for task in tasks])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [83, 1] != [2, 1]
+
+First differing element 0:
+83
+2
+
+- [83, 1]
+?  ^^
+
++ [2, 1]
+?  ^
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.054s
+
+FAILED (failures=3)
+
+EXIT_CODE: 1
+
+COMMAND: /data/data/com.termux/files/home/hermes-env-3.13/bin/python -B -m unittest discover -s scripts/tests -p test_kanban_elapsed.py -k source_elapsed -v
+test_source_elapsed_is_never_substituted_for_keeper_evidence (test_kanban_elapsed.ElapsedBuildTests.test_source_elapsed_is_never_substituted_for_keeper_evidence) ... 
+  test_source_elapsed_is_never_substituted_for_keeper_evidence (test_kanban_elapsed.ElapsedBuildTests.test_source_elapsed_is_never_substituted_for_keeper_evidence) (source_elapsed=999) ... FAIL
+  test_source_elapsed_is_never_substituted_for_keeper_evidence (test_kanban_elapsed.ElapsedBuildTests.test_source_elapsed_is_never_substituted_for_keeper_evidence) (source_elapsed=83.0) ... FAIL
+  test_source_elapsed_is_never_substituted_for_keeper_evidence (test_kanban_elapsed.ElapsedBuildTests.test_source_elapsed_is_never_substituted_for_keeper_evidence) (source_elapsed=None) ... FAIL
+  test_source_elapsed_is_never_substituted_for_keeper_evidence (test_kanban_elapsed.ElapsedBuildTests.test_source_elapsed_is_never_substituted_for_keeper_evidence) (source_elapsed=True) ... FAIL
+  test_source_elapsed_is_never_substituted_for_keeper_evidence (test_kanban_elapsed.ElapsedBuildTests.test_source_elapsed_is_never_substituted_for_keeper_evidence) (source_elapsed='83') ... FAIL
+  test_source_elapsed_is_never_substituted_for_keeper_evidence (test_kanban_elapsed.ElapsedBuildTests.test_source_elapsed_is_never_substituted_for_keeper_evidence) (source_elapsed=-1) ... FAIL
+  test_source_elapsed_is_never_substituted_for_keeper_evidence (test_kanban_elapsed.ElapsedBuildTests.test_source_elapsed_is_never_substituted_for_keeper_evidence) (source_elapsed=0.5) ... FAIL
+  test_source_elapsed_is_never_substituted_for_keeper_evidence (test_kanban_elapsed.ElapsedBuildTests.test_source_elapsed_is_never_substituted_for_keeper_evidence) (source_elapsed=nan) ... FAIL
+  test_source_elapsed_is_never_substituted_for_keeper_evidence (test_kanban_elapsed.ElapsedBuildTests.test_source_elapsed_is_never_substituted_for_keeper_evidence) (source_elapsed=inf) ... FAIL
+
+======================================================================
+FAIL: test_source_elapsed_is_never_substituted_for_keeper_evidence (test_kanban_elapsed.ElapsedBuildTests.test_source_elapsed_is_never_substituted_for_keeper_evidence) (source_elapsed=999)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 99, in test_source_elapsed_is_never_substituted_for_keeper_evidence
+    self.assertEqual([expected, expected], [task.get("elapsed") for task in tasks])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [None, None] != [999, 999]
+
+First differing element 0:
+None
+999
+
+- [None, None]
++ [999, 999]
+
+======================================================================
+FAIL: test_source_elapsed_is_never_substituted_for_keeper_evidence (test_kanban_elapsed.ElapsedBuildTests.test_source_elapsed_is_never_substituted_for_keeper_evidence) (source_elapsed=83.0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 99, in test_source_elapsed_is_never_substituted_for_keeper_evidence
+    self.assertEqual([expected, expected], [task.get("elapsed") for task in tasks])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [None, None] != [83, 83]
+
+First differing element 0:
+None
+83
+
+- [None, None]
++ [83, 83]
+
+======================================================================
+FAIL: test_source_elapsed_is_never_substituted_for_keeper_evidence (test_kanban_elapsed.ElapsedBuildTests.test_source_elapsed_is_never_substituted_for_keeper_evidence) (source_elapsed=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 98, in test_source_elapsed_is_never_substituted_for_keeper_evidence
+    self.assertEqual(2, len(tasks))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+AssertionError: 2 != 0
+
+======================================================================
+FAIL: test_source_elapsed_is_never_substituted_for_keeper_evidence (test_kanban_elapsed.ElapsedBuildTests.test_source_elapsed_is_never_substituted_for_keeper_evidence) (source_elapsed=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 98, in test_source_elapsed_is_never_substituted_for_keeper_evidence
+    self.assertEqual(2, len(tasks))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+AssertionError: 2 != 0
+
+======================================================================
+FAIL: test_source_elapsed_is_never_substituted_for_keeper_evidence (test_kanban_elapsed.ElapsedBuildTests.test_source_elapsed_is_never_substituted_for_keeper_evidence) (source_elapsed='83')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 98, in test_source_elapsed_is_never_substituted_for_keeper_evidence
+    self.assertEqual(2, len(tasks))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+AssertionError: 2 != 0
+
+======================================================================
+FAIL: test_source_elapsed_is_never_substituted_for_keeper_evidence (test_kanban_elapsed.ElapsedBuildTests.test_source_elapsed_is_never_substituted_for_keeper_evidence) (source_elapsed=-1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 98, in test_source_elapsed_is_never_substituted_for_keeper_evidence
+    self.assertEqual(2, len(tasks))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+AssertionError: 2 != 0
+
+======================================================================
+FAIL: test_source_elapsed_is_never_substituted_for_keeper_evidence (test_kanban_elapsed.ElapsedBuildTests.test_source_elapsed_is_never_substituted_for_keeper_evidence) (source_elapsed=0.5)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 98, in test_source_elapsed_is_never_substituted_for_keeper_evidence
+    self.assertEqual(2, len(tasks))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+AssertionError: 2 != 0
+
+======================================================================
+FAIL: test_source_elapsed_is_never_substituted_for_keeper_evidence (test_kanban_elapsed.ElapsedBuildTests.test_source_elapsed_is_never_substituted_for_keeper_evidence) (source_elapsed=nan)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 98, in test_source_elapsed_is_never_substituted_for_keeper_evidence
+    self.assertEqual(2, len(tasks))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+AssertionError: 2 != 0
+
+======================================================================
+FAIL: test_source_elapsed_is_never_substituted_for_keeper_evidence (test_kanban_elapsed.ElapsedBuildTests.test_source_elapsed_is_never_substituted_for_keeper_evidence) (source_elapsed=inf)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 98, in test_source_elapsed_is_never_substituted_for_keeper_evidence
+    self.assertEqual(2, len(tasks))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+AssertionError: 2 != 0
+
+----------------------------------------------------------------------
+Ran 1 test in 0.026s
+
+FAILED (failures=9)
+
+EXIT_CODE: 1
+
+COMMAND: /data/data/com.termux/files/home/hermes-env-3.13/bin/python -B -m unittest discover -s scripts/tests -p test_kanban_elapsed.py -k inactive -v
+test_inactive_uses_only_matching_gone_history_frozen_times (test_kanban_elapsed.ElapsedBuildTests.test_inactive_uses_only_matching_gone_history_frozen_times) ... FAIL
+
+======================================================================
+FAIL: test_inactive_uses_only_matching_gone_history_frozen_times (test_kanban_elapsed.ElapsedBuildTests.test_inactive_uses_only_matching_gone_history_frozen_times)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed.py", line 113, in test_inactive_uses_only_matching_gone_history_frozen_times
+    self.assertEqual([None, 83], [task.get("elapsed") for task in tasks])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [None, 83] != [None, None]
+
+First differing element 1:
+83
+None
+
+- [None, 83]
++ [None, None]
+
+----------------------------------------------------------------------
+Ran 1 test in 0.014s
+
+FAILED (failures=1)
+
+EXIT_CODE: 1

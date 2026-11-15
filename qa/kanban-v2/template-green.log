@@ -1,0 +1,10 @@
+kanban template: 4 safe sizes, 8 explicit slots, assets match generator
+test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails (test_kanban_visual.FourByFourVisualTests.test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails) ... ok
+test_each_card_separates_name_status_line_note_and_elapsed (test_kanban_visual.FourByFourVisualTests.test_each_card_separates_name_status_line_note_and_elapsed) ... ok
+test_header_contains_four_counts_updated_timestamp_and_separator (test_kanban_visual.FourByFourVisualTests.test_header_contains_four_counts_updated_timestamp_and_separator) ... ok
+test_unknown_is_a_full_static_segmented_track_not_a_dash (test_kanban_visual.FourByFourVisualTests.test_unknown_is_a_full_static_segmented_track_not_a_dash) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.012s
+
+OK

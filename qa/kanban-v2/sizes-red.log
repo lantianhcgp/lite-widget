@@ -1,0 +1,15 @@
+test_four_safe_sizes_have_required_slot_counts_and_visible_status_labels (test_kanban_sizes.AllSizesVisualTests.test_four_safe_sizes_have_required_slot_counts_and_visible_status_labels) ... FAIL
+
+======================================================================
+FAIL: test_four_safe_sizes_have_required_slot_counts_and_visible_status_labels (test_kanban_sizes.AllSizesVisualTests.test_four_safe_sizes_have_required_slot_counts_and_visible_status_labels)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_sizes.py", line 18, in test_four_safe_sizes_have_required_slot_counts_and_visible_status_labels
+    self.assertIsNotNone(chip, f"{size}: state text is mandatory")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : 2x2: state text is mandatory
+
+----------------------------------------------------------------------
+Ran 1 test in 0.007s
+
+FAILED (failures=1)

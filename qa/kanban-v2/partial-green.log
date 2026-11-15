@@ -1,0 +1,7 @@
+test_empty_multi_card_pairs_collapse_with_their_task_slots (test_kanban_partial.PartialBoardLayoutTests.test_empty_multi_card_pairs_collapse_with_their_task_slots) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.010s
+
+OK
+kanban template: 4 safe sizes, textual states, static progress, assets match generator

@@ -13,8 +13,8 @@ android {
         applicationId = "com.litewidget.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 27
-        versionName = "0.3.9-kanban"
+        versionCode = 28
+        versionName = "0.3.10"
     }
 
     signingConfigs {

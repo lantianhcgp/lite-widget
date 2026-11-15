@@ -1,0 +1,91 @@
+{
+  "source": "real Renderer Android native Canvas",
+  "passed": true,
+  "images": {
+    "host-2x2": {
+      "size": [
+        276,
+        336
+      ],
+      "classification": "2x2",
+      "expected_slots": 2,
+      "solid_pixel_counts": {
+        "running": 804,
+        "blocked": 777,
+        "waiting": 21,
+        "incident": 27,
+        "bar": 996,
+        "track": 924
+      },
+      "bright_text_pixels": 2150
+    },
+    "host-4x2": {
+      "size": [
+        688,
+        320
+      ],
+      "classification": "4x2",
+      "expected_slots": 4,
+      "solid_pixel_counts": {
+        "running": 813,
+        "blocked": 788,
+        "waiting": 800,
+        "incident": 832,
+        "bar": 1746,
+        "track": 3936
+      },
+      "bright_text_pixels": 3450
+    },
+    "host-2x4": {
+      "size": [
+        276,
+        770
+      ],
+      "classification": "2x4",
+      "expected_slots": 8,
+      "solid_pixel_counts": {
+        "running": 1014,
+        "blocked": 1020,
+        "waiting": 1055,
+        "incident": 1051,
+        "bar": 2208,
+        "track": 1578
+      },
+      "bright_text_pixels": 6230
+    },
+    "host-4x4": {
+      "size": [
+        570,
+        770
+      ],
+      "classification": "4x4",
+      "expected_slots": 8,
+      "solid_pixel_counts": {
+        "running": 2089,
+        "blocked": 1789,
+        "waiting": 2051,
+        "incident": 1862,
+        "bar": 3913,
+        "track": 2742
+      },
+      "bright_text_pixels": 8016
+    },
+    "host-pa-4x2": {
+      "size": [
+        570,
+        336
+      ],
+      "classification": "4x2",
+      "expected_slots": 4,
+      "solid_pixel_counts": {
+        "running": 813,
+        "blocked": 696,
+        "waiting": 800,
+        "incident": 740,
+        "bar": 1326,
+        "track": 2946
+      },
+      "bright_text_pixels": 3452
+    }
+  }
+}

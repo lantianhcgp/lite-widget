@@ -18,6 +18,7 @@ UNKNOWN_PREFIX = "[进度未量化] "
 STATUSES = {"running", "blocked", "waiting", "incident"}
 PRIORITY = {"incident": 0, "blocked": 1, "running": 2, "waiting": 3}
 MAX_TASKS = 8
+MAX_ELAPSED = 2147483647
 STATUS_ALIASES = {
     "active": "running", "进行": "running", "进行中": "running", "运行中": "running",
     "受阻": "blocked", "阻塞": "blocked", "等待": "waiting", "事故": "incident",
@@ -77,8 +78,16 @@ def _task(raw, source, tag):
             note = UNKNOWN_PREFIX + note
     if note.startswith(UNKNOWN_PREFIX.rstrip()) and progress != 0:
         return None
-    return {"name": _limited(name.strip(), 64), "line": _limited(line.strip(), 64),
+    task = {"name": _limited(name.strip(), 64), "line": _limited(line.strip(), 64),
             "status": status, "progress": progress, "note": _limited(note, 240)}
+    if "elapsed" in raw:
+        elapsed = raw["elapsed"]
+        if type(elapsed) not in (int, float) or not 0 <= elapsed <= MAX_ELAPSED:
+            return None
+        if isinstance(elapsed, float) and (not math.isfinite(elapsed) or not elapsed.is_integer()):
+            return None
+        task["elapsed"] = int(elapsed)
+    return task
 
 
 def _markdown_task(text):
@@ -177,7 +186,14 @@ def _source_tasks(source, tag):
             members = raw.get("tasks", [raw]) if isinstance(raw, dict) else []
         if not isinstance(members, list):
             return []
-        return [task for member in members if (task := _task(member, source, tag)) is not None]
+        tasks = []
+        for member in members:
+            # Elapsed belongs to keeper evidence, never to editable progress sources.
+            raw_task = {key: value for key, value in member.items() if key != "elapsed"} if isinstance(member, dict) else member
+            task = _task(raw_task, source, tag)
+            if task is not None:
+                tasks.append(task)
+        return tasks
     except (OSError, ValueError, TypeError, KeyError):
         return []
 
@@ -230,6 +246,29 @@ def _keeper_entries(state):
     return entries
 
 
+def _keeper_elapsed(entries):
+    """Complete minutes across valid recorded pairs, never the wall clock."""
+    pairs = []
+    for entry in entries:
+        start, last_seen = entry.get("start"), entry.get("last_seen")
+        if any(type(value) not in (int, float) or (isinstance(value, float) and not math.isfinite(value))
+               for value in (start, last_seen)):
+            continue
+        if start >= 0 and last_seen >= start:
+            pairs.append((start, last_seen))
+    if not pairs:
+        return None
+    start = min(pair[0] for pair in pairs)
+    last_seen = max(pair[1] for pair in pairs)
+    try:
+        minutes = (last_seen - start) // 60
+    except OverflowError:
+        return None
+    if not 0 <= minutes <= MAX_ELAPSED:
+        return None
+    return int(minutes)
+
+
 def build_tasks(state, sources):
     """Return only explicit task fields; a bad progress line does not poison peers.
 
@@ -255,14 +294,23 @@ def build_tasks(state, sources):
         tag = mapped["tag"]
         used_tags.update(entry["tag"] for entry in group)
         if tag in mappings:
-            tasks.extend(_source_tasks(mappings[tag], tag))
+            group_tasks = _source_tasks(mappings[tag], tag)
         else:
             task = _task({}, {}, tag)
-            if task is not None:
-                tasks.append(task)
+            group_tasks = [task] if task is not None else []
+        elapsed = _keeper_elapsed(group)
+        if elapsed is not None:
+            for task in group_tasks:
+                task["elapsed"] = elapsed
+        tasks.extend(group_tasks)
     for tag, source in mappings.items():
         if tag not in used_tags and source.get("include_inactive") is True:
-            tasks.extend(_source_tasks(source, tag))
+            inactive_tasks = _source_tasks(source, tag)
+            elapsed = _keeper_elapsed(entry for entry in entries if entry["tag"] == tag and entry.get("gone", 0) > 0)
+            if elapsed is not None:
+                for task in inactive_tasks:
+                    task["elapsed"] = elapsed
+            tasks.extend(inactive_tasks)
     return sorted(tasks, key=lambda task: PRIORITY[task["status"]])[:MAX_TASKS]
 
 
@@ -289,7 +337,8 @@ def _valid_board(board):
     if updated.utcoffset() is None or not isinstance(board["tasks"], list) or len(board["tasks"]) > MAX_TASKS:
         return False
     for task in board["tasks"]:
-        if not isinstance(task, dict) or set(task) != {"name", "line", "status", "progress", "note"}:
+        required = {"name", "line", "status", "progress", "note"}
+        if not isinstance(task, dict) or not required <= set(task) <= required | {"elapsed"}:
             return False
         if _task(task, {}, "unused") != task:
             return False

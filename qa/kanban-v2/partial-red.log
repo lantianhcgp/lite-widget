@@ -1,0 +1,17 @@
+test_empty_multi_card_pairs_collapse_with_their_task_slots (test_kanban_partial.PartialBoardLayoutTests.test_empty_multi_card_pairs_collapse_with_their_task_slots) ... FAIL
+
+======================================================================
+FAIL: test_empty_multi_card_pairs_collapse_with_their_task_slots (test_kanban_partial.PartialBoardLayoutTests.test_empty_multi_card_pairs_collapse_with_their_task_slots)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_partial.py", line 13, in test_empty_multi_card_pairs_collapse_with_their_task_slots
+    self.assertEqual({'field': 'parcel.count', 'op': 'gt', 'value': index},
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     by_id[f'pair-{index}'].get('visibleIf'), size)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'field': 'parcel.count', 'op': 'gt', 'value': 0} != None : 4x4
+
+----------------------------------------------------------------------
+Ran 1 test in 0.010s
+
+FAILED (failures=1)

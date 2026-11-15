@@ -1,0 +1,15 @@
+test_elapsed_is_optional_non_negative_integer_with_int32_bound (test_kanban_elapsed_schema.ElapsedSchemaTests.test_elapsed_is_optional_non_negative_integer_with_int32_bound) ... FAIL
+
+======================================================================
+FAIL: test_elapsed_is_optional_non_negative_integer_with_int32_bound (test_kanban_elapsed_schema.ElapsedSchemaTests.test_elapsed_is_optional_non_negative_integer_with_int32_bound)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_elapsed_schema.py", line 14, in test_elapsed_is_optional_non_negative_integer_with_int32_bound
+    self.assertIn('elapsed', task['properties'])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'elapsed' not found in {'name': {'type': 'string', 'minLength': 1, 'maxLength': 64, 'pattern': '\\S'}, 'line': {'type': 'string', 'minLength': 1, 'maxLength': 64, 'pattern': '\\S'}, 'status': {'enum': ['running', 'blocked', 'waiting', 'incident']}, 'progress': {'type': 'number', 'minimum': 0, 'maximum': 100}, 'note': {'type': 'string', 'maxLength': 240, 'description': '百分比未量化时必须以 [进度未量化] 开头并使用 progress=0，组件显示 —，不伪造百分比'}}
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (failures=1)

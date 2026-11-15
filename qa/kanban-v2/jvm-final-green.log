@@ -1,0 +1,7 @@
+Failed to load native library:jansi-2.4.0-96a612d2cbbddb14-libjansi.so. osinfo: Linux/arm64
+java.lang.UnsatisfiedLinkError: /data/data/com.termux/files/usr/tmp/jansi-2.4.0-96a612d2cbbddb14-libjansi.so: dlopen failed: library "libc.so.6" not found: needed by /data/data/com.termux/files/usr/tmp/jansi-2.4.0-96a612d2cbbddb14-libjansi.so in namespace (default)
+JUnit version 4.13.2
+......................
+Time: 0.58
+
+OK (22 tests)

@@ -1,0 +1,89 @@
+test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails (test_kanban_visual.FourByFourVisualTests.test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails) ... 
+  test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails (test_kanban_visual.FourByFourVisualTests.test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails) (slot=0, status='running') ... FAIL
+  test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails (test_kanban_visual.FourByFourVisualTests.test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails) (slot=0, status='blocked') ... FAIL
+  test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails (test_kanban_visual.FourByFourVisualTests.test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails) (slot=0, status='waiting') ... FAIL
+  test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails (test_kanban_visual.FourByFourVisualTests.test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails) (slot=0, status='incident') ... FAIL
+test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails (test_kanban_visual.FourByFourVisualTests.test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails) ... ERROR
+test_each_card_separates_name_status_line_note_and_elapsed (test_kanban_visual.FourByFourVisualTests.test_each_card_separates_name_status_line_note_and_elapsed) ... FAIL
+test_header_contains_four_counts_updated_timestamp_and_separator (test_kanban_visual.FourByFourVisualTests.test_header_contains_four_counts_updated_timestamp_and_separator) ... FAIL
+test_unknown_is_a_full_static_segmented_track_not_a_dash (test_kanban_visual.FourByFourVisualTests.test_unknown_is_a_full_static_segmented_track_not_a_dash) ... FAIL
+
+======================================================================
+ERROR: test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails (test_kanban_visual.FourByFourVisualTests.test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_visual.py", line 35, in test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails
+    self.assertEqual("linear", self.by_id[f"task-{index}"]["style"]["background"]["type"])
+                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+KeyError: 'style'
+
+======================================================================
+FAIL: test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails (test_kanban_visual.FourByFourVisualTests.test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails) (slot=0, status='running')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_visual.py", line 29, in test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails
+    self.assertIsNotNone(chip, "a colored dot is not a text status")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : a colored dot is not a text status
+
+======================================================================
+FAIL: test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails (test_kanban_visual.FourByFourVisualTests.test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails) (slot=0, status='blocked')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_visual.py", line 29, in test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails
+    self.assertIsNotNone(chip, "a colored dot is not a text status")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : a colored dot is not a text status
+
+======================================================================
+FAIL: test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails (test_kanban_visual.FourByFourVisualTests.test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails) (slot=0, status='waiting')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_visual.py", line 29, in test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails
+    self.assertIsNotNone(chip, "a colored dot is not a text status")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : a colored dot is not a text status
+
+======================================================================
+FAIL: test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails (test_kanban_visual.FourByFourVisualTests.test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails) (slot=0, status='incident')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_visual.py", line 29, in test_all_eight_cards_have_textual_colored_status_pills_and_four_pixel_rails
+    self.assertIsNotNone(chip, "a colored dot is not a text status")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : a colored dot is not a text status
+
+======================================================================
+FAIL: test_each_card_separates_name_status_line_note_and_elapsed (test_kanban_visual.FourByFourVisualTests.test_each_card_separates_name_status_line_note_and_elapsed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_visual.py", line 52, in test_each_card_separates_name_status_line_note_and_elapsed
+    self.assertEqual(f"parcel.{index}.{field}", self.by_id[f"{identifier}-{index}"]["bind"]["field"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'parcel.0.line' != 'parcel.0.detail'
+- parcel.0.line
++ parcel.0.detail
+
+
+======================================================================
+FAIL: test_header_contains_four_counts_updated_timestamp_and_separator (test_kanban_visual.FourByFourVisualTests.test_header_contains_four_counts_updated_timestamp_and_separator)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_visual.py", line 59, in test_header_contains_four_counts_updated_timestamp_and_separator
+    self.assertTrue({f"parcel.{s}Count" for s in ("running", "blocked", "incident", "waiting")} <= header_fields)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_unknown_is_a_full_static_segmented_track_not_a_dash (test_kanban_visual.FourByFourVisualTests.test_unknown_is_a_full_static_segmented_track_not_a_dash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_visual.py", line 40, in test_unknown_is_a_full_static_segmented_track_not_a_dash
+    self.assertIsNotNone(bar, "unknown needs a drawn track")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : unknown needs a drawn track
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.013s
+
+FAILED (failures=7, errors=1)

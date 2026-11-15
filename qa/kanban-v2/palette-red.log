@@ -1,0 +1,22 @@
+test_pixel_gate_requires_the_same_blue_amber_grey_red_states (test_kanban_palette.StatePaletteTests.test_pixel_gate_requires_the_same_blue_amber_grey_red_states) ... FAIL
+
+======================================================================
+FAIL: test_pixel_gate_requires_the_same_blue_amber_grey_red_states (test_kanban_palette.StatePaletteTests.test_pixel_gate_requires_the_same_blue_amber_grey_red_states)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/lite-widget-kanban-20261115/scripts/tests/test_kanban_palette.py", line 8, in test_pixel_gate_requires_the_same_blue_amber_grey_red_states
+    self.assertEqual({'running': (90, 189, 247), 'blocked': (232, 187, 83),
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                      'waiting': (137, 147, 165), 'incident': (239, 118, 126)}, module.COLORS)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'running': (90, 189, 247), 'blocked': (232, 187, 83),[52 chars]126)} != {'running': (82, 201, 155), 'blocked': (232, 187, 83),[52 chars]126)}
+  {'blocked': (232, 187, 83),
+   'incident': (239, 118, 126),
+-  'running': (90, 189, 247),
++  'running': (82, 201, 155),
+   'waiting': (137, 147, 165)}
+
+----------------------------------------------------------------------
+Ran 1 test in 0.002s
+
+FAILED (failures=1)
