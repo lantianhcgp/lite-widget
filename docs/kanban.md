@@ -73,7 +73,7 @@ python ~/.hermes/scripts/kanban_build.py --sources ~/.hermes/scripts/kanban_sour
 
 ## 用户装到负一屏
 
-本棒不操作设备。用户自行安装交付APK（不卸载/不清数据），打开Lite Widget：
+本棒不操作设备。用户自行安装交付APK（先尝试覆盖，不卸载/不清数据；旧包签名兼容性尚未核实，冲突时先停），打开Lite Widget：
 1. 按现有分支权限引导允许“创建桌面快捷方式”。
 2. 首页确认已出现“任务进度看板”，打开现有MCP开关以便手动push。
 3. 首页“装到桌面”→选择任务进度看板→4x4（或其他3安全尺寸）。走分支已有 INSTALL_WIDGET 广播；未生效自动退原生pin。

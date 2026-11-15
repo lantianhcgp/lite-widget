@@ -1,0 +1,17 @@
+{
+  "package": "com.litewidget.app",
+  "versionName": "0.3.9-kanban",
+  "versionCode": 27,
+  "apk_sha256": "65dd95a6efba787097e3aa349f83bb1b34132db71e33d3ad99886c5e1bfc1dce",
+  "apk_bytes": 1038442,
+  "delivery_path": "/storage/emulated/0/Documents/lite-widget-0.3.9-kanban.apk",
+  "preview_path": "/storage/emulated/0/Documents/lite-widget-看板-最新测试图.png",
+  "apk_kanban_assets_match_source": true,
+  "apk_zip_crc_valid": true,
+  "source_sha": "21cf599c99168fc5a2446cdff18f239372b8edef",
+  "run_id": 43697998446,
+  "apk_artifact_id": 14155461115,
+  "preview_artifact_id": 14155147392,
+  "signature_scheme_v2_verified": true,
+  "device_installed": false
+}

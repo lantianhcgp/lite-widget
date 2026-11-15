@@ -1,0 +1,18 @@
+{
+  "source_sha": "21cf599c99168fc5a2446cdff18f239372b8edef",
+  "run_id": 43697998446,
+  "scope": "Real Android native Canvas output from CI; fixture tasks, not current private task status or a MIUI device screenshot",
+  "reviewer": "parent assistant native vision, full images plus component-region crops",
+  "passed": true,
+  "full_images_seen": ["2x2", "4x2", "2x4", "4x4", "host-2x2", "host-4x2", "host-2x4", "host-4x4", "host-pa-4x2", "4x4-count-0", "4x4-count-1", "4x4-count-3", "host-2x2-empty", "host-4x2-empty", "host-2x4-empty", "host-4x4-empty"],
+  "component_crops_seen": ["host-4x4 header and tasks 1-4", "host-4x4 tasks 5-8 and footer", "host-2x4 tasks 3-8", "host-pa-4x2 all four cards"],
+  "observations": [
+    "Chinese task names, status dots, percentages and footer are legible; no overlapping or off-canvas text was observed.",
+    "Running/blocked/waiting/incident dots match the fixture; unknown progress is an em dash with an empty track, not an estimated percentage.",
+    "4x4 and 2x4 show eight rows. 4x2 shows four cards and a remaining-four notice; 2x2 shows two and a remaining-six notice.",
+    "Narrow versions intentionally show the line label rather than long notes; wider versions show line and note.",
+    "Empty and partial lists do not add fake task rows, and their footer remains inside the image.",
+    "4x4 host image progress fill was measured independently per row: 37,64,0,18,80,92,100 and unquantified zero, with expected rounding."
+  ],
+  "device_acceptance": "Not performed; user installs and pins to MIUI minus-one screen."
+}

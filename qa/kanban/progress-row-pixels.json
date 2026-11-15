@@ -1,0 +1,62 @@
+{
+  "source": "host-4x4.png actual decoded pixels",
+  "passed": true,
+  "rows": [
+    {
+      "slot": 0,
+      "expected": 37,
+      "measured_percent": 37.02970297029703,
+      "fill_pixels": 187,
+      "track_pixels": 318
+    },
+    {
+      "slot": 1,
+      "expected": 64,
+      "measured_percent": 63.960396039603964,
+      "fill_pixels": 323,
+      "track_pixels": 182
+    },
+    {
+      "slot": 2,
+      "expected": 0,
+      "measured_percent": 0.0,
+      "fill_pixels": 0,
+      "track_pixels": 506
+    },
+    {
+      "slot": 3,
+      "expected": 18,
+      "measured_percent": 18.019801980198018,
+      "fill_pixels": 91,
+      "track_pixels": 414
+    },
+    {
+      "slot": 4,
+      "expected": 80,
+      "measured_percent": 80.0,
+      "fill_pixels": 404,
+      "track_pixels": 101
+    },
+    {
+      "slot": 5,
+      "expected": 92,
+      "measured_percent": 92.07920792079209,
+      "fill_pixels": 465,
+      "track_pixels": 40
+    },
+    {
+      "slot": 6,
+      "expected": 100,
+      "measured_percent": 100.0,
+      "fill_pixels": 506,
+      "track_pixels": 0
+    },
+    {
+      "slot": 7,
+      "expected": 0,
+      "measured_percent": 0.0,
+      "fill_pixels": 0,
+      "track_pixels": 506
+    }
+  ]
+}

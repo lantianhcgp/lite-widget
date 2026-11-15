@@ -1,0 +1,17 @@
+[
+  {
+    "path": "docs/kanban.md",
+    "bytes_match": true,
+    "sha256": "5037f85975ad9022ed0c229c638621b010aa286ca9b37722b7bff4276f1e3ed0"
+  },
+  {
+    "path": "docs/kanban-checkpoint.md",
+    "bytes_match": true,
+    "sha256": "5b618416de83da105019d102885c34e46f30404ad03a94933bedb7794a9267bb"
+  },
+  {
+    "path": "scripts/kanban_build.py",
+    "bytes_match": true,
+    "sha256": "7a78b32d011fb39b4c7e745abac33e7e3f66c50817c3d084884a77156c70c69e"
+  }
+]
