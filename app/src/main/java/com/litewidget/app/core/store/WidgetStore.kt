@@ -142,12 +142,21 @@ class WidgetStore(filesDir: File) {
     }
 
     /** 内置模板播种：不存在才写，绝不覆盖用户已有组件（幂等） */
-    fun ensureBuiltins() {
+    fun ensureBuiltins(assets: android.content.res.AssetManager? = null) {
         try {
             if (!exists("lightwash")) {
                 create("lightwash", "液态玻璃")
                 writeText("lightwash", "widget.json", Templates.lightGlass())
                 AppLog.i("builtin template seeded: lightwash")
+            }
+            if (assets != null && (!exists("task-kanban") || readManifest("task-kanban") == null || readSpec("task-kanban") == null)) {
+                for (name in listOf("manifest.json", "widget.json")) {
+                    if (readText("task-kanban", name) == null) {
+                        val content = assets.open("templates/task-kanban/$name").bufferedReader(Charsets.UTF_8).use { it.readText() }
+                        check(writeText("task-kanban", name, content)) { "kanban seed write failed" }
+                    }
+                }
+                AppLog.i("builtin template seeded: task-kanban")
             }
         } catch (t: Throwable) {
             AppLog.e("ensureBuiltins fail", t)

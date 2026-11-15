@@ -8,3 +8,6 @@ captures/
 *.apk
 *.aab
 .cxx/
+.local-tests/
+__pycache__/
+*.pyc

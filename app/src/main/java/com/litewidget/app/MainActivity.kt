@@ -621,7 +621,7 @@ class MainActivity : Activity() {
 
     /** 第二步：选尺寸。标注每个尺寸能不能拖进负一屏（canDragToPa：spanX≠1 且 spanY∉{1,3}） */
     private fun promptPinSize(templateId: String, templateName: String) {
-        val order = listOf("4x2", "2x2", "4x4", "2x4", "4x1")
+        val order = com.litewidget.app.core.data.KanbanData.pinSizes(templateId, listOf("4x2", "2x2", "4x4", "2x4", "4x1"))
         val classes = mapOf(
             "4x2" to com.litewidget.app.widget.WidgetProvider4x2::class.java,
             "2x2" to com.litewidget.app.widget.WidgetProvider2x2::class.java,
@@ -828,7 +828,7 @@ class MainActivity : Activity() {
     }
 }
 
-/** 版本号占位（避免依赖 BuildConfig 生成时机） */
+/** 与构建配置同源，首页与 APK/MCP 版本一致。 */
 object BuildConfigCompat {
-    const val VERSION = "0.3.3"
+    val VERSION: String get() = BuildConfig.VERSION_NAME
 }

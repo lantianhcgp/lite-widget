@@ -11,11 +11,11 @@ import org.json.JSONObject
 object SpecValidator {
 
     private val COLOR = Regex("^#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$")
-    private val BIND = Regex("^(vars|flow|package|device|account|sys)\\.[a-zA-Z0-9_.]+$")
+    private val BIND = Regex("^(vars|flow|package|device|account|sys|parcel)\\.[a-zA-Z0-9_.]+$")
     private val ID = Regex("^[a-z0-9][a-z0-9_-]{1,63}$")
     private val SEMVER = Regex("^\\d+\\.\\d+\\.\\d+$")
 
-    private val SIZES = setOf("2x1", "2x2", "3x2", "4x1", "4x2", "4x4", "5x2", "6x2")
+    private val SIZES = setOf("2x1", "2x2", "3x2", "4x1", "4x2", "4x4", "2x4", "5x2", "6x2")
 
     private val COMMON = setOf("type", "id", "x", "y", "width", "height", "style", "visibleIf")
     private val SPECIFIC = mapOf(
@@ -280,7 +280,7 @@ object SpecValidator {
         if (b == null) { errs.add("$path: 缺少"); return }
         unknown(b, setOf("field", "format", "fallback"), path)
         val f = b.optString("field", "")
-        if (!BIND.matches(f)) errs.add("$path.field: 必须匹配 ^(vars|flow|package|device|account|sys)\\.[a-zA-Z0-9_.]+$，实际 '$f'")
+        if (!BIND.matches(f)) errs.add("$path.field: 必须匹配 ^(vars|flow|package|device|account|sys|parcel)\\.[a-zA-Z0-9_.]+$，实际 '$f'")
         val fm = b.optJSONObject("format")
         if (fm != null) {
             unknown(fm, setOf("decimals", "unit", "prefix", "suffix", "multiplier", "date"), "$path.format")

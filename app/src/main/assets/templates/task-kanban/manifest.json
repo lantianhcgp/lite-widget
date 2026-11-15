@@ -1,0 +1,9 @@
+{
+  "id": "task-kanban",
+  "name": "任务进度看板",
+  "version": "1.0.0",
+  "size": "4x4",
+  "minAppVersion": "0.3.9",
+  "schemaVersion": 1,
+  "description": "8 槽本地任务看板；4x4/2x4 展示 8 项，4x2 展示 4 项，2x2 展示 2 项。无新增定时刷新。"
+}

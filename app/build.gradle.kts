@@ -13,8 +13,8 @@ android {
         applicationId = "com.litewidget.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 26
-            versionName = "0.3.8-exp5"
+        versionCode = 27
+        versionName = "0.3.9-kanban"
     }
 
     signingConfigs {
@@ -38,6 +38,12 @@ android {
         }
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -48,4 +54,10 @@ android {
     packaging {
         resources.excludes += setOf("META-INF/*.kotlin_module", "META-INF/*.version")
     }
+}
+
+dependencies {
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.json:json:20240303")
+    testImplementation("org.robolectric:robolectric:4.14.1")
 }

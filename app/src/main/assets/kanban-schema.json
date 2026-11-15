@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lite-widget.local/schema/kanban.json",
+  "title": "任务进度看板",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["updated_at", "tasks"],
+  "properties": {
+    "updated_at": {"type": "string", "format": "date-time", "pattern": "^(?!0000)[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.[0-9]{1,6})?(?:Z|[+-](?:(?:0[0-9]|1[0-7]):[0-5][0-9]|18:00))$(?![\\s\\S])", "description": "任务内容最后改变的时间，带时区 ISO8601；幂等运行不更新时间"},
+    "tasks": {
+      "type": "array", "maxItems": 8,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["name", "line", "status", "progress", "note"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "\\S"},
+          "line": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "\\S"},
+          "status": {"enum": ["running", "blocked", "waiting", "incident"]},
+          "progress": {"type": "number", "minimum": 0, "maximum": 100},
+          "note": {"type": "string", "maxLength": 240, "description": "百分比未量化时必须以 [进度未量化] 开头并使用 progress=0，组件显示 —，不伪造百分比"}
+        },
+        "if": {
+          "required": ["note"],
+          "properties": {"note": {"pattern": "^\\[进度未量化\\]"}}
+        },
+        "then": {"properties": {"progress": {"const": 0}}}
+      }
+    }
+  }
+}

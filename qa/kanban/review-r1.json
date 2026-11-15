@@ -1,0 +1,13 @@
+{
+  "stage": "R1 before fixes",
+  "spec": {
+    "passed": false,
+    "logic_errors": ["4x2 empty slots retained height and could overflow footer", "pin dialog still offered unsafe 4x1 for task-kanban", "unknown progress marker did not require zero", "write size unlimited while read size bounded at 256KiB"]
+  },
+  "quality": {
+    "passed": false,
+    "security_concerns": [],
+    "logic_errors": ["unbounded write could replace good snapshot with an unreadable oversized one", "Python accepted date shapes that Android rejected", "unknown marker/nonzero progress inconsistent between renderer and script"]
+  },
+  "resolution": "Third independent fix context added exact regression tests and targeted patches; R2 and CI still required. No failed review is presented as approval."
+}

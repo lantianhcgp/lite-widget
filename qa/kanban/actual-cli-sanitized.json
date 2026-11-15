@@ -1,0 +1,14 @@
+{
+  "command": "python ~/.hermes/scripts/kanban_build.py --print",
+  "exit_code": 0,
+  "installed_script_sha256": "7a78b32d011fb39b4c7e745abac33e7e3f66c50817c3d084884a77156c70c69e",
+  "task_count": 2,
+  "statuses": [
+    "running",
+    "running"
+  ],
+  "unquantified_count": 2,
+  "idempotent_bytes": true,
+  "idempotent_mtime": true,
+  "private_data_not_committed": true
+}

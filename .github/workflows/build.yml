@@ -28,8 +28,32 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: build
-        run: gradle assembleDebug --parallel --build-cache --no-daemon
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Python contract and generator checks
+        run: |
+          python3 -m pip install 'Pillow==11.3.0'
+          python3 -m unittest discover -s scripts/tests -v
+          python3 scripts/generate_kanban_template.py --check
+
+      - name: build and Android Canvas tests
+        run: gradle assembleDebug testDebugUnitTest --parallel --build-cache --no-daemon
+
+      - name: verify real Canvas pixels
+        run: python3 scripts/verify_kanban_pixels.py app/build/kanban-preview --output app/build/kanban-preview/pixel-checks.json
+
+      - name: upload tests and real Canvas previews
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kanban-tests-and-preview
+          path: |
+            app/build/test-results/testDebugUnitTest/
+            app/build/reports/tests/testDebugUnitTest/
+            app/build/kanban-preview/
+          if-no-files-found: warn
 
       - uses: actions/upload-artifact@v4
         with:

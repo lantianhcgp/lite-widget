@@ -1,0 +1,9 @@
+{
+  "AndroidManifest.xml": true,
+  "Prefs.kt": true,
+  "WidgetProvider.kt": true,
+  "WidgetUpdater.kt": true,
+  "AlarmScheduler.kt": true,
+  "RefreshReceiver.kt": true,
+  "BootReceiver.kt": true
+}

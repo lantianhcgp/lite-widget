@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "patterns": {
+    "credential_shape": 0,
+    "shell_injection": 0,
+    "dangerous_deserialize": 0
+  },
+  "untracked_files_scanned": 22,
+  "added_lines_scanned": 97,
+  "scope": "feature added lines + all untracked text, no credentials read"
+}

@@ -19,11 +19,14 @@ class DataRepo(private val ctx: Context) {
     private var cache: Map<String, Any?>? = null
 
     private val file get() = File(File(ctx.filesDir, "data"), "snapshot.json")
+    private val kanban = KanbanFile(File(ctx.filesDir, KanbanData.RELATIVE_PATH))
 
     fun lastFetch(): Long = file.lastModified()
 
-    /** 读缓存；无缓存时返回空 map（调用方自行用 sample 兜底） */
-    fun values(): Map<String, Any?> {
+    /** WiFi 缓存不变；看板在每次渲染读取，写入后无需另设刷新链。 */
+    fun values(): Map<String, Any?> = wifiValues() + kanban.values()
+
+    private fun wifiValues(): Map<String, Any?> {
         cache?.let { return it }
         val j = readJson() ?: return emptyMap()
         val m = fromJson(j)
@@ -31,7 +34,7 @@ class DataRepo(private val ctx: Context) {
         return m
     }
 
-    fun hasData(): Boolean = file.exists()
+    fun hasData(): Boolean = file.exists() || kanban.values().isNotEmpty()
 
     fun readJson(): JSONObject? = try {
         if (!file.isFile) null else JSONObject(file.readText())
@@ -43,14 +46,18 @@ class DataRepo(private val ctx: Context) {
     /** 必须在后台线程调用 */
     fun refresh(): Map<String, Any?> {
         val prefs = Prefs(ctx)
-        if (!prefs.hasSource()) throw IllegalStateException("变量未填写：App → 变量管理，填后台地址和充值号")
+        if (!prefs.hasSource()) {
+            val local = kanban.values()
+            if (local.isNotEmpty()) return wifiValues() + local
+            throw IllegalStateException("变量未填写：App → 变量管理，填后台地址和充值号；看板可独立通过 MCP 写入")
+        }
         val data = WifiClient.loginCard(prefs.effectiveBaseUrl, prefs.effectiveDevNo)
         file.parentFile?.mkdirs()
         file.writeText(data.toString())
         val m = fromJson(data)
         cache = m
         AppLog.i("data refreshed: pkg=${m["package.name"]} remain=${m["flow.remain"]} battery=${m["device.battery"]}")
-        return m
+        return m + kanban.values()
     }
 
     /** loginCard data → 绑定字段。单位：流量 MB，百分比 % */
@@ -100,8 +107,8 @@ class DataRepo(private val ctx: Context) {
 
     /** 取当前用于渲染的值：真实数据优先，没有就用示例数据（新装机也能看到效果） */
     fun forRender(): Map<String, Any?> {
-        val v = values()
-        return if (v.isEmpty()) sampleValues() else v
+        val wifi = wifiValues()
+        return (if (wifi.isEmpty()) sampleValues() else wifi) + kanban.values()
     }
 
     fun invalidate() {

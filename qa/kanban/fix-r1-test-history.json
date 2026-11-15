@@ -1,0 +1,11 @@
+{
+  "first_targeted_fix_cycle": {
+    "initial_kotlin_red": {"tests": 16, "failures": 8},
+    "extra_date_kotlin_red": {"tests": 17, "failures": 2},
+    "date_python_red": {"tests": 2, "subtest_failures": 7},
+    "worker_green": {"kotlin": 17, "python_build_cli": 27, "python_mcp_not_run_by_worker": 4},
+    "parent_verified_green": {"kotlin": 17, "python_all": 35},
+    "scope": "targeted empty-slots, safe-pinning, unknown-zero, UTF8-size and shared-RFC3339 fixes"
+  },
+  "note": "RED execution counts preserved from independent fix transcript; parent subsequently exercised the complete Python suite including local HTTP protocol tests. No simulated output substituted for CI."
+}

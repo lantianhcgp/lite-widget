@@ -33,7 +33,7 @@ class App : Application() {
             com.litewidget.app.core.Trace.mark(this, "3 AppLog.init OK")
             prefs = Prefs(this)
             store = WidgetStore(filesDir)
-            store.ensureBuiltins()
+            store.ensureBuiltins(assets)
             com.litewidget.app.core.Trace.mark(this, "4 WidgetStore OK")
             assetLoader = AssetLoader(filesDir)
             data = DataRepo(this)
@@ -119,11 +119,11 @@ class App : Application() {
     private fun copySchema() {
         try {
             val dst = java.io.File(filesDir, "schema.json")
-            if (!dst.exists()) {
-                getAssets().open("schema.json").use { ins ->
-                    dst.outputStream().use { outs -> ins.copyTo(outs) }
-                }
-                AppLog.i("schema.json installed")
+            getAssets().open("schema.json").use { ins ->
+                dst.outputStream().use { outs -> ins.copyTo(outs) }
+            }
+            getAssets().open("kanban-schema.json").use { ins ->
+                java.io.File(filesDir, "kanban-schema.json").outputStream().use { outs -> ins.copyTo(outs) }
             }
         } catch (t: Throwable) {
             AppLog.w("schema copy fail: ${t.message}")

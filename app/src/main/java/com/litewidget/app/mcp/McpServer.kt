@@ -298,9 +298,9 @@ class McpServer(private val app: App) {
             prop("filter", "string", "关键字过滤")
         }))
         a.put(tool("log_clear", "清空日志", obj {}))
-        a.put(tool("data_snapshot", "读取当前数据快照（流量/设备/账户字段）", obj {}))
+        a.put(tool("data_snapshot", "读取当前数据快照（网络源 + 本地看板 parcel.*）", obj {}))
         a.put(tool("data_refresh", "重新拉取后台数据（后台线程执行）", obj {}))
-        a.put(tool("schema_get", "获取 widget.json / manifest.json 的 schema", obj {}))
+        a.put(tool("schema_get", "获取 widget.json / manifest.json / kanban 的 schema", obj {}))
         return a
     }
 
@@ -344,6 +344,14 @@ class McpServer(private val app: App) {
                 if (!args.has("content")) return "缺少 content" to true
                 val f = resolveWrite(rel) ?: return "路径越权: $rel" to true
                 if (f.isDirectory) return "路径是目录: $rel" to true
+                if (f.canonicalFile == File(app.filesDir, com.litewidget.app.core.data.KanbanData.RELATIVE_PATH).canonicalFile) {
+                    try {
+                        com.litewidget.app.core.data.KanbanData.write(f, content)
+                    } catch (_: Exception) {
+                        return "看板契约无效或写入失败；原有效看板保持不变" to true
+                    }
+                    return "已写入 $rel\nkanban schema: OK" to false
+                }
                 f.parentFile?.mkdirs()
                 f.writeText(content, Charsets.UTF_8)
                 AppLog.i("mcp write $rel (${content.length} bytes)")
@@ -440,8 +448,10 @@ class McpServer(private val app: App) {
             }
             "schema_get" -> {
                 val f = File(app.filesDir, "schema.json")
-                if (f.isFile) f.readText(Charsets.UTF_8) to false
-                else DEFAULT_SCHEMA to false
+                val raw = if (f.isFile) f.readText(Charsets.UTF_8) else DEFAULT_SCHEMA
+                val combined = JSONObject(raw)
+                app.assets.open("kanban-schema.json").bufferedReader(Charsets.UTF_8).use { combined.put("kanban", JSONObject(it.readText())) }
+                combined.toString() to false
             }
             else -> "未知工具: $name" to true
         }
@@ -498,7 +508,7 @@ class McpServer(private val app: App) {
     }
 
     companion object {
-        const val VERSION = "0.3.3"
+        val VERSION: String get() = com.litewidget.app.BuildConfig.VERSION_NAME
         private const val MAX_BODY = 2 * 1024 * 1024
         private val ALLOWED = setOf("widgets", "logs", "data", "exports")
         private val WRITABLE = setOf("widgets", "logs")
